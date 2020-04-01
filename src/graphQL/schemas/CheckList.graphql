@@ -1,0 +1,13 @@
+type Document {
+	id: Int
+	name: String
+}
+
+type CheckList {
+	feName: String
+  checkList: [Document]
+}
+
+type Query {
+	getCheckList(loanId: Int): [CheckList]
+}
