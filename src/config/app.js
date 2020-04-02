@@ -15,7 +15,6 @@ dotenv.config();
 import debugRoute from '../middlewares/debug-route';
 import routesV1 from '../controllers';
 import rollbar from './rollbarConfig';
-// import saveLogsApi from '../helpers/saveLogsApi';
 import '../helpers/axiosInterceptors';
 
 rollbar.log('Server Loaded!');
@@ -35,29 +34,6 @@ app.use(
     extended: true,
   }),
 );
-app.use(function(req, res, next) {
-  const oldJson = res.json;
-  req.requestId = mongoose.Types.ObjectId().toHexString();
-  // const salesChannelApiKey = req.headers['x-api-key'];
-  // saveLogsApi({
-  //   url: req.url,
-  //   method: req.method,
-  //   requestBody: JSON.stringify({ ...req.body, ...req.headers }),
-  //   salesChannelApiKey,
-  //   requestId: req.requestId,
-  // });
-  // res.json = function(data) {
-  //   saveLogsApi({
-  //     url: req.url,
-  //     method: req.method,
-  //     responseBody: JSON.stringify(data),
-  //     salesChannelApiKey,
-  //     requestId: req.requestId,
-  //   });
-  //   oldJson.apply(res, arguments);
-  // };
-  next();
-});
 app.use(helmet());
 app.use(cors());
 app.use(morgan('tiny'));
