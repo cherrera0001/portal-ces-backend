@@ -7,7 +7,6 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import appRoot from 'app-root-path';
-import mongoose from 'mongoose';
 import swaggerUi from 'swagger-ui-express';
 
 dotenv.config();
