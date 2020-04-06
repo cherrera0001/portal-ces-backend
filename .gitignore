@@ -72,3 +72,5 @@ command-files/
 .idea/
 
 .built
+
+.mongo-volume

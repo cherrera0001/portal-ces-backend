@@ -19,8 +19,8 @@ restart: build
 	docker-compose restart app
 
 clean: stop
+	rm -rf .mongo-volume
 	rm -f tmp/pids/*
-	docker-compose rm -f -v bundle_cache
 	rm -f .bundled
 	docker-compose rm -f
 	rm -f .built

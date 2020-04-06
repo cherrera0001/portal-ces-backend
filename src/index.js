@@ -1,9 +1,12 @@
 import { ApolloServer } from 'apollo-server-express';
 import 'app-module-path/register';
+
 import app from 'config/app';
 import { debugApp } from 'config/debug';
 import schema from 'helpers/gqlSchemasExport';
 import rollbar from 'config/rollbarConfig';
+
+import './config/mgConnect';
 
 const { PORT, NODE_ENV } = process.env;
 const apiPort = PORT || 8085;

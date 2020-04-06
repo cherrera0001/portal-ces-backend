@@ -1,9 +1,11 @@
-// import { CheckListMgModel } from '../../../../helpers/modelsExport';
+import { LoansModel } from '../../../../helpers/modelsExport';
 
-export default async ({ data: where, rollbar }) => {
+export default async ({ rollbar }) => {
   try {
+    const loans = await LoansModel.find();
+    return loans;
   } catch (err) {
-    // rollbar.log(`src/methods/chl/v1/getCheckList/index::ERROR: ${err.message}`);
-    // throw new Error(err.message);
+    rollbar.log(`src/methods/chl/v1/getCheckList/index::ERROR: ${err.message}`);
+    throw new Error(err.message);
   }
 };

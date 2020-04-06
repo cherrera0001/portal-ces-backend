@@ -1,16 +1,29 @@
-version: "3"
+version: '3'
 services:
+  mongo:
+    image: mongo:latest
+    ports:
+      - '27017:27017'
+    command: --quiet
+    environment:
+      MONGO_INITDB_DATABASE: admin
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    volumes:
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
+      - ./.mongo-volume:/data/db
   app:
     build:
       context: .
     environment:
-      - NODE_ENV=test
+      - NODE_ENV=development
+      - TERM=xterm
       - PORT=8085
       - SERVER_HOST=localhost
       - USE_MOCK_DATA
       - MONGO_URI
     ports:
-      - "8085:8085"
+      - '8085:8085'
     command: npm run start
     volumes:
       - .:/usr/src/

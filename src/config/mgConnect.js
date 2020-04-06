@@ -1,9 +1,22 @@
 import mongoose from 'mongoose';
 
-const { MONGO_URI: mongodbUri } = process.env;
+import rollbar from 'config/rollbarConfig';
 
-mongoose.connect(mongodbUri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-mongoose.set('useCreateIndex', true);
+const { NODE_ENV, MONGO_USERNAME, MONGO_PASSWORD, MONGO_HOST, MONGO_DB } = process.env;
+
+const getMongoURI = () => {
+  return `mongodb${
+    NODE_ENV === 'production' ? '+srv' : ''
+  }://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}/${MONGO_DB}_${NODE_ENV}?retryWrites=true&w=majority`;
+};
+
+try {
+  mongoose.connect(getMongoURI(), {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+  });
+} catch (err) {
+  rollbar.log(`mongoose-connection::ERROR: ${err.message}`);
+  throw new Error(err.message);
+}
