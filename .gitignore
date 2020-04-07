@@ -74,3 +74,5 @@ command-files/
 .built
 
 .mongo-volume
+
+.vscode

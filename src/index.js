@@ -22,7 +22,6 @@ app.listen(apiPort, () => {
   debugApp("Let's rock!! 🤘🏻🚀");
   debugApp(`Server running at http://127.0.0.1:${apiPort}/`);
   debugApp(`graphQL server running at http://127.0.0.1:${apiPort}${server.graphqlPath}/`);
-  debugApp(`graphQL server running at http://127.0.0.1:${apiPort}/api-docs`);
 });
 
 module.exports = app;

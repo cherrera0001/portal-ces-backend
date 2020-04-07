@@ -2,7 +2,14 @@ import mongoose from 'mongoose';
 
 const LoansSchema = new mongoose.Schema(
   {
-    name: { type: mongoose.Schema.Types.String },
+    loanId: { type: mongoose.Schema.Types.String },
+    fEntityId: { type: mongoose.Schema.Types.Number },
+    checkList: [
+      {
+        id: mongoose.Schema.Types.Number,
+        name: mongoose.Schema.Types.String,
+      },
+    ],
   },
   {
     collection: 'loans',

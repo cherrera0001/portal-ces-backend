@@ -4,10 +4,10 @@ type Document {
 }
 
 type CheckList {
-	feName: String
+	fEntityId: Int
   checkList: [Document]
 }
 
 type Query {
-	getCheckList(loanId: Int): [CheckList]
+	getCheckList(loanId: String!): CheckList
 }
