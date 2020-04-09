@@ -1,13 +1,35 @@
+scalar Upload
+
 type Document {
-	id: Int
-	name: String
+  id: String
+  uuid: String
+}
+
+type DocumentSet {
+  id: String
+  name: String
+  step: Int
+  wasSent: Boolean
+  feError: String
+  documents: [Document]
 }
 
 type CheckList {
-	fEntityId: Int
-  checkList: [Document]
+  financingEntityId: Int
+  loanId: String
+  checkList: [DocumentSet]
+}
+
+type File {
+  filename: String!
+  mimetype: String!
+  encoding: String!
 }
 
 type Query {
-	getCheckList(loanId: String!): CheckList
+  getCheckList(loanId: String!): CheckList
+}
+
+type Mutation {
+  uploadDocuments(files: [Upload]!, documentSetId: String!): CheckList
 }

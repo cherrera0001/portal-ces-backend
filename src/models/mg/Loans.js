@@ -3,11 +3,19 @@ import mongoose from 'mongoose';
 const LoansSchema = new mongoose.Schema(
   {
     loanId: { type: mongoose.Schema.Types.String },
-    fEntityId: { type: mongoose.Schema.Types.Number },
+    financingEntityId: { type: mongoose.Schema.Types.Number },
     checkList: [
       {
         id: mongoose.Schema.Types.Number,
         name: mongoose.Schema.Types.String,
+        step: mongoose.Schema.Types.Number,
+        wasSent: mongoose.Schema.Types.Boolean,
+        feError: mongoose.Schema.Types.String,
+        documents: [
+          {
+            uuid: mongoose.Schema.Types.String,
+          },
+        ],
       },
     ],
   },
