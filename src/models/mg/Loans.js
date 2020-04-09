@@ -6,7 +6,7 @@ const LoansSchema = new mongoose.Schema(
     financingEntityId: { type: mongoose.Schema.Types.Number },
     checkList: [
       {
-        id: mongoose.Schema.Types.Number,
+        id: mongoose.Schema.Types.String,
         name: mongoose.Schema.Types.String,
         step: mongoose.Schema.Types.Number,
         wasSent: mongoose.Schema.Types.Boolean,
