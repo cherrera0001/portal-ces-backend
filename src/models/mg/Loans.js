@@ -13,6 +13,7 @@ const LoansSchema = new mongoose.Schema(
         feError: mongoose.Schema.Types.String,
         documents: [
           {
+            id: mongoose.Schema.Types.String,
             uuid: mongoose.Schema.Types.String,
           },
         ],

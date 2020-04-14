@@ -6,7 +6,7 @@ const { NODE_ENV, MONGO_USERNAME, MONGO_PASSWORD, MONGO_HOST, MONGO_DB } = proce
 
 const getMongoURI = () => {
   return `mongodb${
-    NODE_ENV === 'production' ? '+srv' : ''
+    NODE_ENV === 'production' || NODE_ENV === 'staging' ? '+srv' : ''
   }://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}/${MONGO_DB}_${NODE_ENV}?retryWrites=true&w=majority`;
 };
 

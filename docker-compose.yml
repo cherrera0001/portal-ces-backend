@@ -5,10 +5,8 @@ services:
     ports:
       - '27017:27017'
     command: --quiet
-    environment:
-      MONGO_INITDB_DATABASE: admin
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    env_file:
+      - .env
     volumes:
       - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
       - ./.mongo-volume:/data/db
