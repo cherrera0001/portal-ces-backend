@@ -39,6 +39,7 @@ jobs:
       CI: true
       NODE_ENV: production
       PORT: 8085
+      TERM: xterm
       SERVER_HOST: localhost
       MONGO_INITDB_DATABASE: admin
       MONGO_INITDB_ROOT_USERNAME: amicar
