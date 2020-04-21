@@ -1,0 +1,58 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Portal Backend - Node.js CI
+
+on: push
+#   push:
+#     branches: [ master ]
+#   pull_request:
+#     branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+
+    strategy:
+      matrix:
+        node-version: [10.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm run build --if-present
+    - run: export TERM=xterm; npm test
+      env:
+        CI: true
+        NODE_ENV: test
+    env:
+      CI: true
+      NODE_ENV: production
+      PORT: 8085
+      SERVER_HOST: localhost
+      MONGO_INITDB_DATABASE: admin
+      MONGO_INITDB_ROOT_USERNAME: amicar
+      MONGO_INITDB_ROOT_PASSWORD: amicar
+      MONGO_USERNAME: amicar
+      MONGO_PASSWORD: amicar
+      MONGO_DB: amicar
+      MONGO_HOST: mongo:27017
+#   deploy:
+#     runs-on: google/cloud-sdk
+#     steps:
+#     - run: apt-get install -qq -y gettext
+#     - run: echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+#     - run: gcloud --quiet config set run/region us-central1
+#     - run: gcloud --quiet config set project prueba-arquitectura
+#     - run: gcloud builds submit --tag gcr.io/prueba-arquitectura/core-testing
+#     - run: gcloud beta run deploy --image gcr.io/prueba-arquitectura/core-testing --platform managed --set-env-vars NODE_ENV=test,PG_DB=$PG_DB_TESTING,PG_HOST=$PG_HOST_TESTING,PG_USER=$PG_USER_TESTING,PG_PW=$PG_PW_TESTING
