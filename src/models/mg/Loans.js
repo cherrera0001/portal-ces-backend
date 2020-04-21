@@ -9,6 +9,7 @@ const LoansSchema = new mongoose.Schema(
         id: mongoose.Schema.Types.String,
         name: mongoose.Schema.Types.String,
         step: mongoose.Schema.Types.Number,
+        documentType: mongoose.Schema.Types.String,
         wasSent: mongoose.Schema.Types.Boolean,
         feError: mongoose.Schema.Types.String,
         documents: [

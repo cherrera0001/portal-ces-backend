@@ -7,6 +7,7 @@ const seedLoans = {
       name: 'Liquidaciones',
       step: 0,
       wasSent: false,
+      documentType: '74',
       feError: null,
       documents: [
         {
@@ -24,6 +25,7 @@ const seedLoans = {
       name: 'Contrato',
       step: 3,
       wasSent: true,
+      documentType: '58',
       feError: 'Documento ilegible',
       documents: [
         {

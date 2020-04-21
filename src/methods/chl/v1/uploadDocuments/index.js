@@ -6,7 +6,7 @@ const { CORE_UPLOAD_DOCUMENT_URL } = process.env;
 const ALLOWED_MIME_TYPES = ['application/pdf', 'image/jpeg', 'image/png'];
 const MAX_FILE_SIZE_IN_KB = 40000000;
 
-const uploadDocument = async (loanId, file, fileName) => {
+const uploadDocument = async (loanId, file, fileName, documentType) => {
   const response = await axios({
     method: 'post',
     url: CORE_UPLOAD_DOCUMENT_URL,
@@ -14,6 +14,7 @@ const uploadDocument = async (loanId, file, fileName) => {
       loanId,
       file,
       fileName,
+      documentType,
     },
   });
   if (response.status !== 200) {
@@ -23,7 +24,7 @@ const uploadDocument = async (loanId, file, fileName) => {
 
 export default async ({ data, rollbar }) => {
   try {
-    const { files, loanId } = data;
+    const { files, loanId, documentSetId, documentType } = data;
     for await (const fileStream of files) {
       const { createReadStream, filename, mimetype } = fileStream;
       const chunks = [];
@@ -43,14 +44,17 @@ export default async ({ data, rollbar }) => {
 
       if (file.byteLength >= MAX_FILE_SIZE_IN_KB) throw new Error('INCORRECT_FILE_SIZE');
 
-      await uploadDocument(loanId, file.toString('base64'), filename);
+      await uploadDocument(loanId, file.toString('base64'), filename, documentType);
 
-      const loan = await LoansModel.findOne({ loanId });
-      loan.wasSent = true;
-      loan.step = 1;
+      const loan = await LoansModel.findOne({ loanId, 'checkList.id': documentSetId });
+      loan.checkList.forEach((document) => {
+        if (document.id === documentSetId) {
+          document.wasSent = true;
+          document.step = 1;
+        }
+      });
       loan.save();
-
-      return true;
+      return loan;
     }
   } catch (err) {
     if (err.message === 'INCORRECT_FILE_TYPE')
