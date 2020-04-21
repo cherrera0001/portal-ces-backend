@@ -4,7 +4,7 @@ import { LoansModel } from '../../../../helpers/modelsExport';
 
 const { CORE_UPLOAD_DOCUMENT_URL } = process.env;
 const ALLOWED_MIME_TYPES = ['application/pdf', 'image/jpeg', 'image/png'];
-const MAX_FILE_SIZE_IN_MB = 40;
+const MAX_FILE_SIZE_IN_KB = 40000000;
 
 const uploadDocument = async (loanId, file, fileName) => {
   const response = await axios({
@@ -20,8 +20,6 @@ const uploadDocument = async (loanId, file, fileName) => {
     throw new Error(`${__dirname}/uploadDocument::ERROR`);
   }
 };
-
-const convertBytesToMb = (bytes) => bytes / 1000000;
 
 export default async ({ data, rollbar }) => {
   try {
@@ -42,9 +40,8 @@ export default async ({ data, rollbar }) => {
       );
 
       const file = Buffer.concat(chunks);
-      const fileSize = convertBytesToMb(file.byteLength);
 
-      if (fileSize >= MAX_FILE_SIZE_IN_MB) throw new Error('INCORRECT_FILE_SIZE');
+      if (file.byteLength >= MAX_FILE_SIZE_IN_KB) throw new Error('INCORRECT_FILE_SIZE');
 
       await uploadDocument(loanId, file.toString('base64'), filename);
 
