@@ -37,6 +37,11 @@ const seedLoans = {
   ],
 };
 
+const seedConfig = {
+  allowedMimeTypes: ['application/pdf', 'image/jpeg', 'image/png'],
+  maxFileSizeInKB: 40000000,
+};
+
 db = db.getSiblingDB('amicar_development');
 
 db.createUser({
@@ -46,6 +51,7 @@ db.createUser({
 });
 
 db.loans.insertMany([seedLoans]);
+db.config.insertOne(seedConfig);
 
 db = db.getSiblingDB('amicar_test');
 
@@ -56,3 +62,4 @@ db.createUser({
 });
 
 db.loans.insertMany([seedLoans]);
+db.config.insertOne(seedConfig);

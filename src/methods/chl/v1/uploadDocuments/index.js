@@ -1,10 +1,8 @@
 import axios from 'axios';
 import { ApolloError } from 'apollo-server-express';
-import { LoansModel } from '../../../../helpers/modelsExport';
+import { LoansModel, ConfigModel } from '../../../../helpers/modelsExport';
 
 const { CORE_UPLOAD_DOCUMENT_URL } = process.env;
-const ALLOWED_MIME_TYPES = ['application/pdf', 'image/jpeg', 'image/png'];
-const MAX_FILE_SIZE_IN_KB = 40000000;
 
 const uploadDocument = async (loanId, file, fileName, documentType) => {
   const response = await axios({
@@ -25,11 +23,14 @@ const uploadDocument = async (loanId, file, fileName, documentType) => {
 export default async ({ data, rollbar }) => {
   try {
     const { files, loanId, documentSetId, documentType } = data;
+    const config = await ConfigModel.findOne();
+    if (!config) throw new Error('CONFIG_NOT_FOUND');
+
     for await (const fileStream of files) {
       const { createReadStream, filename, mimetype } = fileStream;
       const chunks = [];
 
-      if (!ALLOWED_MIME_TYPES.includes(mimetype)) throw new Error('INCORRECT_FILE_TYPE');
+      if (!config.allowedMimeTypes.includes(mimetype)) throw new Error('INCORRECT_FILE_TYPE');
 
       await new Promise((resolve, reject) =>
         createReadStream()
@@ -42,7 +43,7 @@ export default async ({ data, rollbar }) => {
 
       const file = Buffer.concat(chunks);
 
-      if (file.byteLength >= MAX_FILE_SIZE_IN_KB) throw new Error('INCORRECT_FILE_SIZE');
+      if (file.byteLength >= config.maxFileSizeInKB) throw new Error('INCORRECT_FILE_SIZE');
 
       await uploadDocument(loanId, file.toString('base64'), filename, documentType);
 
