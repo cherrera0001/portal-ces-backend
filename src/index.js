@@ -13,6 +13,13 @@ const apiPort = PORT || 8085;
 const server = new ApolloServer({
   schema,
   playground: NODE_ENV !== 'production',
+  formatError: (err) => {
+    // TODO: add token verification
+    if (err.message.startsWith('Database Error: ')) {
+      return new Error('Internal server error');
+    }
+    return err;
+  },
   context: () => ({ rollbar }),
 });
 

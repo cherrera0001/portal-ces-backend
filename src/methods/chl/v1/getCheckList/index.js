@@ -1,11 +1,9 @@
+import { ApolloError } from 'apollo-server-express';
 import { LoansModel } from '../../../../helpers/modelsExport';
 
-export default async ({ data, rollbar }) => {
-  try {
-    const loan = await LoansModel.findOne({ loanId: data.loanId });
-    return loan;
-  } catch (err) {
-    rollbar.log(`src/methods/chl/v1/getCheckList/index::ERROR: ${err.message}`);
-    throw new Error(err.message);
-  }
+export default async (data) => {
+  if (!data.loanId) throw new ApolloError('Missing loanId field.', 'MISSING_LOAN_ID');
+
+  const loan = await LoansModel.findOne({ loanId: data.loanId });
+  return loan;
 };

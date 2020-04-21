@@ -31,5 +31,5 @@ type Query {
 }
 
 type Mutation {
-  uploadDocuments(files: [Upload]!, documentSetId: String!): CheckList
+  uploadDocuments(files: [Upload]!, documentSetId: String!): Boolean
 }

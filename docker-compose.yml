@@ -18,7 +18,6 @@ services:
       - TERM=xterm
       - PORT=8085
       - SERVER_HOST=localhost
-      - USE_MOCK_DATA
       - MONGO_URI
     ports:
       - '8085:8085'
