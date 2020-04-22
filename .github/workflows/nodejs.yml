@@ -37,7 +37,7 @@ jobs:
         NODE_ENV: test
     env:
       CI: true
-      NODE_ENV: production
+      NODE_ENV: development
       PORT: 8085
       SERVER_HOST: localhost
       MONGO_INITDB_DATABASE: admin
