@@ -19,7 +19,7 @@ jobs:
         image: mongo:latest
         ports:
           - 27017:27017
-        environment:
+        env:
           MONGO_INITDB_ROOT_USERNAME: amicar
           MONGO_INITDB_ROOT_PASSWORD: amicar
 
@@ -48,6 +48,7 @@ jobs:
       MONGO_PASSWORD: amicar
       MONGO_DB: amicar
       MONGO_HOST: mongo:27017
+      ACTIONS_RUNNER_DEBUG: true
 #   deploy:
 #     runs-on: google/cloud-sdk
 #     steps:
