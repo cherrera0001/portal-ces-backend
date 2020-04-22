@@ -36,7 +36,6 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm install
-    - run: mongo -u amicar -p amicar
     - run: npm run test
       env:
         TERM: xterm
@@ -60,5 +59,6 @@ jobs:
 #     - run: echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
 #     - run: gcloud --quiet config set run/region us-central1
 #     - run: gcloud --quiet config set project prueba-arquitectura
-#     - run: gcloud builds submit --tag gcr.io/prueba-arquitectura/core-testing
+#     - run: gcloud builds submit --tag gcr.io/prueba-arquitectura/core-testing --async
+#     - run: sleep 120
 #     - run: gcloud beta run deploy --image gcr.io/prueba-arquitectura/core-testing --platform managed --set-env-vars NODE_ENV=test,PG_DB=$PG_DB_TESTING,PG_HOST=$PG_HOST_TESTING,PG_USER=$PG_USER_TESTING,PG_PW=$PG_PW_TESTING
