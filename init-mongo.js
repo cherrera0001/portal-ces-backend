@@ -1,6 +1,6 @@
 const seedLoans = {
   loanId: '0065500000FcXi2AAF',
-  financingEntityId: 4,
+  financingEntityId: '6,762249812',
   checkList: [
     {
       id: '731b4',

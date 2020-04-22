@@ -16,7 +16,7 @@ type DocumentSet {
 }
 
 type CheckList {
-  financingEntityId: Int
+  financingEntityId: String
   loanId: String
   checkList: [DocumentSet]
 }

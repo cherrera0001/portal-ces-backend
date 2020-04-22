@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const LoansSchema = new mongoose.Schema(
   {
     loanId: { type: mongoose.Schema.Types.String },
-    financingEntityId: { type: mongoose.Schema.Types.Number },
+    financingEntityId: { type: mongoose.Schema.Types.String },
     checkList: [
       {
         id: mongoose.Schema.Types.String,

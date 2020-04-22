@@ -1,29 +1,10 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../src';
+import { getCheckListQuery } from '../src/graphQL/queries/getCheckList';
 
 const { expect } = chai;
 chai.use(chaiHttp);
-
-const getCheckListQuery = (loanId) => ({
-  operationName: 'getCheckList',
-  variables: { loanId },
-  query: `
-    query getCheckList($loanId: String!) {
-      getCheckList(loanId: $loanId) {
-        financingEntityId
-        checkList {
-          id
-          name
-          step
-          documentType
-          wasSent
-          feError
-        }
-      }
-    }
-  `,
-});
 
 describe('CheckList', () => {
   describe('/POST gets a FE checklist for a given loanId', () => {

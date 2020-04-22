@@ -2,12 +2,12 @@ import axios from 'axios';
 import { ApolloError } from 'apollo-server-express';
 import { LoansModel, ConfigModel } from '../../../../helpers/modelsExport';
 
-const { CORE_UPLOAD_DOCUMENT_URL } = process.env;
+const { CORE_URL } = process.env;
 
 const uploadDocument = async (loanId, file, fileName, documentType) => {
   const response = await axios({
     method: 'post',
-    url: CORE_UPLOAD_DOCUMENT_URL,
+    url: `${CORE_URL}/chl/v1/alfresco`,
     data: {
       loanId,
       file,
