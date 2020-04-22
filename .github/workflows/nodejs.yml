@@ -36,7 +36,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm install
-    - run: mongo
+    - run: mongo mongodb://amicar:amicar@127.0.0.1:27017/amicar_test
     - run: npm run test
       env:
         TERM: xterm
