@@ -22,6 +22,9 @@ jobs:
         env:
           MONGO_INITDB_ROOT_USERNAME: amicar
           MONGO_INITDB_ROOT_PASSWORD: amicar
+        volumes:
+          - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
+          - ./.mongo-volume:/data/db
 
     strategy:
       matrix:
