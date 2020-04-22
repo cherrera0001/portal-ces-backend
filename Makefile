@@ -28,5 +28,8 @@ clean: stop
 test: build
 	docker-compose run -e NODE_ENV=test app npm t
 
+testView: build
+	docker-compose run -e NODE_ENV=test app npm run testView
+
 logs:
 	docker-compose logs

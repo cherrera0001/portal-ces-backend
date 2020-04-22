@@ -11,13 +11,15 @@ services:
       - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
       - ./.mongo-volume:/data/db
   app:
+    depends_on:
+      - mongo
     build:
       context: .
     environment:
-      - NODE_ENV=development
+      - NODE_ENV
       - TERM=xterm
       - PORT=8085
-      - SERVER_HOST=localhost
+      - SERVER_HOST
       - MONGO_URI
     ports:
       - '8085:8085'

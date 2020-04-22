@@ -10,14 +10,11 @@ import appRoot from 'app-root-path';
 
 dotenv.config();
 
-import debugRoute from '../middlewares/debug-route';
-import routesV1 from '../controllers';
 import rollbar from './rollbarConfig';
 
 rollbar.log('Server Loaded!');
 
 const app = express();
-const controllersConfig = routesV1({ rollbar });
 app.use(rollbar.errorHandler());
 app.use(methodOverride());
 app.use(
@@ -35,6 +32,5 @@ app.use(helmet());
 app.use(cors());
 app.use(morgan('tiny'));
 app.use('/docs/code', express.static(`${appRoot.path}/codeDocs/`));
-app.use('', debugRoute, controllersConfig.router);
 
 export default app;
