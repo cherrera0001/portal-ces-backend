@@ -22,9 +22,6 @@ jobs:
         env:
           MONGO_INITDB_ROOT_USERNAME: amicar
           MONGO_INITDB_ROOT_PASSWORD: amicar
-        volumes:
-          - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
-          - ./.mongo-volume:/data/db
 
     strategy:
       matrix:
@@ -38,6 +35,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm install
     - run: mongo
+    - run: node ./init-mongo.js
     - run: npm run test
       env:
         TERM: xterm
