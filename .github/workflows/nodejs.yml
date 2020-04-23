@@ -58,7 +58,7 @@ jobs:
       MONGO_USERNAME: amicar
       MONGO_PASSWORD: amicar
       MONGO_DB: amicar_test
-      MONGO_HOST: mongo:27017
+      MONGO_HOST: localhost:27017
       ACTIONS_RUNNER_DEBUG: true
 #   deploy:
 #     runs-on: google/cloud-sdk
