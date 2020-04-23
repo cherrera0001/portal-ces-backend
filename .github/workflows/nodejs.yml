@@ -23,13 +23,12 @@ jobs:
           MONGO_INITDB_ROOT_USERNAME: amicar
           MONGO_INITDB_ROOT_PASSWORD: amicar
         volumes:
-          #- init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
-          - COPY init-mongo.js /docker-entrypoint-initdb.d/
+          - init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
 
     strategy:
       matrix:
         node-version: [8.x]
-        mongodb-version: [4.0, 4.2]
+        mongodb-version: [4.0]
 
     steps:
     - uses: actions/checkout@v2
@@ -47,7 +46,6 @@ jobs:
     - run: npm run test
       env:
         TERM: xterm
-
     env:
       CI: true
       NODE_ENV: test
