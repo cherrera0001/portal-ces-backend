@@ -4,7 +4,7 @@ all: build run
 
 run: build
 	docker-compose run app npm i
-	docker-compose up
+	docker-compose up --remove-orphans
 
 build: .built
 

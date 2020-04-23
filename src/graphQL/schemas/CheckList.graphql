@@ -33,4 +33,9 @@ type Query {
 
 type Mutation {
   uploadDocuments(files: [Upload]!, loanId: String!, documentSetId: String!, documentType: String!): CheckList
+  updateDocumentStatus(loanId: String!, documentSetId: String!, state: String!): Boolean
+}
+
+type Subscription {
+  documentStatusUpdated(loanId: String!): CheckList
 }
