@@ -43,7 +43,7 @@ jobs:
         TERM: xterm
     env:
       CI: true
-      NODE_ENV: development
+      NODE_ENV: test
       PORT: 8085
       SERVER_HOST: localhost
       MONGO_INITDB_DATABASE: admin
