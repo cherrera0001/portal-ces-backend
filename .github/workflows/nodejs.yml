@@ -55,8 +55,8 @@ jobs:
       MONGO_INITDB_DATABASE: admin
       MONGO_INITDB_ROOT_USERNAME: amicar
       MONGO_INITDB_ROOT_PASSWORD: amicar
-      MONGO_USERNAME: amicar
-      MONGO_PASSWORD: amicar
+      MONGO_USERNAME: ""
+      MONGO_PASSWORD: ""
       MONGO_DB: amicar_test
       MONGO_HOST: 127.0.0.1:27017
       ACTIONS_RUNNER_DEBUG: true
