@@ -6,6 +6,7 @@
 		"test-staging": "clear; NODE_ENV=staging nyc --check-coverage --lines 90 --branches 68 --statements 90 --functions 90 --reporter=lcov --reporter=text-summary babel-node ./node_modules/.bin/_mocha --timeout 12000 --exit ./test/**/*.test.js",
 		"testView": "clear; NODE_ENV=test nyc --check-coverage --lines 90 --branches 70 --statements 90 --functions 90 --reporter=html --reporter=text babel-node ./node_modules/.bin/_mocha --timeout 12000 --exit ./test/**/**/*.test.js",
 		"start": "clear; DEBUG='app, route, mongo' nodemon src/index.js --exec babel-node -e js",
+		"start-test": "clear; NODE_ENV=test DEBUG='app, route, mongo' nodemon src/index.js --exec babel-node -e js",
 		"debug": "clear; DEBUG='app, route, mongo' nodemon --inspect -w src/index.js --exec babel-node debug src/index.js",
 		"docs": "node_modules/.bin/jsdoc -c jsdoc.json",
 		"clean": "rm -rf dist",
