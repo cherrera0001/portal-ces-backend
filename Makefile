@@ -4,7 +4,7 @@ all: build run
 
 run: build
 	docker-compose run app npm i
-	docker-compose up
+	docker-compose up --remove-orphans
 
 build: .built
 
@@ -19,14 +19,17 @@ restart: build
 	docker-compose restart app
 
 clean: stop
+	rm -rf .mongo-volume
 	rm -f tmp/pids/*
-	docker-compose rm -f -v bundle_cache
 	rm -f .bundled
 	docker-compose rm -f
 	rm -f .built
 
 test: build
 	docker-compose run -e NODE_ENV=test app npm t
+
+testView: build
+	docker-compose run -e NODE_ENV=test app npm run testView
 
 logs:
 	docker-compose logs
