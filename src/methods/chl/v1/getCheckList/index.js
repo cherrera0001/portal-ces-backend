@@ -8,7 +8,7 @@ const { CORE_URL } = process.env;
 const getCheckList = async (loanId) => {
   return axios({
     method: 'post',
-    url: `${CORE_URL}/gql`,
+    url: `${CORE_URL}/graphql`,
     data: getCheckListQuery(loanId),
   });
 };
