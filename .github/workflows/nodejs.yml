@@ -43,8 +43,8 @@ jobs:
         mongodb-replica-set: insert-replica-set-name
     - run: mongo init-mongo.js
     - run: npm install
-    - run: nohup npm run start-test
     - run: npm run test
+    - run: npm build
       env:
         TERM: xterm
     env:
