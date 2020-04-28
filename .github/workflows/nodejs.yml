@@ -57,7 +57,7 @@ jobs:
       MONGO_INITDB_ROOT_PASSWORD: amicar
       MONGO_USERNAME: amicar
       MONGO_PASSWORD: amicar
-      MONGO_DB: amicar_test
+      MONGO_DB: amicar
       MONGO_HOST: 127.0.0.1:27017
       ACTIONS_RUNNER_DEBUG: true
 #   deploy:
