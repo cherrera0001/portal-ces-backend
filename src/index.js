@@ -1,12 +1,11 @@
 import { createServer } from 'http';
 import { ApolloServer, PubSub } from 'apollo-server-express';
 import 'app-module-path/register';
-
 import app from 'config/app';
 import { debugApp } from 'config/debug';
 import schema from 'helpers/gqlSchemasExport';
 import rollbar from 'config/rollbarConfig';
-
+import { permissions, getUser } from './auth';
 import './config/mgConnect';
 
 const { PORT, NODE_ENV } = process.env;
@@ -16,13 +15,18 @@ const server = new ApolloServer({
   schema,
   playground: NODE_ENV !== 'production',
   formatError: (err) => {
-    // TODO: add token verification
     if (err.message.startsWith('Database Error: ')) {
       return new Error('Internal server error');
     }
     return err;
   },
-  context: () => ({ rollbar, pubsub }),
+  middlewares: [permissions],
+  context: async ({ req, res }) => {
+    const accessToken = req.headers['x-access-token'] || '';
+    const refreshToken = req.headers['x-refresh-token'] || '';
+    const { user, claims } = await getUser(accessToken, refreshToken, res);
+    return { req, res, rollbar, pubsub, user, claims };
+  },
 });
 
 server.applyMiddleware({ app, path: '/graphql' });

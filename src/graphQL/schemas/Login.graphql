@@ -1,0 +1,9 @@
+type Tokens {
+  accessToken: String
+  refreshToken: String
+}
+
+extend type Mutation {
+  login(email: String!, password: String!): Tokens
+  signUp(email: String!, password: String!, type: String!): Tokens
+}

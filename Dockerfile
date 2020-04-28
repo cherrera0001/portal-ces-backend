@@ -8,7 +8,7 @@ WORKDIR /usr/src/app
 # Copying this separately prevents re-running npm install on every code change.
 COPY package*.json ./
 # Install production dependencies.
-RUN npm --quiet install
+RUN npm install
 
 # Copy local code to the container image.
 COPY . ./

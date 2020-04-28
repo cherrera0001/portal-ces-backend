@@ -42,6 +42,21 @@ const seedConfig = {
   maxFileSizeInKB: 40000000,
 };
 
+const seedUsers = [
+  {
+    email: 'mail1@mail.com',
+    password: '$2a$10$0ZXz5YX.2sHGxLMjbT50xuYUBr3./cyUSTXgix6YQ3TkS9rhjBG4S',
+    type: 'user',
+    claims: ['read-metrics'],
+  },
+  {
+    email: 'mail1@mail.com',
+    password: '$2a$10$0ZXz5YX.2sHGxLMjbT50xuYUBr3./cyUSTXgix6YQ3TkS9rhjBG4S',
+    type: 'user',
+    claims: [],
+  },
+];
+
 db = db.getSiblingDB('amicar_development');
 
 db.createUser({
@@ -52,6 +67,7 @@ db.createUser({
 
 db.loans.insertMany([seedLoans]);
 db.config.insertOne(seedConfig);
+db.users.insertMany(seedUsers);
 
 db = db.getSiblingDB('amicar_test');
 
