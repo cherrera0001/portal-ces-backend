@@ -10,7 +10,7 @@ on: push
 #     branches: [ master ]
 
 jobs:
-  build:
+  build_and_test:
 
     runs-on: ubuntu-latest
 
@@ -59,13 +59,27 @@ jobs:
       MONGO_DB: amicar
       MONGO_HOST: 127.0.0.1:27017
       ACTIONS_RUNNER_DEBUG: true
-#   deploy:
-#     runs-on: google/cloud-sdk
-#     steps:
-#     - run: apt-get install -qq -y gettext
-#     - run: echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
-#     - run: gcloud --quiet config set run/region us-central1
-#     - run: gcloud --quiet config set project prueba-arquitectura
-#     - run: gcloud builds submit --tag gcr.io/prueba-arquitectura/core-testing --async
-#     - run: sleep 120
-#     - run: gcloud beta run deploy --image gcr.io/prueba-arquitectura/core-testing --platform managed --set-env-vars NODE_ENV=test,PG_DB=$PG_DB_TESTING,PG_HOST=$PG_HOST_TESTING,PG_USER=$PG_USER_TESTING,PG_PW=$PG_PW_TESTING
+  deploy_staging:
+    runs-on: google/cloud-sdk
+    steps:
+    - run: apt-get install -qq -y gettext
+    - run: echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+    - run: gcloud --quiet config set run/region us-central1
+    - run: gcloud --quiet config set project prueba-arquitectura
+    - run: gcloud builds submit --tag gcr.io/prueba-arquitectura/portal-backend-staging --async
+    - run: sleep 120
+    - run: gcloud beta run deploy --image gcr.io/prueba-arquitectura/portal-backend-staging --platform managed --set-env-vars NODE_ENV=staging,,MONGO_USERNAME=$MONGO_USERNAME_STAGING,MONGO_PASSWORD=$MONGO_PASSWORD_STAGING,MONGO_DB=amicar,MONGO_HOST=$MONGO_HOST_STAGING,ROLLBAR_TOKEN=
+    env:
+      CI: true
+      GCLOUD_SERVICE_KEY: ${{ secrets.GCLOUD_SERVICE_KEY }}
+
+    # deploy_testing:
+  #   runs-on: google/cloud-sdk
+  #   steps:
+  #   - run: apt-get install -qq -y gettext
+  #   - run: echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+  #   - run: gcloud --quiet config set run/region us-central1
+  #   - run: gcloud --quiet config set project prueba-arquitectura
+  #   - run: gcloud builds submit --tag gcr.io/prueba-arquitectura/portal-backend-testing --async
+  #   - run: sleep 120
+  #   - run: gcloud beta run deploy --image gcr.io/prueba-arquitectura/portal-backend-testing --platform managed --set-env-vars NODE_ENV=test,PG_DB=$PG_DB_TESTING,PG_HOST=$PG_HOST_TESTING,PG_USER=$PG_USER_TESTING,PG_PW=$PG_PW_TESTING
