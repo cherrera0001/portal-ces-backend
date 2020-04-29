@@ -12,7 +12,7 @@ export default async ({ data: { email, password }, rollbar }) => {
     return { user, ...setTokens(user) };
   } catch (err) {
     rollbar.log(`src/methods/chl/v1/login/index::ERROR: ${err.message}`);
-    if (err.message === 'MISSING_LOAN_ID') throw new ApolloError('User id not found.', 'USER_NOT_FOUND');
+    if (err.message === 'USER_NOT_FOUND') throw new ApolloError('User id not found.', 'USER_NOT_FOUND');
     if (err.message === 'INVALID_PASSWORD') throw new ApolloError('Invalid password.', 'INVALID_PASSWORD');
     throw new Error(err.message);
   }
