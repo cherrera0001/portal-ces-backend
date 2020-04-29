@@ -1,9 +1,21 @@
-type Tokens {
+type User {
+  name: String
+  email: String
+  type: String
+}
+
+type LoginResponse {
+  user: User
+  accessToken: String
+  refreshToken: String
+}
+
+type SignUpResponse {
   accessToken: String
   refreshToken: String
 }
 
 extend type Mutation {
-  login(email: String!, password: String!): Tokens
-  signUp(email: String!, password: String!, type: String!): Tokens
+  login(email: String!, password: String!): LoginResponse
+  signUp(name: String!, email: String!, password: String!, type: String!): SignUpResponse
 }

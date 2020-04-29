@@ -5,15 +5,12 @@ const { JWT_SECRET } = process.env;
 
 const setTokens = (user) => {
   const sevenDays = 60 * 60 * 24 * 7 * 1000;
-  const fifteenMins = 60 * 15 * 1000;
-  const accessToken = sign({ user: user.id }, JWT_SECRET, {
-    expiresIn: fifteenMins,
+  const twentyMins = 60 * 20 * 1000;
+  const accessToken = sign({ user: user.id, claims: user.claims }, JWT_SECRET, {
+    expiresIn: twentyMins,
   });
-  const refreshUser = {
-    id: user.id,
-    count: user.tokenCount,
-  };
-  const refreshToken = sign({ user: refreshUser }, JWT_SECRET, {
+
+  const refreshToken = sign({ user: user.id, claims: user.claims }, JWT_SECRET, {
     expiresIn: sevenDays,
   });
 
@@ -29,8 +26,8 @@ const verifyToken = (token) => {
 };
 
 const getUser = async (accessToken, refreshToken, res) => {
-  let user;
-  let claims;
+  let user = null;
+  let claims = null;
 
   if (!accessToken && !refreshToken) return { user, claims };
   const decodedAccessToken = verifyToken(accessToken);
@@ -42,8 +39,7 @@ const getUser = async (accessToken, refreshToken, res) => {
 
   const decodedRefreshToken = verifyToken(refreshToken);
   if (decodedRefreshToken && decodedRefreshToken.user) {
-    user = await UsersModel.findOne({ _id: decodedRefreshToken.user.id });
-
+    user = await UsersModel.findById(decodedRefreshToken.user);
     if (!user) return { user: null, claims: null };
 
     const userTokens = setTokens(user);

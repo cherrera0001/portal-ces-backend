@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const UsersSchema = new mongoose.Schema(
   {
+    name: mongoose.Schema.Types.String,
     email: mongoose.Schema.Types.String,
     password: mongoose.Schema.Types.String,
     type: mongoose.Schema.Types.String,

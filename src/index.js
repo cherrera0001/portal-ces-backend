@@ -1,9 +1,10 @@
 import { createServer } from 'http';
 import { ApolloServer, PubSub } from 'apollo-server-express';
+import { applyMiddleware } from 'graphql-middleware';
 import 'app-module-path/register';
 import app from 'config/app';
 import { debugApp } from 'config/debug';
-import schema from 'helpers/gqlSchemasExport';
+import schemaDef from 'helpers/gqlSchemasExport';
 import rollbar from 'config/rollbarConfig';
 import { permissions, getUser } from './auth';
 import './config/mgConnect';
@@ -11,6 +12,8 @@ import './config/mgConnect';
 const { PORT, NODE_ENV } = process.env;
 const apiPort = PORT || 8085;
 const pubsub = new PubSub();
+const schema = applyMiddleware(schemaDef, permissions);
+
 const server = new ApolloServer({
   schema,
   playground: NODE_ENV !== 'production',
@@ -20,10 +23,9 @@ const server = new ApolloServer({
     }
     return err;
   },
-  middlewares: [permissions],
   context: async ({ req, res }) => {
-    const accessToken = req.headers['x-access-token'] || '';
-    const refreshToken = req.headers['x-refresh-token'] || '';
+    const accessToken = req && req.headers ? req.headers['x-access-token'] : '';
+    const refreshToken = req && req.headers ? req.headers['x-refresh-token'] : '';
     const { user, claims } = await getUser(accessToken, refreshToken, res);
     return { req, res, rollbar, pubsub, user, claims };
   },
