@@ -85,7 +85,8 @@ jobs:
       MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD_STAGING }}
       MONGO_HOST: ${{ secrets.MONGO_HOST_STAGING }}
       ROLLBAR_TOKEN: ${{ secrets.ROLLBAR_TOKEN_STAGING }}
-    # deploy_testing:
+
+  # deploy_testing:
   #   runs-on: google/cloud-sdk
   #   steps:
   #   - run: apt-get install -qq -y gettext
