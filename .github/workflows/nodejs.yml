@@ -68,8 +68,6 @@ jobs:
         export_default_credentials: true
     - run: sudo apt-get install -qq -y gettext
     - run: echo $GCLOUD_SERVICE_KEY
-      env:
-        GCLOUD_SERVICE_KEY: ${{ secrets.GCLOUD_SERVICE_KEY }}
     - run: echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
       env:
         GCLOUD_SERVICE_KEY: ${{ secrets.GCLOUD_SERVICE_KEY }}
@@ -78,11 +76,14 @@ jobs:
     - run: gcloud info
     - run: gcloud builds submit --tag gcr.io/prueba-arquitectura/portal-backend-staging --async
     - run: sleep 120
-    - run: gcloud run deploy portal-backend-staging --image gcr.io/prueba-arquitectura/portal-backend-staging --platform managed --set-env-vars NODE_ENV=staging,MONGO_USERNAME=$MONGO_USERNAME_STAGING,MONGO_PASSWORD=$MONGO_PASSWORD_STAGING,MONGO_DB=amicar,MONGO_HOST=$MONGO_HOST_STAGING,ROLLBAR_TOKEN=
+    - run: gcloud run deploy portal-backend-staging --image gcr.io/prueba-arquitectura/portal-backend-staging --platform managed --set-env-vars NODE_ENV=staging,MONGO_USERNAME=$MONGO_USERNAME,MONGO_PASSWORD=$MONGO_PASSWORD,MONGO_DB=amicar,MONGO_HOST=$MONGO_HOST,ROLLBAR_TOKEN=$ROLLBAR_TOKEN
     env:
       CI: true
       GCLOUD_SERVICE_KEY: ${{ secrets.GCLOUD_SERVICE_KEY }}
-
+      MONGO_USERNAME: ${{ secrets.MONGO_USERNAME_STAGING }}
+      MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD_STAGING }}
+      MONGO_HOST: ${{ secrets.MONGO_HOST_STAGING }}
+      ROLLBAR_TOKEN: ${{ secrets.ROLLBAR_TOKEN_STAGING }}
     # deploy_testing:
   #   runs-on: google/cloud-sdk
   #   steps:
