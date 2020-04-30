@@ -78,9 +78,10 @@ jobs:
     - run: gcloud info
     - run: gcloud builds submit --tag gcr.io/prueba-arquitectura/portal-backend-staging --async
     - run: sleep 120
-    - run: gcloud beta run deploy --image gcr.io/prueba-arquitectura/portal-backend-staging --platform managed --set-env-vars NODE_ENV=staging,,MONGO_USERNAME=$MONGO_USERNAME_STAGING,MONGO_PASSWORD=$MONGO_PASSWORD_STAGING,MONGO_DB=amicar,MONGO_HOST=$MONGO_HOST_STAGING,ROLLBAR_TOKEN=
+    - run: gcloud run deploy portal-backend-staging --image gcr.io/prueba-arquitectura/portal-backend-staging --platform managed --set-env-vars NODE_ENV=staging,,MONGO_USERNAME=$MONGO_USERNAME_STAGING,MONGO_PASSWORD=$MONGO_PASSWORD_STAGING,MONGO_DB=amicar,MONGO_HOST=$MONGO_HOST_STAGING,ROLLBAR_TOKEN=
     env:
       CI: true
+      GCLOUD_SERVICE_KEY: ${{ secrets.GCLOUD_SERVICE_KEY }}
 
     # deploy_testing:
   #   runs-on: google/cloud-sdk
