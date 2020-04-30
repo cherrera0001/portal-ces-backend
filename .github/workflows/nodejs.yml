@@ -60,6 +60,7 @@ jobs:
       MONGO_HOST: 127.0.0.1:27017
       ACTIONS_RUNNER_DEBUG: true
   deploy_staging:
+    needs: build_and_test
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
