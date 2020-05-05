@@ -1,0 +1,12 @@
+type CoreParams {
+  _id: String
+  id: Int
+  externalCode: String
+  name: String
+  parentId: Int
+  type: String
+}
+
+extend type Query {
+  getCoreParams(type: String!): [CoreParams]
+}
