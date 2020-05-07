@@ -60,11 +60,9 @@ jobs:
       MONGO_HOST: 127.0.0.1:27017
       ACTIONS_RUNNER_DEBUG: true
   deploy_staging:
-    on:
-      push:
-        branches: [ master ]
-      pull_request:
-        branches: [ master ]
+    only:
+      refs:
+        - master
     
     needs: build_and_test
     runs-on: ubuntu-latest
