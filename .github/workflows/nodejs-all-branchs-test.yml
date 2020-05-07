@@ -1,0 +1,60 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Portal Backend - All Branchs - Node.js CI
+
+on:
+  push:
+    branches-ignore:
+      - 'master' 
+
+jobs:
+  build_and_test:
+
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        env:
+          MONGO_INITDB_ROOT_USERNAME: amicar
+          MONGO_INITDB_ROOT_PASSWORD: amicar
+        volumes:
+          - init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
+
+    strategy:
+      matrix:
+        node-version: [8.x]
+        mongodb-version: [4.0]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Start MongoDB
+      uses: supercharge/mongodb-github-action@1.3.0
+      with:
+        mongodb-version: ${{ matrix.mongodb-version }}
+    - run: mongo init-mongo.js
+    - run: npm install
+    - run: npm run test
+      env:
+        TERM: xterm
+    - run: npm build
+    env:
+      CI: true
+      NODE_ENV: test
+      PORT: 8085
+      SERVER_HOST: 127.0.0.1
+      MONGO_INITDB_DATABASE: admin
+      MONGO_INITDB_ROOT_USERNAME: amicar
+      MONGO_INITDB_ROOT_PASSWORD: amicar
+      MONGO_USERNAME: amicar
+      MONGO_PASSWORD: amicar
+      MONGO_DB: amicar
+      MONGO_HOST: 127.0.0.1:27017
+      ACTIONS_RUNNER_DEBUG: true
