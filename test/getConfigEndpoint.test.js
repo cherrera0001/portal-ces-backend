@@ -23,7 +23,7 @@ describe('Config', () => {
     it('should fail if file upload config data is not returned', () => {
       return chai
         .request(server)
-        .post('/gql')
+        .post('/graphql')
         .send(getFileUploadingConfigQuery())
         .then((res) => {
           expect(res.status).to.equal(200);

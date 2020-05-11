@@ -1,8 +1,8 @@
 {
 	"main": ".src/index.js",
 	"scripts": {
-		"myTest": "clear; NODE_ENV=test nyc --check-coverage --lines 90 --branches 65 --statements 90 --functions 90 --reporter=lcov --reporter=text-summary babel-node ./node_modules/.bin/_mocha --timeout 12000 --exit ./test/getCheckListEndpoint.test.js",
-		"test": "clear; NODE_ENV=test nyc --check-coverage --lines 80 --branches 50 --statements 80 --functions 80 --reporter=lcov --reporter=text-summary babel-node ./node_modules/.bin/_mocha --timeout 12000 --exit ./test/**/**/*.test.js",
+		"myTest": "clear; NODE_ENV=test nyc --check-coverage --lines 70 --branches 30 --statements 70 --functions 60 --reporter=lcov --reporter=text-summary babel-node ./node_modules/.bin/_mocha --timeout 12000 --exit ./test/getCheckListEndpoint.test.js",
+		"test": "clear; NODE_ENV=test nyc --check-coverage --lines 70 --branches 30 --statements 70 --functions 60 --reporter=lcov --reporter=text-summary babel-node ./node_modules/.bin/_mocha --timeout 12000 --exit ./test/**/**/*.test.js",
 		"test-staging": "clear; NODE_ENV=staging nyc --check-coverage --lines 90 --branches 68 --statements 90 --functions 90 --reporter=lcov --reporter=text-summary babel-node ./node_modules/.bin/_mocha --timeout 12000 --exit ./test/**/*.test.js",
 		"testView": "clear; NODE_ENV=test nyc --check-coverage --lines 90 --branches 70 --statements 90 --functions 90 --reporter=html --reporter=text babel-node ./node_modules/.bin/_mocha --timeout 12000 --exit ./test/**/**/*.test.js",
 		"start": "clear; DEBUG='app, route, mongo' nodemon src/index.js --exec babel-node -e js",

@@ -36,7 +36,6 @@ const seedLoans = {
     },
   ],
 };
-
 const seedConfig = {
   allowedMimeTypes: ['application/pdf', 'image/jpeg', 'image/png'],
   maxFileSizeInKB: 40000000,
@@ -60,24 +59,22 @@ const seedUsers = [
 ];
 
 db = db.getSiblingDB('amicar_development');
-
 db.createUser({
   user: 'amicar',
   pwd: 'amicar',
   roles: [{ role: 'readWrite', db: 'amicar_development' }],
 });
-
+print("---> Development created and seeded");
 db.loans.insertMany([seedLoans]);
 db.config.insertOne(seedConfig);
 db.users.insertMany(seedUsers);
 
 db = db.getSiblingDB('amicar_test');
-
 db.createUser({
   user: 'amicar',
   pwd: 'amicar',
   roles: [{ role: 'readWrite', db: 'amicar_test' }],
 });
-
 db.loans.insertMany([seedLoans]);
 db.config.insertOne(seedConfig);
+print("---> Test created and seeded");
