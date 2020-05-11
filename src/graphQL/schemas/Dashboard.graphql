@@ -1,0 +1,9 @@
+type Dashboard {
+  simulations: Int
+  awardedLoans: Int
+  approvedNotAwarded: Int
+}
+
+extend type Query {
+  dashboard: Dashboard
+}
