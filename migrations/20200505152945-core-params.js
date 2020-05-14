@@ -3701,7 +3701,28 @@ const coreParams = [
     "externalCode": "29",
     "parentId": 136,
     "type": "BANKS"
-  }
+  },
+  {
+    "id": 530,
+    "name": "NORMAL",
+    "externalCode": "NORMAL",
+    "parentId": 0,
+    "type": "RateTypes"
+  },
+  {
+    "id": 531,
+    "name": "PRIME",
+    "externalCode": "PRIME",
+    "parentId": 0,
+    "type": "RateTypes"
+  },
+  {
+    "id": 532,
+    "name": "CONVERSIÓN",
+    "externalCode": "CONVERSIÓN",
+    "parentId": 0,
+    "type": "RateTypes"
+  },
 ]
 
 module.exports = {
