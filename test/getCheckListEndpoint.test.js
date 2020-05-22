@@ -11,7 +11,7 @@ describe('CheckList', () => {
     it('should fail when no loanId is provided', () => {
       return chai
         .request(server)
-        .post('/gql')
+        .post('/graphql')
         .send(getCheckListQuery(''))
         .then((res) => {
           expect(res.status).to.equal(200);
@@ -24,7 +24,7 @@ describe('CheckList', () => {
     it('should return a valid checkList when a valid loanId is provided', () => {
       return chai
         .request(server)
-        .post('/gql')
+        .post('/graphql')
         .send(getCheckListQuery('0065500000FcXi2AAF'))
         .then((res) => {
           expect(res.status).to.equal(200);

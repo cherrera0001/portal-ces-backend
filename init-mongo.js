@@ -36,30 +36,45 @@ const seedLoans = {
     },
   ],
 };
-
 const seedConfig = {
   allowedMimeTypes: ['application/pdf', 'image/jpeg', 'image/png'],
   maxFileSizeInKB: 40000000,
 };
 
-db = db.getSiblingDB('amicar_development');
+const seedUsers = [
+  {
+    name: 'name1',
+    email: 'mail1@mail.com',
+    password: '$2a$10$0ZXz5YX.2sHGxLMjbT50xuYUBr3./cyUSTXgix6YQ3TkS9rhjBG4S',
+    type: 'user',
+    claims: ['read-metrics'],
+  },
+  {
+    name: 'name2',
+    email: 'mail2@mail.com',
+    password: '$2a$10$0ZXz5YX.2sHGxLMjbT50xuYUBr3./cyUSTXgix6YQ3TkS9rhjBG4S',
+    type: 'user',
+    claims: [],
+  },
+];
 
+db = db.getSiblingDB('amicar_development');
 db.createUser({
   user: 'amicar',
   pwd: 'amicar',
   roles: [{ role: 'readWrite', db: 'amicar_development' }],
 });
-
+print("---> Development created and seeded");
 db.loans.insertMany([seedLoans]);
 db.config.insertOne(seedConfig);
+db.users.insertMany(seedUsers);
 
 db = db.getSiblingDB('amicar_test');
-
 db.createUser({
   user: 'amicar',
   pwd: 'amicar',
   roles: [{ role: 'readWrite', db: 'amicar_test' }],
 });
-
 db.loans.insertMany([seedLoans]);
 db.config.insertOne(seedConfig);
+print("---> Test created and seeded");

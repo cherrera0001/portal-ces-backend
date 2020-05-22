@@ -1,16 +1,15 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Portal Backend - Node.js CI
+name: Portal Backend - All Branchs - Node.js CI
 
-on: push
-#   push:
-#     branches: [ master ]
-#   pull_request:
-#     branches: [ master ]
+on:
+  push:
+    branches-ignore:
+      - 'master' 
 
 jobs:
-  build:
+  build_and_test:
 
     runs-on: ubuntu-latest
 
@@ -40,13 +39,12 @@ jobs:
       uses: supercharge/mongodb-github-action@1.3.0
       with:
         mongodb-version: ${{ matrix.mongodb-version }}
-        mongodb-replica-set: insert-replica-set-name
     - run: mongo init-mongo.js
     - run: npm install
-    - run: nohup npm run start-test
     - run: npm run test
       env:
         TERM: xterm
+    - run: npm build
     env:
       CI: true
       NODE_ENV: test
@@ -55,18 +53,8 @@ jobs:
       MONGO_INITDB_DATABASE: admin
       MONGO_INITDB_ROOT_USERNAME: amicar
       MONGO_INITDB_ROOT_PASSWORD: amicar
-      MONGO_USERNAME: ""
-      MONGO_PASSWORD: ""
-      MONGO_DB: amicar_test
+      MONGO_USERNAME: amicar
+      MONGO_PASSWORD: amicar
+      MONGO_DB: amicar
       MONGO_HOST: 127.0.0.1:27017
       ACTIONS_RUNNER_DEBUG: true
-#   deploy:
-#     runs-on: google/cloud-sdk
-#     steps:
-#     - run: apt-get install -qq -y gettext
-#     - run: echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
-#     - run: gcloud --quiet config set run/region us-central1
-#     - run: gcloud --quiet config set project prueba-arquitectura
-#     - run: gcloud builds submit --tag gcr.io/prueba-arquitectura/core-testing --async
-#     - run: sleep 120
-#     - run: gcloud beta run deploy --image gcr.io/prueba-arquitectura/core-testing --platform managed --set-env-vars NODE_ENV=test,PG_DB=$PG_DB_TESTING,PG_HOST=$PG_HOST_TESTING,PG_USER=$PG_USER_TESTING,PG_PW=$PG_PW_TESTING
