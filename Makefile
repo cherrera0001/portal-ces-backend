@@ -4,8 +4,8 @@ all: build run
 
 run: build
 	docker-compose run app npm i
+	migrate-mongo up
 	docker-compose up --remove-orphans
-
 build: .built
 
 .built: Dockerfile
