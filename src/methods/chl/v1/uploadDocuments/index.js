@@ -45,7 +45,7 @@ export default async ({ data, rollbar }) => {
 
       if (file.byteLength >= config.maxFileSizeInKB) throw new Error('INCORRECT_FILE_SIZE');
 
-      await uploadDocument(loanId, file.toString('base64'), filename, documentType);
+      // await uploadDocument(loanId, file.toString('base64'), filename, documentType);
 
       const loan = await LoansModel.findOne({ loanId, 'checkList.id': documentSetId });
       loan.checkList.forEach((document) => {
