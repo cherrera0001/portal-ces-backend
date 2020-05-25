@@ -21,6 +21,13 @@ services:
       - PORT=8085
       - SERVER_HOST
       - MONGO_URI
+      - MONGO_INITDB_DATABASE
+      - MONGO_INITDB_ROOT_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD
+      - MONGO_USERNAME
+      - MONGO_PASSWORD
+      - MONGO_DB
+      - MONGO_HOST
     ports:
       - '8085:8085'
     command: npm run start

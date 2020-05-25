@@ -64,7 +64,6 @@ db.createUser({
   pwd: 'amicar',
   roles: [{ role: 'readWrite', db: 'amicar_development' }],
 });
-print("---> Development created and seeded");
 db.loans.insertMany([seedLoans]);
 db.config.insertOne(seedConfig);
 db.users.insertMany(seedUsers);
@@ -77,4 +76,3 @@ db.createUser({
 });
 db.loans.insertMany([seedLoans]);
 db.config.insertOne(seedConfig);
-print("---> Test created and seeded");
