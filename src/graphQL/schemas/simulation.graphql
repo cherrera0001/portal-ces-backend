@@ -39,36 +39,31 @@ input Simulation{
   vehicle: Vehicle,
   loan: Loan
 }
-extend type Query {
-  simulation(simulation: Simulation): Prueba
-}
-type Prueba {
-  name: String
-}
+
 type FinalLoanValues {
   loanType: String,
   term: Int,
   balance: Int,
-  UFValue: Int,
+  UFValue: Float,
   totalSurchargesToMAF: Int,
   totalSurchargesToQuote: Int,
-  factorTotal: Int,
-  promissoryFactor: Int,
+  factorTotal: Float,
+  promissoryFactor: Float,
   promissoryValue: Int,
   totalToFinance: Int,
-  totalToFinanceUF: Int,
+  totalToFinanceUF: Float,
   finalCapital: Int,
   daysDelayedFirstDue: Int,
   delayedInterest: Int,
   monthlyPayment: Int,
-  customerRate: Int,
-  dealerRate: Int,
+  customerRate: Float,
+  dealerRate: Float,
   dealerCommission: Int,
   amicarCommission: Int
 },
 type EquivalentAnnualCharge {
-  annualCAE: Int,
-  monthlyCAE: Int,
+  annualCAE: Float,
+  monthlyCAE: Float,
   totalLoanCost: Int
 },
 type AmortizationSchedule{
@@ -112,15 +107,35 @@ type FinancingEntitySurcharges {
   selected: Boolean,
   isRequired: Boolean
 }
+type FinancingEntityInsurance{
+  id: Int
+  description: String
+  value: Int
+  currencyType: String
+  factorCalculated: Int
+  selected: Boolean
+  isRequired: Boolean
+}
+
 type SurchargesAndInsurances {
   amicarAssistance: [AmicarAssistance]
   dealerSurcharges: [DealerSurcharges]
-  dealerInsurance: [FinancingEntitySurcharges]
+  dealerInsurance: [FinancingEntitySurcharges] #Not defined
   financingEntitySurcharges: [FinancingEntitySurcharges]
+  financingEntityInsurance: [FinancingEntityInsurance]
 }
-type responseSimulation {
-  finalLoanValues: FinalLoanValues,
-  equivalentAnnualCharge:EquivalentAnnualCharge,
-  amortizationSchedule: [AmortizationSchedule],
+
+
+type SimulationResponse {
+  finalLoanValues: FinalLoanValues
+  equivalentAnnualCharge: EquivalentAnnualCharge
+  amortizationSchedule: [AmortizationSchedule]
   surchargesAndInsurances: SurchargesAndInsurances
+}
+extend type Query {
+  Simulation(simulation: Simulation!): [SimulationResponse]
+}
+
+type Prueba {
+  name: String
 }
