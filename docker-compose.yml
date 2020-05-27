@@ -34,3 +34,7 @@ services:
     volumes:
       - .:/usr/src/
       - /usr/node_modules
+networks:
+  default:
+    external:
+      name: amicar-network
