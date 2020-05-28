@@ -30,6 +30,54 @@ input Loan {
   modifyTerm: [ModifyTerm]
 }
 
+input AmicarAssistanceInput {
+  id: Int
+  description: String
+  value: Int
+  currencyType: String
+  factorCalculated: Int
+  selected: Boolean
+  isRequired: Boolean
+}
+input DealerSurchargesInput {
+  id: Int
+  description: String
+  value: Int
+  isEditable: Boolean
+  currencyType: String
+  factorCalculated: Int
+  selected: Boolean
+  isRequired: Boolean
+}
+
+input FinancingEntitySurchargesInput {
+  id: Int
+  description: String
+  value: Int
+  isEditable: Boolean
+  currencyType: String
+  factorCalculated: Int
+  selected: Boolean
+  isRequired: Boolean
+}
+input FinancingEntityInsuranceInput {
+  id: Int
+  description: String
+  value: Int
+  currencyType: String
+  factorCalculated: Int
+  selected: Boolean
+  isRequired: Boolean
+}
+
+input SurchargesAndInsurancesInput {
+  amicarAssistance: [AmicarAssistanceInput]
+  dealerSurcharges: [FinancingEntitySurchargesInput]
+  dealerInsurance: [FinancingEntitySurchargesInput] #Not defined
+  financingEntitySurcharges: [FinancingEntitySurchargesInput]
+  financingEntityInsurance: [FinancingEntityInsuranceInput]
+}
+
 input Simulation {
   transactionId: String
   sellerIdentificationValue: String
@@ -37,6 +85,7 @@ input Simulation {
   customer: Customer
   vehicle: Vehicle
   loan: Loan
+  surchargesAndInsurances: SurchargesAndInsurancesInput
 }
 
 type FinalLoanValues {
