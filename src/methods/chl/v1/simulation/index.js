@@ -1,16 +1,18 @@
 import axios from 'axios';
 
+const { CORE_URL } = process.env;
+
 export default async ({ data, rollbar }) => {
   try {
     const headers = {
       'Content-Type': 'application/json',
       'x-api-key': 'f2fb29d5831f44598bd634938685186b',
     };
-    let response = ''
+    let response = '';
     await axios
-      .post(`https://api.core.staging.amicar.com/chl/v1/simulation/`, data.simulation, { headers })
+      .post(`${CORE_URL}/chl/v1/simulation/`, data.simulation, { headers })
       .then((res) => {
-        console.log(res.data)
+        console.log(res.data);
         response = res.data;
       })
       .catch((error) => {
