@@ -7,7 +7,12 @@ input Customer {
 input Vehicle {
   type: String
   price: Int
+  brandName: String
+  modelName: String
+  version: String
+  year: Int
 }
+
 input ModifyTerm {
   paymentNumber: Int
   payment: Int
@@ -20,6 +25,7 @@ input Loan {
   term: Int
   startDate: String
   firstDueDate: String
+  financingEntity: String
   rateType: String
   saleChannel: String
   saleChannelType: String
@@ -28,6 +34,7 @@ input Loan {
   accessories: Int
   tradeInCarValue: Int
   modifyTerm: [ModifyTerm]
+  type: String
 }
 
 input AmicarAssistanceInput {
@@ -184,6 +191,13 @@ type SimulationEmailResponse {
   status: String
 }
 
+type SaveSimulationResponse {
+  simulationId: Float
+  equivalentAnnualCharge: EquivalentAnnualCharge
+  amortizationSchedule: [AmortizationSchedule]
+  surchargesAndInsurances: SurchargesAndInsurances
+}
+
 extend type Query {
   Simulation(simulation: Simulation!): [SimulationResponse]
 }
@@ -203,4 +217,5 @@ extend type Mutation {
     downPaymentPercentage: Float!
     monthlyPayment: Float!
   ): SimulationEmailResponse
+  saveSimulation(simulation: Simulation): SaveSimulationResponse
 }
