@@ -3,7 +3,7 @@
 const { NODE_ENV } = process.env;
 const config = {
   mongodb: {
-    url: 'mongodb://amicar:amicar@localhost:27017/',
+    url: 'mongodb://localhost:27017/',
     databaseName: `amicar_${NODE_ENV || 'development'}`,
 
     options: {

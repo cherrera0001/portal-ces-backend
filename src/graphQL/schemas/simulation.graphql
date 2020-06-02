@@ -165,7 +165,7 @@ type FinancingEntitySurcharges {
 type FinancingEntityInsurance {
   id: Int
   description: String
-  value: Int
+  value: Float
   currencyType: String
   factorCalculated: Int
   selected: Boolean
