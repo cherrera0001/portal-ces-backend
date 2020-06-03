@@ -1,16 +1,14 @@
 import { CoreParamsModel } from '../../../../helpers/modelsExport';
+import headers from '../../../../helpers/headers';
 
+const { CORE_URL } = process.env;
 const axios = require('axios');
 
 export default async ({ rollbar }) => {
   try {
-    const headers = {
-      'Content-Type': 'application/json',
-      'x-api-key': 'f2fb29d5831f44598bd634938685186b',
-    };
     const response = await axios({
       method: 'GET',
-      url: `http://localhost:8080/chl/v1/core-params`,
+      url: `${CORE_URL}/chl/v1/core-params`,
       headers,
     });
 

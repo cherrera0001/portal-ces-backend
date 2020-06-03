@@ -1,14 +1,11 @@
 import axios from 'axios';
 import { ApolloError } from 'apollo-server-express';
+import headers from '../../../../helpers/headers';
 
 const { CORE_URL } = process.env;
 
 export default async ({ data, rollbar }) => {
   try {
-    const headers = {
-      'Content-Type': 'application/json',
-      'x-api-key': 'f2fb29d5831f44598bd634938685186b',
-    };
     let response = {};
     await axios
       .post(`${CORE_URL}/chl/v1/simulation/save`, data.simulation, { headers })
