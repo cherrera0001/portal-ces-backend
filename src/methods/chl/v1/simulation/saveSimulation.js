@@ -13,7 +13,6 @@ export default async ({ data, rollbar }) => {
     await axios
       .post(`${CORE_URL}/chl/v1/simulation/save`, data.simulation, { headers })
       .then((res) => {
-        console.log(res.data);
         response = res.data;
       })
       .catch((err) => {
