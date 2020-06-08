@@ -200,7 +200,7 @@ type SaveSimulationResponse {
 
 extend type Query {
   Simulation(simulation: Simulation!): [SimulationResponse]
-  getSimulationById(simulationId: String): Boolean
+  getSimulationById(simulationId: Int): Boolean
 }
 
 extend type Mutation {
