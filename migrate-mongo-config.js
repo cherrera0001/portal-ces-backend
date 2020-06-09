@@ -1,9 +1,9 @@
 // In this file you can configure migrate-mongo
 
-const { NODE_ENV } = process.env;
+const { NODE_ENV, MONGO_HOST } = process.env;
 const config = {
   mongodb: {
-    url: 'mongodb://localhost:27017/',
+    url: `mongodb://${MONGO_HOST}/`,
     databaseName: `amicar_${NODE_ENV || 'development'}`,
 
     options: {

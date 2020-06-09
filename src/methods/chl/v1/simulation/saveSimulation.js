@@ -6,17 +6,11 @@ const { CORE_URL } = process.env;
 
 export default async ({ data, rollbar }) => {
   try {
-    let response = {};
-    await axios
-      .post(`${CORE_URL}/chl/v1/simulation/save`, data.simulation, { headers })
-      .then((res) => {
-        response = res.data;
-      })
-      .catch((err) => {
-        console.log(err.response.data);
-        throw new ApolloError(err.response.statusText, 'ERROR_SAVING_SIMULATION');
-      });
-    return response;
+    const response = await axios.post(`${CORE_URL}/chl/v1/simulation/save`, data.simulation, { headers });
+    if (response.status !== 200) {
+      throw new ApolloError(response.statusText, 'ERROR_SAVING_SIMULATION');
+    }
+    return response.data;
   } catch (err) {
     rollbar.log(`src/methods/chl/v1/simulation/saveSimulation::ERROR: ${err.message}`);
     throw new Error(err.message);
