@@ -7,6 +7,18 @@ type CoreParams {
   type: String
 }
 
+type CoreParamsList {
+  maritalStatus: [CoreParams]
+  maritalRegime: [CoreParams]
+  academicLevel: [CoreParams]
+  genderType: [CoreParams]
+  livingHousehold: [CoreParams]
+  region: [CoreParams]
+  commune: [CoreParams]
+  nationality: [CoreParams]
+}
+
 extend type Query {
   getCoreParams(type: String!, name: String, externalCode: String, parentId: Int): [CoreParams]
+  getCoreParamsLists: CoreParamsList
 }
