@@ -1,4 +1,4 @@
-// In this file you can configure migrate-mongo
+require('dotenv').config()
 
 const { NODE_ENV, MONGO_HOST } = process.env;
 const config = {
