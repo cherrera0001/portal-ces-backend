@@ -7,11 +7,6 @@ const getMongoURI = () => {
   }://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}/${MONGO_DB}_${NODE_ENV}?retryWrites=true&w=majority`;
 };
 try {
-  console.log({ NODE_ENV });
-  console.log({ MONGO_USERNAME });
-  console.log({ MONGO_PASSWORD });
-  console.log({ MONGO_HOST });
-  console.log({ MONGO_DB });
   mongoose.connect(getMongoURI(), {
     useNewUrlParser: true,
     useUnifiedTopology: true,

@@ -1,5 +1,4 @@
 import getCoreParams from '../../methods/chl/v1/getCoreParams';
-import getCheckList from "../../methods/chl/v1/getCheckList";
 
 const resolvers = {
   Query: {
