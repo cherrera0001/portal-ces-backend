@@ -20,6 +20,7 @@ services:
       - TERM=xterm
       - PORT=8085
       - SERVER_HOST
+      - CORE_URL
       - MONGO_URI
       - MONGO_INITDB_DATABASE
       - MONGO_INITDB_ROOT_USERNAME
@@ -34,7 +35,3 @@ services:
     volumes:
       - .:/usr/src/
       - /usr/node_modules
-networks:
-  default:
-    external:
-      name: amicar-network

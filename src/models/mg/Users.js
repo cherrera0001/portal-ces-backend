@@ -7,6 +7,8 @@ const UsersSchema = new mongoose.Schema(
     password: mongoose.Schema.Types.String,
     type: mongoose.Schema.Types.String,
     claims: [mongoose.Schema.Types.String],
+    sellerIdentificationValue: mongoose.Schema.Types.String,
+    amicarExecutiveIdentificationValue: mongoose.Schema.Types.String,
   },
   {
     collection: 'users',
