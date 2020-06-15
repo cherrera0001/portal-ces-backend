@@ -40,19 +40,19 @@ input Loan {
 input AmicarAssistanceInput {
   id: Int
   description: String
-  value: Int
+  value: Float
   currencyType: String
-  factorCalculated: Int
+  factorCalculated: Float
   selected: Boolean
   isRequired: Boolean
 }
 input DealerSurchargesInput {
   id: Int
   description: String
-  value: Int
+  value: Float
   isEditable: Boolean
   currencyType: String
-  factorCalculated: Int
+  factorCalculated: Float
   selected: Boolean
   isRequired: Boolean
 }
@@ -60,19 +60,20 @@ input DealerSurchargesInput {
 input FinancingEntitySurchargesInput {
   id: Int
   description: String
-  value: Int
+  value: Float
   isEditable: Boolean
   currencyType: String
-  factorCalculated: Int
+  factorCalculated: Float
   selected: Boolean
   isRequired: Boolean
 }
+
 input FinancingEntityInsuranceInput {
   id: Int
   description: String
-  value: Int
+  value: Float
   currencyType: String
-  factorCalculated: Int
+  factorCalculated: Float
   selected: Boolean
   isRequired: Boolean
 }
@@ -116,11 +117,13 @@ type FinalLoanValues {
   dealerCommission: Int
   amicarCommission: Int
 }
+
 type EquivalentAnnualCharge {
   annualCAE: Float
   monthlyCAE: Float
   totalLoanCost: Int
 }
+
 type AmortizationSchedule {
   paymentNumber: Int
   expirationDate: String
@@ -133,41 +136,45 @@ type AmortizationSchedule {
   endingBalance: Int
   cumulativeInterest: Int
 }
+
 type AmicarAssistance {
   id: Int
   description: String
-  value: Int
+  value: Float
   currencyType: String
-  factorCalculated: Int
+  factorCalculated: Float
   selected: Boolean
   isRequired: Boolean
 }
+
 type DealerSurcharges {
   id: Int
   description: String
-  value: Int
+  value: Float
   isEditable: Boolean
   currencyType: String
-  factorCalculated: Int
+  factorCalculated: Float
   selected: Boolean
   isRequired: Boolean
 }
+
 type FinancingEntitySurcharges {
   id: Int
   description: String
-  value: Int
+  value: Float
   isEditable: Boolean
   currencyType: String
-  factorCalculated: Int
+  factorCalculated: Float
   selected: Boolean
   isRequired: Boolean
 }
+
 type FinancingEntityInsurance {
   id: Int
   description: String
   value: Float
   currencyType: String
-  factorCalculated: Int
+  factorCalculated: Float
   selected: Boolean
   isRequired: Boolean
 }
@@ -175,7 +182,7 @@ type FinancingEntityInsurance {
 type SurchargesAndInsurances {
   amicarAssistance: [AmicarAssistance]
   dealerSurcharges: [DealerSurcharges]
-  dealerInsurance: [FinancingEntitySurcharges] #Not defined
+  dealerInsurance: [FinancingEntitySurcharges]
   financingEntitySurcharges: [FinancingEntitySurcharges]
   financingEntityInsurance: [FinancingEntityInsurance]
 }
