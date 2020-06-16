@@ -67,7 +67,6 @@ jobs:
       with:
         export_default_credentials: true
     - run: sudo apt-get install -qq -y gettext
-    - run: echo $GCLOUD_SERVICE_KEY
     - run: echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
       env:
         GCLOUD_SERVICE_KEY: ${{ secrets.GCLOUD_SERVICE_KEY }}
@@ -79,7 +78,7 @@ jobs:
     - run: gcloud run deploy portal-backend-staging --image gcr.io/amicar-tech-255421/portal-backend-staging --platform managed --set-env-vars NODE_ENV=staging,MONGO_USERNAME=$MONGO_USERNAME,MONGO_PASSWORD=$MONGO_PASSWORD,MONGO_DB=amicar,MONGO_HOST=$MONGO_HOST,ROLLBAR_TOKEN=$ROLLBAR_TOKEN,JWT_SECRET=$JWT_SECRET
     env:
       CI: true
-      GCLOUD_SERVICE_KEY: ${{ secrets.GCLOUD_SERVICE_KEY }}
+      GCLOUD_SERVICE_KEY: ${{ secrets.GCLOUD_SERVICE_KEY_PRODUCTION }}
       MONGO_USERNAME: ${{ secrets.MONGO_USERNAME_STAGING }}
       MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD_STAGING }}
       MONGO_HOST: ${{ secrets.MONGO_HOST_STAGING }}
