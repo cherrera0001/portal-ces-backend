@@ -6,7 +6,7 @@ name: Portal Backend - Master - Node.js CI
 on:
   push:
     branches:
-      - 'master'
+      - 'staging' 
 
 jobs:
   build_and_test:
@@ -58,7 +58,7 @@ jobs:
       MONGO_DB: amicar
       MONGO_HOST: 127.0.0.1:27017
       ACTIONS_RUNNER_DEBUG: true
-  deploy_master:
+  deploy_staging:
     needs: build_and_test
     runs-on: ubuntu-latest
     steps:
@@ -73,10 +73,9 @@ jobs:
     - run: gcloud --quiet config set run/region us-east1
     - run: gcloud --quiet config set project amicar-tech-255421
     - run: gcloud info
-    - run: gcloud builds submit --tag gcr.io/amicar-tech-255421/portal-backend-production --async
+    - run: gcloud builds submit --tag gcr.io/amicar-tech-255421/portal-backend-staging --async
     - run: sleep 120
-    - run: gcloud run deploy portal-backend-staging --image gcr.io/prueba-arquitectura/portal-backend-staging --platform managed --set-env-vars NODE_ENV=staging,MONGO_USERNAME=$MONGO_USERNAME,MONGO_PASSWORD=$MONGO_PASSWORD,MONGO_DB=amicar,MONGO_HOST=$MONGO_HOST,ROLLBAR_TOKEN=$ROLLBAR_TOKEN,JWT_SECRET=$JWT_SECRET,CORE_URL=$CORE_URL,API_KEY_PORTAL=$API_KEY_PORTAL
-    - run: gcloud run deploy portal-backend-production --image gcr.io/amicar-tech-255421/portal-backend-production --platform managed --set-env-vars NODE_ENV=production,MONGO_USERNAME=$MONGO_USERNAME,MONGO_PASSWORD=$MONGO_PASSWORD,MONGO_DB=amicar,MONGO_HOST=$MONGO_HOST,ROLLBAR_TOKEN=$ROLLBAR_TOKEN,JWT_SECRET=$JWT_SECRET,CORE_URL=$CORE_URL,API_KEY_PORTAL=$API_KEY_PORTAL
+    - run: gcloud run deploy portal-backend-staging --image gcr.io/amicar-tech-255421/portal-backend-staging --platform managed --set-env-vars NODE_ENV=staging,MONGO_USERNAME=$MONGO_USERNAME,MONGO_PASSWORD=$MONGO_PASSWORD,MONGO_DB=amicar,MONGO_HOST=$MONGO_HOST,ROLLBAR_TOKEN=$ROLLBAR_TOKEN,JWT_SECRET=$JWT_SECRET
     env:
       CI: true
       MONGO_USERNAME: ${{ secrets.MONGO_USERNAME_STAGING }}
@@ -84,6 +83,3 @@ jobs:
       MONGO_HOST: ${{ secrets.MONGO_HOST_STAGING }}
       ROLLBAR_TOKEN: ${{ secrets.ROLLBAR_TOKEN_STAGING }}
       JWT_SECRET: ${{ secrets.JWT_SECRET_STAGING }}
-      CORE_URL: ${{ secrets.CORE_URL_STAGING }}
-      API_KEY_PORTAL: ${{ secrets.API_KEY_PORTAL_STAGING }}
-      # TODO: change secrets
