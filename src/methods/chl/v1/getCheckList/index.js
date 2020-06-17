@@ -2,13 +2,14 @@ import axios from 'axios';
 import { ApolloError } from 'apollo-server-express';
 import { LoansModel } from '../../../../helpers/modelsExport';
 import { getCheckListQuery } from '../../../../graphQL/queries/getCheckList';
+import { PATH_CORE_ENDPOINT_GQL } from '../../../../config';
 
 const { CORE_URL } = process.env;
 
 const getCheckList = async (loanId) => {
   return axios({
     method: 'post',
-    url: `${CORE_URL}/graphql`,
+    url: `${CORE_URL}${PATH_CORE_ENDPOINT_GQL}`,
     data: getCheckListQuery(loanId),
   });
 };

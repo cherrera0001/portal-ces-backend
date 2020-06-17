@@ -11,6 +11,7 @@ module.exports = {
     db.collection('PortalConfig').insertMany(cuotas);
   },
 
-  async down(db, client) {
-  }
+  async down(db) {
+    db.collection('PortalConfig').drop();
+  },
 };

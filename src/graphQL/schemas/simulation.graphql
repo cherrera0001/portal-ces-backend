@@ -1,126 +1,229 @@
-input Customer{
-  rut: String,
-  email: String,
+input Customer {
+  rut: String
+  email: String
   phone: String
 }
 
-input Vehicle{
-  type: String,
+input Vehicle {
+  type: String
   price: Int
+  brandName: String
+  modelName: String
+  version: String
+  year: Int
 }
-input ModifyTerm
-  {
-    paymentNumber: Int,
-    payment: Int
-  }
 
-input Loan{
-  downPayment: Int,
-  balance: Int,
-  downPaymentPercentage: Int,
-  term: Int,
-  startDate: String,
-  firstDueDate: String,
-  rateType: String,
-  saleChannel: String,
-  saleChannelType: String,
-  salesRoomId: Int,
-  immediateOption: Boolean,
-  accessories: Int,
-  tradeInCarValue: Int,
+input ModifyTerm {
+  paymentNumber: Int
+  payment: Int
+}
+
+input Loan {
+  downPayment: Int
+  balance: Int
+  downPaymentPercentage: Int
+  term: Int
+  startDate: String
+  firstDueDate: String
+  financingEntity: String
+  rateType: String
+  saleChannel: String
+  saleChannelType: String
+  salesRoomId: Int
+  immediateOption: Boolean
+  accessories: Int
+  tradeInCarValue: Int
   modifyTerm: [ModifyTerm]
+  type: String
 }
 
-input Simulation{
-  transactionId: String,
-  sellerIdentificationValue: String,
-  amicarExecutiveIdentificationValue: String,
-  customer: Customer,
-  vehicle: Vehicle,
+input AmicarAssistanceInput {
+  id: Int
+  description: String
+  value: Float
+  currencyType: String
+  factorCalculated: Float
+  selected: Boolean
+  isRequired: Boolean
+}
+input DealerSurchargesInput {
+  id: Int
+  description: String
+  value: Float
+  isEditable: Boolean
+  currencyType: String
+  factorCalculated: Float
+  selected: Boolean
+  isRequired: Boolean
+}
+
+input FinancingEntitySurchargesInput {
+  id: Int
+  description: String
+  value: Float
+  isEditable: Boolean
+  currencyType: String
+  factorCalculated: Float
+  selected: Boolean
+  isRequired: Boolean
+}
+
+input FinancingEntityInsuranceInput {
+  id: Int
+  description: String
+  value: Float
+  currencyType: String
+  factorCalculated: Float
+  selected: Boolean
+  isRequired: Boolean
+}
+
+input SurchargesAndInsurancesInput {
+  amicarAssistance: [AmicarAssistanceInput]
+  dealerSurcharges: [FinancingEntitySurchargesInput]
+  dealerInsurance: [FinancingEntitySurchargesInput] #Not defined
+  financingEntitySurcharges: [FinancingEntitySurchargesInput]
+  financingEntityInsurance: [FinancingEntityInsuranceInput]
+}
+
+input Simulation {
+  transactionId: String
+  sellerIdentificationValue: String
+  amicarExecutiveIdentificationValue: String
+  customer: Customer
+  vehicle: Vehicle
   loan: Loan
+  surchargesAndInsurances: SurchargesAndInsurancesInput
 }
-extend type Query {
-  simulation(simulation: Simulation): Prueba
-}
-type Prueba {
-  name: String
-}
+
 type FinalLoanValues {
-  loanType: String,
-  term: Int,
-  balance: Int,
-  UFValue: Int,
-  totalSurchargesToMAF: Int,
-  totalSurchargesToQuote: Int,
-  factorTotal: Int,
-  promissoryFactor: Int,
-  promissoryValue: Int,
-  totalToFinance: Int,
-  totalToFinanceUF: Int,
-  finalCapital: Int,
-  daysDelayedFirstDue: Int,
-  delayedInterest: Int,
-  monthlyPayment: Int,
-  customerRate: Int,
-  dealerRate: Int,
-  dealerCommission: Int,
+  loanType: String
+  term: Int
+  balance: Int
+  UFValue: Float
+  totalSurchargesToMAF: Int
+  totalSurchargesToQuote: Int
+  factorTotal: Float
+  promissoryFactor: Float
+  promissoryValue: Int
+  totalToFinance: Int
+  totalToFinanceUF: Float
+  finalCapital: Int
+  daysDelayedFirstDue: Int
+  delayedInterest: Int
+  monthlyPayment: Int
+  customerRate: Float
+  dealerRate: Float
+  dealerCommission: Int
   amicarCommission: Int
-},
+}
+
 type EquivalentAnnualCharge {
-  annualCAE: Int,
-  monthlyCAE: Int,
+  annualCAE: Float
+  monthlyCAE: Float
   totalLoanCost: Int
-},
-type AmortizationSchedule{
-  paymentNumber: Int,
-  expirationDate: String,
-  daysBetweenExpirationsDates: Int,
-  payment: Int,
-  quotaType: String,
-  beginningBalance: Int,
-  principal: Int,
-  interest: Int,
-  endingBalance: Int,
+}
+
+type AmortizationSchedule {
+  paymentNumber: Int
+  expirationDate: String
+  daysBetweenExpirationsDates: Int
+  payment: Int
+  quotaType: String
+  beginningBalance: Int
+  principal: Int
+  interest: Int
+  endingBalance: Int
   cumulativeInterest: Int
 }
-type AmicarAssistance{
-  id: Int,
-  description: String,
-  value: Int,
-  currencyType: String,
-  factorCalculated: Int,
-  selected: Boolean,
+
+type AmicarAssistance {
+  id: Int
+  description: String
+  value: Float
+  currencyType: String
+  factorCalculated: Float
+  selected: Boolean
   isRequired: Boolean
 }
-type DealerSurcharges{
-  id: Int,
-  description: String,
-  value: Int,
-  isEditable: Boolean,
-  currencyType: String,
-  factorCalculated: Int,
-  selected: Boolean,
+
+type DealerSurcharges {
+  id: Int
+  description: String
+  value: Float
+  isEditable: Boolean
+  currencyType: String
+  factorCalculated: Float
+  selected: Boolean
   isRequired: Boolean
-},
+}
+
 type FinancingEntitySurcharges {
-  id: Int,
-  description: String,
-  value: Int,
-  isEditable: Boolean,
-  currencyType: String,
-  factorCalculated: Int,
-  selected: Boolean,
+  id: Int
+  description: String
+  value: Float
+  isEditable: Boolean
+  currencyType: String
+  factorCalculated: Float
+  selected: Boolean
   isRequired: Boolean
 }
+
+type FinancingEntityInsurance {
+  id: Int
+  description: String
+  value: Float
+  currencyType: String
+  factorCalculated: Float
+  selected: Boolean
+  isRequired: Boolean
+}
+
 type SurchargesAndInsurances {
   amicarAssistance: [AmicarAssistance]
   dealerSurcharges: [DealerSurcharges]
   dealerInsurance: [FinancingEntitySurcharges]
   financingEntitySurcharges: [FinancingEntitySurcharges]
+  financingEntityInsurance: [FinancingEntityInsurance]
 }
-type responseSimulation {
-  finalLoanValues: FinalLoanValues,
-  equivalentAnnualCharge:EquivalentAnnualCharge,
-  amortizationSchedule: [AmortizationSchedule],
+
+type SimulationResponse {
+  finalLoanValues: FinalLoanValues
+  equivalentAnnualCharge: EquivalentAnnualCharge
+  amortizationSchedule: [AmortizationSchedule]
   surchargesAndInsurances: SurchargesAndInsurances
+}
+
+type SimulationEmailResponse {
+  status: String
+}
+
+type SaveSimulationResponse {
+  simulationId: Float
+  equivalentAnnualCharge: EquivalentAnnualCharge
+  amortizationSchedule: [AmortizationSchedule]
+  surchargesAndInsurances: SurchargesAndInsurances
+}
+
+extend type Query {
+  Simulation(simulation: Simulation!): [SimulationResponse]
+  getSimulationById(simulationId: Int): Boolean
+}
+
+extend type Mutation {
+  sendEmail(
+    mailTo: String!
+    name: String!
+    lastName: String!
+    term: Float!
+    totalToFinance: Float!
+    cae: Float!
+    loanType: String!
+    vfg: Float
+    price: Float!
+    downPayment: Float!
+    downPaymentPercentage: Float!
+    monthlyPayment: Float!
+  ): SimulationEmailResponse
+  saveSimulation(simulation: Simulation): SaveSimulationResponse
 }

@@ -1,8 +1,8 @@
-import {CoreParamsModel} from '../../../../helpers/modelsExport';
+import { CoreParamsModel } from '../../../../helpers/modelsExport';
 
 export default async ({ data, rollbar }) => {
   try {
-    const coreParams = await CoreParamsModel.find({type: data.type});
+    const coreParams = await CoreParamsModel.find(data);
     return coreParams;
   } catch (err) {
     rollbar.log(`src/methods/chl/v1/getConfig/index::ERROR: ${err.message}`);
