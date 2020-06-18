@@ -1,8 +1,8 @@
-import axios from 'axios';
-import { ApolloError } from 'apollo-server-express';
-import { LoansModel } from '../../../../helpers/modelsExport';
-import { getCheckListQuery } from '../../../../graphQL/queries/getCheckList';
-import { PATH_CORE_ENDPOINT_GQL } from '../../../../config';
+const axios = require('axios');
+const { ApolloError } = require('apollo-server-express');
+const { LoansModel } = require('../../../../helpers/modelsExport');
+const { getCheckListQuery } = require('../../../../graphQL/queries/getCheckList');
+const { PATH_CORE_ENDPOINT_GQL } = require('../../../../config');
 
 const { CORE_URL } = process.env;
 

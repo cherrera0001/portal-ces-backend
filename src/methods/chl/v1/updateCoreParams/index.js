@@ -1,7 +1,7 @@
-import axios from 'axios';
-import { CoreParamsModel } from '../../../../helpers/modelsExport';
-import headers from '../../../../helpers/headers';
-import { PATH_ENDPOINT_CORE_PARAMS } from '../../../../config';
+const axios = require('axios');
+const { CoreParamsModel } = require('../../../../helpers/modelsExport');
+const headers = require('../../../../helpers/headers');
+const { PATH_ENDPOINT_CORE_PARAMS } = require('../../../../config');
 
 const { CORE_URL } = process.env;
 

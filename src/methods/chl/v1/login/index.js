@@ -1,7 +1,7 @@
-import { ApolloError } from 'apollo-server-express';
-import bcrypt from 'bcryptjs';
-import { UsersModel } from '../../../../helpers/modelsExport';
-import { setTokens } from '../../../../auth';
+const { ApolloError } = require('apollo-server-express');
+const bcrypt = require('bcryptjs');
+const { UsersModel } = require('../../../../helpers/modelsExport');
+const { setTokens } = require('../../../../auth');
 
 export default async ({ data: { email, password }, rollbar }) => {
   try {

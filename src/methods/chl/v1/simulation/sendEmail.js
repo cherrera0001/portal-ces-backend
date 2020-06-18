@@ -1,6 +1,6 @@
-import axios from 'axios';
-import headers from '../../../../helpers/headers';
-import { PATH_ENDPOINT_EMAIL } from '../../../../config';
+const axios = require('axios');
+const headers = require('../../../../helpers/headers');
+const { PATH_ENDPOINT_EMAIL } = require('../../../../config');
 
 const { CORE_URL } = process.env;
 

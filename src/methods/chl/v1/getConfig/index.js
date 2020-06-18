@@ -1,4 +1,4 @@
-import { ConfigModel } from '../../../../helpers/modelsExport';
+const { ConfigModel } = require('../../../../helpers/modelsExport');
 
 export default async ({ rollbar }) => {
   try {

@@ -1,4 +1,4 @@
-import permissions from './permissions';
-import { getUser, setTokens } from './jwt';
+const permissions = require('./permissions');
+const { getUser, setTokens } = require('./jwt');
 
 export { permissions, getUser, setTokens };

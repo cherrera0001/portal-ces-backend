@@ -1,16 +1,16 @@
 /* eslint-disable import/first */
-import dotenv from 'dotenv';
-import express from 'express';
-import bodyParser from 'body-parser';
-import methodOverride from 'method-override';
-import cors from 'cors';
-import helmet from 'helmet';
-import morgan from 'morgan';
-import appRoot from 'app-root-path';
+const dotenv = require('dotenv');
+const express = require('express');
+const bodyParser = require('body-parser');
+const methodOverride = require('method-override');
+const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const appRoot = require('app-root-path');
 
 dotenv.config();
 
-import rollbar from './rollbarConfig';
+const rollbar = require('./rollbarConfig');
 
 rollbar.log('Server Loaded!');
 

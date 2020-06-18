@@ -1,4 +1,4 @@
-import { CoreParamsModel } from '../../../../helpers/modelsExport';
+const { CoreParamsModel } = require('../../../../helpers/modelsExport');
 
 export default async ({ data, rollbar }) => {
   try {

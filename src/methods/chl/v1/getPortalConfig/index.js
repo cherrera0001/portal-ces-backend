@@ -1,4 +1,4 @@
-import { PortalConfigModel } from '../../../../helpers/modelsExport';
+const { PortalConfigModel } = require('../../../../helpers/modelsExport');
 
 export default async ({ data, rollbar }) => {
   try {

@@ -1,13 +1,13 @@
-import { createServer } from 'http';
-import { ApolloServer, PubSub } from 'apollo-server-express';
-import { applyMiddleware } from 'graphql-middleware';
-import 'app-module-path/register';
-import app from 'config/app';
-import { debugApp } from 'config/debug';
-import schemaDef from 'helpers/gqlSchemasExport';
-import rollbar from 'config/rollbarConfig';
-import { permissions, getUser } from './auth';
-import './config/mgConnect';
+const { createServer } = require('http');
+const { ApolloServer, PubSub } = require('apollo-server-express');
+const { applyMiddleware } = require('graphql-middleware');
+require('app-module-path/register');
+const app = require('config/app');
+const { debugApp } = require('config/debug');
+const schemaDef = require('helpers/gqlSchemasExport');
+const rollbar = require('config/rollbarConfig');
+const { permissions, getUser } = require('./auth');
+require('./config/mgConnect');
 
 const { PORT, NODE_ENV } = process.env;
 const apiPort = PORT || 8085;

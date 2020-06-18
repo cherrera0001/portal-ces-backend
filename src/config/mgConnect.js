@@ -1,10 +1,11 @@
-import mongoose from 'mongoose';
-import rollbar from 'config/rollbarConfig';
+const mongoose = require('mongoose');
+const rollbar = require('./rollbarConfig');
+
 const { NODE_ENV, MONGO_USERNAME, MONGO_PASSWORD, MONGO_HOST, MONGO_DB } = process.env;
 const getMongoURI = () => {
   return `mongodb${
     NODE_ENV === 'production' || NODE_ENV === 'staging' ? '+srv' : ''
-  }://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}/${MONGO_DB}_${NODE_ENV}?retryWrites=true&w=majority`;
+  }://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}/${MONGO_DB}_${NODE_ENV}?authSource=admin&retryWrites=true&w=majority`;
 };
 try {
   mongoose.connect(getMongoURI(), {

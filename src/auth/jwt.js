@@ -1,5 +1,5 @@
-import { sign, verify } from 'jsonwebtoken';
-import { UsersModel } from '../helpers/modelsExport';
+const { sign, verify } = require('jsonwebtoken');
+const { UsersModel } = require('../helpers/modelsExport');
 
 const { JWT_SECRET } = process.env;
 

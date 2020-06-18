@@ -1,4 +1,4 @@
-import { rule, shield, and, or, not } from 'graphql-shield';
+const { rule, shield, and, or, not } = require('graphql-shield');
 
 const isAuthenticated = rule()(async (parent, args, ctx, info) => {
   return ctx.claims !== null;

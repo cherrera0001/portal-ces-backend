@@ -1,7 +1,7 @@
-import axios from 'axios';
-import { ApolloError } from 'apollo-server-express';
-import { LoansModel, ConfigModel } from '../../../../helpers/modelsExport';
-import { PATH_CORE_ENDPOINT_ALFRESCO } from '../../../../config';
+const axios = require('axios');
+const { ApolloError } = require('apollo-server-express');
+const { LoansModel, ConfigModel } = require('../../../../helpers/modelsExport');
+const { PATH_CORE_ENDPOINT_ALFRESCO } = require('../../../../config');
 
 const { CORE_URL } = process.env;
 

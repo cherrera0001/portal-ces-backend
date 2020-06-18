@@ -1,4 +1,4 @@
-import Rollbar from 'rollbar';
+const Rollbar = require('rollbar');
 
 const { ROLLBAR_TOKEN, NODE_ENV } = process.env;
 
@@ -20,4 +20,4 @@ const singleton = (() => {
   };
 })();
 
-export default singleton.getInstance();
+module.exports = singleton.getInstance();

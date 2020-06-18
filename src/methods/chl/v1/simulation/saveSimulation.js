@@ -1,7 +1,7 @@
-import axios from 'axios';
-import { ApolloError } from 'apollo-server-express';
-import headers from '../../../../helpers/headers';
-import { PATH_ENDPOINT_SAVE_SIMULATION } from '../../../../config';
+const axios = require('axios');
+const { ApolloError } = require('apollo-server-express');
+const headers = require('../../../../helpers/headers');
+const { PATH_ENDPOINT_SAVE_SIMULATION } = require('../../../../config');
 
 const { CORE_URL } = process.env;
 

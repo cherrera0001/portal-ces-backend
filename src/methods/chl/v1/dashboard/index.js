@@ -1,4 +1,4 @@
-import { ApolloError } from 'apollo-server-express';
+const { ApolloError } = require('apollo-server-express');
 
 export default async ({ data, rollbar }) => {
   try {

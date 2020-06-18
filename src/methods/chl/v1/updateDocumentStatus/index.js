@@ -1,5 +1,5 @@
-import { LoansModel } from '../../../../helpers/modelsExport';
-import { CHECKLIST_DOCUMENT_UPDATED } from '../../../../graphQL/events';
+const { LoansModel } = require('../../../../helpers/modelsExport');
+const { CHECKLIST_DOCUMENT_UPDATED } = require('../../../../graphQL/events');
 
 export default async ({ data, pubsub, rollbar }) => {
   try {

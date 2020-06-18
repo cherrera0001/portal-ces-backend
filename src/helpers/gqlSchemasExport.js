@@ -1,8 +1,8 @@
-import appRoot from 'app-root-path';
-import path from 'path';
-import fs from 'fs';
-import merge from 'lodash/merge';
-import { makeExecutableSchema } from 'graphql-tools';
+const appRoot = require('app-root-path');
+const path = require('path');
+const fs = require('fs');
+const merge = require('lodash/merge');
+const { makeExecutableSchema } = require('graphql-tools');
 
 // --------------------- GRAPHQL SCHEMA EXPORT ---------------------
 const schemasExport = [];
