@@ -1,6 +1,7 @@
 const { createServer } = require('http');
 const { ApolloServer, PubSub } = require('apollo-server-express');
 const { applyMiddleware } = require('graphql-middleware');
+const createError = require('http-errors');
 require('app-module-path/register');
 const app = require('config/app');
 const { debugApp } = require('config/debug');
@@ -32,6 +33,11 @@ const server = new ApolloServer({
 });
 
 server.applyMiddleware({ app, path: '/graphql' });
+
+app.use((req, res, next) => {
+  next(createError(404));
+});
+
 const httpServer = createServer(app);
 server.installSubscriptionHandlers(httpServer);
 

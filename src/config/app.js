@@ -2,7 +2,6 @@
 const dotenv = require('dotenv');
 const express = require('express');
 const methodOverride = require('method-override');
-const createError = require('http-errors');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
@@ -38,10 +37,5 @@ app.get('', (req, res) => {
 });
 
 app.use('/efidoc', require('../efidoc/routes'));
-
-// Catch 404
-app.use((req, res, next) => {
-  next(createError(404));
-});
 
 export default app;
