@@ -4,6 +4,6 @@ const validate = require('../middlewares/validate.middleware');
 const schema = require('../validations/auction.validation');
 
 router.route('').get(controller.all);
-router.route('').post(validate(schema.create), controller.create);
+router.route('/:fe-rut').post(validate(schema.create), controller.create);
 
 module.exports = router;
