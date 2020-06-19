@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../src';
-import { getCheckListQuery } from '../src/graphQL/queries/getCheckList';
+import { getCheckListQuery } from '../src/portal/graphQL/queries/getCheckList';
 
 const { expect } = chai;
 chai.use(chaiHttp);

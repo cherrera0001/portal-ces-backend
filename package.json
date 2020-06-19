@@ -1,14 +1,13 @@
 {
 	"main": ".src/index.js",
 	"scripts": {
-		"fixtures": "node src/fixtures/index.js",
 		"myTest": "clear; NODE_ENV=test nyc --check-coverage --lines 70 --branches 10 --statements 40 --functions 40 --reporter=lcov --reporter=text-summary babel-node ./node_modules/.bin/_mocha --timeout 12000 --exit ./test/getCheckListEndpoint.test.js",
 		"test": "clear; NODE_ENV=test nyc --check-coverage --lines 70 --branches 10 --statements 40 --functions 40 --reporter=lcov --reporter=text-summary babel-node ./node_modules/.bin/_mocha --timeout 12000 --exit ./test/**/**/*.test.js",
 		"test-staging": "clear; NODE_ENV=staging nyc --check-coverage --lines 90 --branches 15 --statements 40 --functions 40 --reporter=lcov --reporter=text-summary babel-node ./node_modules/.bin/_mocha --timeout 12000 --exit ./test/**/*.test.js",
 		"testView": "clear; NODE_ENV=test nyc --check-coverage --lines 90 --branches 15 --statements 40 --functions 90 --reporter=html --reporter=text babel-node ./node_modules/.bin/_mocha --timeout 12000 --exit ./test/**/**/*.test.js",
-		"start": "clear; DEBUG='app, route, mongo' nodemon src/index.js --exec babel-node -e js",
-		"start-test": "clear; NODE_ENV=test DEBUG='app, route, mongo' nodemon src/index.js --exec babel-node -e js",
-		"debug": "clear; DEBUG='app, route, mongo' nodemon --inspect -w src/index.js --exec babel-node debug src/index.js",
+		"start": "clear; NODE_PATH=./src DEBUG='app, route, mongo' bin/www",
+		"start-test": "clear; NODE_ENV=test DEBUG='app, route, mongo' nodemon bin/www --exec babel-node -e js",
+		"debug": "clear; DEBUG='app, route, mongo' nodemon --inspect -w bin/www --exec babel-node debug src/index.js",
 		"clean": "rm -rf dist",
 		"lint-staged": "lint-staged",
 		"lint-review": "clear; eslint ./src/**/**/*.js"

@@ -1,4 +1,4 @@
-const Auction = require('../model/auction.model');
+const Auction = require('efidoc/models/auction.model');
 
 const all = async (req, res) => {
   const auctions = await Auction.find();
