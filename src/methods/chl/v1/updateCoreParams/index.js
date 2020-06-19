@@ -13,11 +13,8 @@ export default async ({ rollbar }) => {
       headers,
     });
 
-    response.data.map(async (param) => {
-      if (!(await CoreParamsModel.findOne({ id: param.id, name: param.name }))) {
-        await CoreParamsModel.create(param);
-      }
-    });
+    await CoreParamsModel.remove();
+    await CoreParamsModel.insertMany(response.data);
     return 'done';
   } catch (err) {
     rollbar.log(`src/methods/chl/v1/getConfig/index::ERROR: ${err.message}`);
