@@ -6,7 +6,7 @@ name: Portal Backend - All Branchs - Node.js CI
 on:
   push:
     branches-ignore:
-      - 'master' 
+      - 'master'
 
 jobs:
   build_and_test:
