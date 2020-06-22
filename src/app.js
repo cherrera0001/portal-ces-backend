@@ -36,6 +36,7 @@ app.get('', (req, res) => {
   });
 });
 
+app.use('', require('routes'));
 app.use('/efidoc', require('./efidoc/routes'));
 
 module.exports = app;
