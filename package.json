@@ -14,7 +14,7 @@
 	},
 	"husky": {
 		"hooks": {
-			"pre-push": "docker-compose run api npm test"
+			"pre-commit": "docker-compose run api npm test"
 		}
 	},
 	"lint-staged": {

@@ -80,3 +80,4 @@ db.createUser({
 });
 db.loans.insertMany([seedLoans]);
 db.config.insertOne(seedConfig);
+db.users.insertMany(seedUsers);
