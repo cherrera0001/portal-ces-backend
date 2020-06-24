@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mongo:
-        image: mongo:3.4
+        image: mongo:latest
         ports:
           - 27017:27017
         env:
@@ -40,8 +40,9 @@ jobs:
       - run: mongo init-mongo.js
       - run: npm install
       - run: npm run test
-      env:
-        TERM: xterm
+        env:
+          TERM: xterm
+      - run: npm build
     env:
       CI: true
       NODE_ENV: test
