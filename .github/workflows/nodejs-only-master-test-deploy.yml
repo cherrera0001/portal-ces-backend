@@ -20,12 +20,14 @@ jobs:
           MONGO_INITDB_ROOT_USERNAME: root
           MONGO_INITDB_ROOT_PASSWORD: pass
         volumes:
-          - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
+          - init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
           - db:/data/db
+
     strategy:
       matrix:
         node-version: [12.x]
         mongodb-version: [3.4]
+
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
