@@ -44,16 +44,17 @@ jobs:
       - run: npm install
       - run: npm run test
         env:
-          CI: true
-          NODE_ENV: test
-          PORT: 8085
-          SERVER_HOST: 127.0.0.1
-          MONGO_INITDB_DATABASE: admin
-          MONGO_INITDB_ROOT_USERNAME: amicar
-          MONGO_INITDB_ROOT_PASSWORD: amicar
-          MONGO_USERNAME: amicar
-          MONGO_PASSWORD: amicar
-          MONGO_DB: amicar
-          MONGO_HOST: 127.0.0.1:27017
-          ACTIONS_RUNNER_DEBUG: true
           TERM: xterm
+    env:
+      CI: true
+      NODE_ENV: test
+      PORT: 8085
+      SERVER_HOST: 127.0.0.1
+      MONGO_INITDB_DATABASE: admin
+      MONGO_INITDB_ROOT_USERNAME: amicar
+      MONGO_INITDB_ROOT_PASSWORD: amicar
+      MONGO_USERNAME: amicar
+      MONGO_PASSWORD: amicar
+      MONGO_DB: amicar
+      MONGO_HOST: 127.0.0.1:27017
+      ACTIONS_RUNNER_DEBUG: true

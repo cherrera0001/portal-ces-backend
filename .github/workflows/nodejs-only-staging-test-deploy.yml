@@ -45,19 +45,20 @@ jobs:
       - run: npm run test
       - run: npm run build
         env:
-          CI: true
-          NODE_ENV: test
-          PORT: 8085
-          SERVER_HOST: 127.0.0.1
-          MONGO_INITDB_DATABASE: admin
-          MONGO_INITDB_ROOT_USERNAME: amicar
-          MONGO_INITDB_ROOT_PASSWORD: amicar
-          MONGO_USERNAME: amicar
-          MONGO_PASSWORD: amicar
-          MONGO_DB: amicar
-          MONGO_HOST: 127.0.0.1:27017
-          ACTIONS_RUNNER_DEBUG: true
           TERM: xterm
+    env:
+      CI: true
+      NODE_ENV: test
+      PORT: 8085
+      SERVER_HOST: 127.0.0.1
+      MONGO_INITDB_DATABASE: admin
+      MONGO_INITDB_ROOT_USERNAME: amicar
+      MONGO_INITDB_ROOT_PASSWORD: amicar
+      MONGO_USERNAME: amicar
+      MONGO_PASSWORD: amicar
+      MONGO_DB: amicar
+      MONGO_HOST: 127.0.0.1:27017
+      ACTIONS_RUNNER_DEBUG: true
 
   deploy_staging:
     needs: build_and_test
@@ -79,6 +80,7 @@ jobs:
       - run: gcloud run deploy portal-backend-staging --image gcr.io/amicar-tech-255421/portal-backend-staging --platform managed --set-env-vars NODE_ENV=staging,MONGO_USERNAME=$MONGO_USERNAME,MONGO_PASSWORD=$MONGO_PASSWORD,MONGO_DB=amicar,MONGO_HOST=$MONGO_HOST,ROLLBAR_TOKEN=$ROLLBAR_TOKEN,JWT_SECRET=$JWT_SECRET,CORE_URL=$CORE_URL,API_KEY_PORTAL=$API_KEY_PORTAL
     env:
       CI: true
+      NODE_ENV: staging
       MONGO_USERNAME: ${{ secrets.MONGO_USERNAME_STAGING }}
       MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD_STAGING }}
       MONGO_HOST: ${{ secrets.MONGO_HOST_STAGING }}
