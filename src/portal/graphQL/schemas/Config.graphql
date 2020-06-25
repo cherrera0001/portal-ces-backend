@@ -1,6 +1,13 @@
+type Term {
+  _id: String
+  key: Int
+  description: String
+}
+
 type FileUploadingConfig {
   allowedMimeTypes: [String]
   maxFileSizeInKB: Int
+  terms: [Term]
 }
 
 extend type Query {
