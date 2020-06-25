@@ -1,16 +1,8 @@
 {
-	"main": ".src/index.js",
 	"scripts": {
-		"myTest": "clear; NODE_ENV=test nyc --check-coverage --lines 70 --branches 10 --statements 40 --functions 40 --reporter=lcov --reporter=text-summary babel-node ./node_modules/.bin/_mocha --timeout 12000 --exit ./test/getCheckListEndpoint.test.js",
-		"test": "clear; NODE_ENV=test NODE_PATH=./src nyc --check-coverage --lines 70 --branches 10 --statements 40 --functions 40 --reporter=lcov --reporter=text-summary babel-node ./node_modules/.bin/_mocha --timeout 12000 --exit ./test/**/**/*.test.js",
-		"test-staging": "clear; NODE_ENV=staging nyc --check-coverage --lines 90 --branches 15 --statements 40 --functions 40 --reporter=lcov --reporter=text-summary babel-node ./node_modules/.bin/_mocha --timeout 12000 --exit ./test/**/*.test.js",
-		"testView": "clear; NODE_ENV=test nyc --check-coverage --lines 90 --branches 15 --statements 40 --functions 90 --reporter=html --reporter=text babel-node ./node_modules/.bin/_mocha --timeout 12000 --exit ./test/**/**/*.test.js",
-		"start": "clear; NODE_PATH=./src DEBUG='app, route, mongo' node src/index.js",
-		"start-test": "clear; NODE_ENV=test DEBUG='app, route, mongo' nodemon src/index.js --exec babel-node -e js",
-		"debug": "clear; DEBUG='app, route, mongo' nodemon --inspect -w src/index.js --exec babel-node debug src/index.js",
-		"clean": "rm -rf dist",
-		"lint-staged": "lint-staged",
-		"lint-review": "clear; eslint ./src/**/**/*.js"
+		"myTest": "clear; NODE_ENV=test nyc --check-coverage --lines 70 --branches 10 --statements 40 --functions 40 --reporter=lcov --reporter=text-summary node ./node_modules/.bin/_mocha --timeout 12000 --exit ./test/getCheckListEndpoint.test.js",
+		"test": "clear; NODE_ENV=test NODE_PATH=./src nyc --check-coverage --lines 70 --branches 10 --statements 40 --functions 40 --reporter=lcov --reporter=text-summary node ./node_modules/.bin/_mocha --timeout 12000 --exit ./test/**/**/*.test.js",
+		"start": "clear; NODE_PATH=./src DEBUG='app, route, mongo' node src/index.js"
 	},
 	"husky": {
 		"hooks": {
@@ -27,19 +19,15 @@
 			"git add"
 		]
 	},
-	"license": "MIT",
 	"dependencies": {
 		"@hapi/joi": "^17.1.1",
-		"@sendgrid/mail": "^6.5.2",
 		"api-query-params": "^4.15.0",
 		"apollo-server-express": "^2.12.0",
 		"app-module-path": "^2.2.0",
 		"app-root-path": "^2.2.1",
 		"axios": "^0.19.0",
 		"bcryptjs": "^2.4.3",
-		"chalk": "^2.4.2",
 		"cors": "^2.8.5",
-		"currency-formatter": "^1.5.5",
 		"debug": "^4.1.1",
 		"dotenv": "^8.0.0",
 		"eslint-config-prettier": "^6.8.0",
@@ -61,23 +49,12 @@
 		"moment": "^2.24.0",
 		"mongoose": "^5.6.13",
 		"morgan": "^1.9.1",
-		"nodemon": "^1.19.1",
-		"precise-commits": "^1.0.2",
 		"rollbar": "^2.13.0",
 		"sinon": "^7.5.0",
 		"subscriptions-transport-ws": "^0.9.16"
 	},
 	"devDependencies": {
 		"@types/mocha": "^7.0.2",
-		"babel-cli": "^6.26.0",
-		"babel-core": "^6.26.3",
-		"babel-node": "0.0.1-security",
-		"babel-plugin-add-module-exports": "^1.0.2",
-		"babel-plugin-transform-runtime": "^6.23.0",
-		"babel-preset-env": "^1.7.0",
-		"babel-preset-es2015": "^6.24.1",
-		"babel-preset-stage-0": "^6.24.1",
-		"babel-preset-stage-2": "^6.24.1",
 		"chai": "^4.2.0",
 		"chai-http": "^4.3.0",
 		"eslint": "^6.8.0",
@@ -87,7 +64,9 @@
 		"faker": "^4.1.0",
 		"husky": "^3.1.0",
 		"mocha": "^5.0.5",
+		"nodemon": "^1.19.4",
 		"nyc": "^14.1.1",
+		"precise-commits": "^1.0.2",
 		"prettier": "^1.19.1"
 	}
 }
