@@ -16,8 +16,9 @@ jobs:
         ports:
           - 27017:27017
         env:
-          MONGO_INITDB_ROOT_USERNAME: amicar
-          MONGO_INITDB_ROOT_PASSWORD: amicar
+          MONGO_INITDB_DATABASE: admin
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: pass
         volumes:
           - init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
 
@@ -40,7 +41,6 @@ jobs:
         with:
           mongodb-version: ${{ matrix.mongodb-version }}
 
-      - run: mongo < init-mongo.js
       - run: npm install
       - run: npm run test
       - run: npm run build
@@ -52,8 +52,8 @@ jobs:
       PORT: 8085
       SERVER_HOST: 127.0.0.1
       MONGO_INITDB_DATABASE: admin
-      MONGO_INITDB_ROOT_USERNAME: amicar
-      MONGO_INITDB_ROOT_PASSWORD: amicar
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: pass
       MONGO_USERNAME: amicar
       MONGO_PASSWORD: amicar
       MONGO_DB: amicar
@@ -64,6 +64,7 @@ jobs:
     needs: build_and_test
     runs-on: ubuntu-latest
     steps:
+      - run: mongo < init-mongo.js
       - uses: actions/checkout@v2
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:

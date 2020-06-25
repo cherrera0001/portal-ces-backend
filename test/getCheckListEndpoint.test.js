@@ -28,8 +28,6 @@ describe('CheckList', () => {
         .post('/graphql')
         .send(getCheckListQuery('0065500000FcXi2AAF'))
         .end((err, res) => {
-          console.log(JSON.stringify(err));
-          console.log(JSON.stringify(res));
           expect(res.status).to.equal(200);
           expect(res.body).to.be.a('object');
           expect(res.body).to.have.property('data');
