@@ -37,6 +37,6 @@ app.get('', (req, res) => {
 });
 
 app.use('', require('routes'));
-app.use('/efidoc', require('./efidoc/routes'));
+app.use('/amidoc', require('amidoc/routes'));
 
 module.exports = app;

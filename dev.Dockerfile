@@ -8,4 +8,4 @@ RUN npm ci --quiet
 
 EXPOSE 8085
 
-CMD [ "npm", "start" ]
+CMD [ "npm", "run", "dev" ]

@@ -1,4 +1,4 @@
-const errors = require('efidoc/errors');
+const errors = require('amidoc/errors');
 
 module.exports = (schema) => (req, res, next) => {
   const { error } = schema.validate(req.body, { abortEarly: false });

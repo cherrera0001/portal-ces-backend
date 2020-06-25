@@ -1,5 +1,5 @@
 const aqp = require('api-query-params');
-const Auction = require('efidoc/models/auction.model');
+const Auction = require('amidoc/models/auction.model');
 
 const all = async (req, res) => {
   const { filter, skip, limit, sort, projection, population } = aqp({ ...req.query });
