@@ -56,3 +56,4 @@ jobs:
           MONGO_DB: amicar
           MONGO_HOST: 127.0.0.1:27017
           ACTIONS_RUNNER_DEBUG: true
+          TERM: xterm

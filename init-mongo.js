@@ -63,6 +63,7 @@ const seedUsers = [
 ];
 
 db = db.getSiblingDB('amicar_development');
+db.setProfilingLevel(2);
 db.createUser({
   user: 'amicar',
   pwd: 'amicar',
@@ -73,6 +74,7 @@ db.config.insertOne(seedConfig);
 db.users.insertMany(seedUsers);
 
 db = db.getSiblingDB('amicar_test');
+db.setProfilingLevel(2);
 db.createUser({
   user: 'amicar',
   pwd: 'amicar',
