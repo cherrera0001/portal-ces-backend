@@ -5,14 +5,18 @@ const server = require('index');
 const { expect } = chai;
 chai.use(chaiHttp);
 
-const getFileUploadingConfigQuery = () => ({
-  operationName: 'getFileUploadingConfig',
+const getConfigQuery = () => ({
+  operationName: 'getConfig',
   variables: {},
   query: `
-  query getFileUploadingConfig {
-    getFileUploadingConfig {
+  query getConfig {
+    getConfig {
       allowedMimeTypes
       maxFileSizeInKB
+      terms {
+        key
+        description
+      }
     }
   }
   `,
@@ -20,16 +24,17 @@ const getFileUploadingConfigQuery = () => ({
 
 describe('Config', () => {
   describe('/POST gets a Config object with parametrized data', () => {
-    it('should fail if file upload config data is not returned', (done) => {
+    it('should fail if config data is not returned', (done) => {
       chai
         .request(server)
         .post('/graphql')
-        .send(getFileUploadingConfigQuery())
+        .send(getConfigQuery())
         .end((err, res) => {
           expect(res.status).to.equal(200);
           expect(res.body).to.be.a('object');
-          expect(res.body.data.getFileUploadingConfig).to.have.property('allowedMimeTypes');
-          expect(res.body.data.getFileUploadingConfig).to.have.property('maxFileSizeInKB');
+          expect(res.body.data.getConfig).to.have.property('allowedMimeTypes');
+          expect(res.body.data.getConfig).to.have.property('maxFileSizeInKB');
+          expect(res.body.data.getConfig).to.have.property('terms');
           done();
         });
     });

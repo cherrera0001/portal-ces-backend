@@ -10,7 +10,7 @@ const { debugApp } = require('debugger');
 const schemaDef = require('portal/helpers/gqlSchemasExport');
 const rollbar = require('rollbar');
 const { permissions, getUser } = require('portal/auth');
-require('mongo');
+require('mongo')();
 
 const { PORT, NODE_ENV } = process.env;
 const apiPort = PORT || 8085;
