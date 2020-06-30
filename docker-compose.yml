@@ -1,37 +1,74 @@
-version: '3'
+version: '3.3'
 services:
-  mongo:
-    image: mongo:latest
+  proxy:
+    image: traefik:v2.2
+    container_name: traefik
+    command:
+      - '--api.insecure=true'
+      - '--providers.docker=true'
+      - '--providers.docker.exposedbydefault=false'
+      - '--entrypoints.web.address=:80'
     ports:
-      - '27017:27017'
-    command: --quiet
-    env_file:
-      - .env
+      - '80:80'
+      - '8080:8080'
     volumes:
-      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
-      - ./.mongo-volume:/data/db
-  app:
-    depends_on:
-      - mongo
-    build:
-      context: .
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+
+  mongo:
+    container_name: mongo
+    image: mongo:3.4
     environment:
       - NODE_ENV
-      - TERM=xterm
-      - PORT=8085
-      - SERVER_HOST
-      - CORE_URL
-      - MONGO_URI
-      - MONGO_INITDB_DATABASE
+      - MONGO_INITDB_DATABASE=admin
       - MONGO_INITDB_ROOT_USERNAME
       - MONGO_INITDB_ROOT_PASSWORD
       - MONGO_USERNAME
       - MONGO_PASSWORD
       - MONGO_DB
-      - MONGO_HOST
-    ports:
-      - '8085:8085'
-    command: npm run start
     volumes:
-      - .:/usr/src/
-      - /usr/node_modules
+      - ./mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
+      - db:/data/db
+    ports:
+      - 27018:27017
+
+  mongoui:
+    container_name: mongoui
+    image: mongo-express
+    depends_on:
+      - mongo
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: pass
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.mongoui.rule=Host(`mongo.localhost`)'
+      - 'traefik.http.routers.mongoui.entrypoints=web'
+
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    environment:
+      - NODE_ENV
+      - MONGO_COMMAND=mongodb://
+      - MONGO_HOST
+      - MONGO_DB
+      - MONGO_USERNAME
+      - MONGO_PASSWORD
+      - CORE_URL
+      - API_KEY_PORTAL
+      - JWT_SECRET
+      - PORT
+    volumes:
+      - './:/src'
+      - '/src/node_modules'
+    restart: always
+    depends_on:
+      - mongo
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.api.rule=Host(`api.localhost`)'
+volumes:
+  db:
+    driver: local

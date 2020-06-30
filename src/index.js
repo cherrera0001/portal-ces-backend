@@ -1,13 +1,16 @@
-import { createServer } from 'http';
-import { ApolloServer, PubSub } from 'apollo-server-express';
-import { applyMiddleware } from 'graphql-middleware';
-import 'app-module-path/register';
-import app from 'config/app';
-import { debugApp } from 'config/debug';
-import schemaDef from 'helpers/gqlSchemasExport';
-import rollbar from 'config/rollbarConfig';
-import { permissions, getUser } from './auth';
-import './config/mgConnect';
+#!/usr/bin/env node
+const { createServer } = require('http');
+const { ApolloServer, PubSub } = require('apollo-server-express');
+const { applyMiddleware } = require('graphql-middleware');
+const createError = require('http-errors');
+require('app-module-path/register');
+
+const app = require('app');
+const { debugApp } = require('debugger');
+const schemaDef = require('portal/helpers/gqlSchemasExport');
+const rollbar = require('rollbar');
+const { permissions, getUser } = require('portal/auth');
+require('mongo')();
 
 const { PORT, NODE_ENV } = process.env;
 const apiPort = PORT || 8085;
@@ -32,6 +35,11 @@ const server = new ApolloServer({
 });
 
 server.applyMiddleware({ app, path: '/graphql' });
+
+app.use((req, res, next) => {
+  next(createError(404));
+});
+
 const httpServer = createServer(app);
 server.installSubscriptionHandlers(httpServer);
 
