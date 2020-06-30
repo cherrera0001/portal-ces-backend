@@ -1,6 +1,6 @@
 const home = async (req, res) => {
   res.json({
-    message: 'Welcome to Amidoc API',
+    message: 'Welcome to eficar API',
   });
 };
 

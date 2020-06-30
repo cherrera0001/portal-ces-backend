@@ -1,4 +1,4 @@
-const errors = require('amidoc/errors');
+const errors = require('eficar/errors');
 
 module.exports = (schema) => (req, res, next) => {
   const { error } = schema.validate(req.body, { abortEarly: false });

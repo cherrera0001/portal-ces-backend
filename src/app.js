@@ -37,6 +37,7 @@ app.get('', (req, res) => {
 });
 
 app.use('', require('routes'));
-app.use('/amidoc', require('amidoc/routes'));
+app.use('/portal', require('portal/routes'));
+app.use('/eficar', require('eficar/routes'));
 
 module.exports = app;

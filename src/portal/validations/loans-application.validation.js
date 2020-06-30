@@ -1,0 +1,25 @@
+const Joi = require('@hapi/joi');
+
+exports.create = Joi.object().keys({
+  loanSimulationData: Joi.object().required(),
+  finalLoanValues: Joi.object().required(),
+  equivalentAnnualCharge: Joi.object().required(),
+  customerRequestData: Joi.object().required(),
+  income: Joi.object().required(),
+  otherIncome: Joi.object().required(),
+  expenses: Joi.object().required(),
+  taxReturn: Joi.object().required(),
+  spouseData: Joi.object().required(),
+  guarantor: Joi.object().required(),
+  buyForAnother: Joi.object().required(),
+  amortizationSchedule: Joi.object().required(),
+  surchargesAndInsurances: Joi.object().required(),
+  customerActivity: Joi.object().required(),
+  indexaProductsConversion: Joi.object().required(),
+  bankInformation: Joi.object().required(),
+  personalReferences: Joi.object().required(),
+  loanSimulationCar: Joi.object().required(),
+  tradeInCar: Joi.object().required(),
+  heritage: Joi.object().required(),
+  customer: Joi.object().required(),
+});

@@ -6,11 +6,11 @@ chai.use(chaiHttp);
 chai.should();
 
 describe('AMIDOC AUCTIONS', () => {
-  describe('GET -> /amidoc/loan-application/auction', () => {
+  describe('GET -> /eficar/loan-application/auction', () => {
     it('Should get a list or a response object', (done) => {
       chai
         .request(server)
-        .get('/amidoc/loan-application/auction')
+        .get('/eficar/loan-application/auction')
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
@@ -18,11 +18,11 @@ describe('AMIDOC AUCTIONS', () => {
         });
     });
   });
-  describe('POST -> /amidoc/loan-application/auction', () => {
+  describe('POST -> /eficar/loan-application/auction', () => {
     it('Should get a 201 Response', (done) => {
       chai
         .request(server)
-        .post('/amidoc/loan-application/auction/132343234-3')
+        .post('/eficar/loan-application/auction/132343234-3')
         .send({
           customer: {
             name: 'JhonDoe',
