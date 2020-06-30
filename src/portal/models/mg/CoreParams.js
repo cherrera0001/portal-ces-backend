@@ -9,7 +9,7 @@ const CoreParamsSchema = new mongoose.Schema(
     type: { type: mongoose.Schema.Types.String },
   },
   {
-    collection: 'CoreParams',
+    collection: 'coreParams',
     autoIndex: true,
     minimize: false,
     timestamps: true,

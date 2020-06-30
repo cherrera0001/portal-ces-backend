@@ -4,12 +4,12 @@ type Term {
   description: String
 }
 
-type FileUploadingConfig {
+type Config {
   allowedMimeTypes: [String]
   maxFileSizeInKB: Int
   terms: [Term]
 }
 
 extend type Query {
-  getFileUploadingConfig: FileUploadingConfig
+  getConfig: Config
 }

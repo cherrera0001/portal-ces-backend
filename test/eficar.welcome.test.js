@@ -5,7 +5,7 @@ const server = require('index');
 chai.use(chaiHttp);
 chai.should();
 
-describe('AMIDOC REST', () => {
+describe('Eficar API REST', () => {
   describe('GET -> /', () => {
     it('Should get a welcome message', (done) => {
       chai
