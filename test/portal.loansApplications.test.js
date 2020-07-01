@@ -1,6 +1,7 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const server = require('index');
+const request = require('../test/requests/loansApplication.post.json');
 
 chai.use(chaiHttp);
 chai.should();
@@ -23,29 +24,7 @@ describe('PORTAL LOANS APPLICATIONS', () => {
       chai
         .request(server)
         .post('/portal/loans-applications')
-        .send({
-          loanSimulationData: { name: 'test' },
-          finalLoanValues: { name: 'test' },
-          equivalentAnnualCharge: { name: 'test' },
-          customerRequestData: { name: 'test' },
-          income: { name: 'test' },
-          otherIncome: { name: 'test' },
-          expenses: { name: 'test' },
-          taxReturn: { name: 'test' },
-          spouseData: { name: 'test' },
-          guarantor: { name: 'test' },
-          buyForAnother: { name: 'test' },
-          amortizationSchedule: { name: 'test' },
-          surchargesAndInsurances: { name: 'test' },
-          customerActivity: { name: 'test' },
-          indexaProductsConversion: { name: 'test' },
-          bankInformation: { name: 'test' },
-          personalReferences: { name: 'test' },
-          loanSimulationCar: { name: 'test' },
-          tradeInCar: { name: 'test' },
-          heritage: { name: 'test' },
-          customer: { name: 'test' },
-        })
+        .send(request)
         .end((err, res) => {
           res.should.have.status(201);
           done();
