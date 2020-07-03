@@ -24,4 +24,9 @@ const all = async (req, res) => {
   });
 };
 
-module.exports = { all, create };
+const status = async (req, res) => {
+  const loansApplication = await LoansApplication.findById(req.params.id);
+  res.json(loansApplication);
+};
+
+module.exports = { all, create, status };

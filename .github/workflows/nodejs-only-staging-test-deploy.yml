@@ -12,6 +12,11 @@ on:
 jobs:
   deploy_staging:
     runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo:latest
+
     steps:
       - run: sh mongo-init.sh
       - uses: actions/checkout@v2
