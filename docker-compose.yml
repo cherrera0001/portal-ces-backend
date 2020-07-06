@@ -62,6 +62,7 @@ services:
       - PORT
       - GCP_PUBSUB_AUCTION_START_TOPIC_NAME
       - GCP_PUBSUB_AUCTION_RESPONSES_TOPIC_NAME
+      - GOOGLE_APPLICATION_CREDENTIALS
     volumes:
       - './:/src'
       - '/src/node_modules'
