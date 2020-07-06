@@ -7,8 +7,21 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 
 dotenv.config();
-
+const { GCP_PUBSUB_AUCTION_START_TOPIC_NAME, GCP_PUBSUB_AUCTION_RESPONSES_TOPIC_NAME } = process.env;
 const rollbar = require('rollbar.js');
+const pubSub = require('pubSub');
+const auctionSubscriptionHandler = require('portal/subscriptions/auction.subscription.js');
+
+// ############ INIT PUB/SUB SUBSCRIPTIONS ############
+pubSub.subscribe({
+  subscriptionName: GCP_PUBSUB_AUCTION_START_TOPIC_NAME,
+  messageHandler: auctionSubscriptionHandler.auctionStart,
+});
+pubSub.subscribe({
+  subscriptionName: GCP_PUBSUB_AUCTION_RESPONSES_TOPIC_NAME,
+  messageHandler: auctionSubscriptionHandler.auctionResponses,
+});
+// ####################################################
 
 rollbar.log('Server Loaded!');
 

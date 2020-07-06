@@ -60,6 +60,8 @@ services:
       - API_KEY_PORTAL
       - JWT_SECRET
       - PORT
+      - GCP_PUBSUB_AUCTION_START_TOPIC_NAME
+      - GCP_PUBSUB_AUCTION_RESPONSES_TOPIC_NAME
     volumes:
       - './:/src'
       - '/src/node_modules'
