@@ -17,6 +17,13 @@ module.exports = async ({ rollbar }) => {
   try {
     const coreParams = await CoreParamsModel.aggregate(getQuery());
     return {
+      personalReferencesType: coreParams.find((el) => el.type === 'PERSONAL_REFERENCE_TYPE').values,
+      heritageType: coreParams.find((el) => el.type === 'HERITAGE_TYPE').values,
+      bank: coreParams.find((el) => el.type === 'BANKS').values,
+      salaryType: coreParams.find((el) => el.type === 'SALARY_TYPE').values,
+      employmentContractType: coreParams.find((el) => el.type === 'EMPLOYMENT_CONTRACT_TYPE').values,
+      activityType: coreParams.find((el) => el.type === 'ACTIVITY_TYPE').values,
+      workType: coreParams.find((el) => el.type === 'WORK_TYPE').values,
       maritalStatus: coreParams.find((el) => el.type === 'MARITAL_STATUS').values,
       maritalRegime: coreParams.find((el) => el.type === 'MARITAL_REGIME').values,
       academicLevel: coreParams.find((el) => el.type === 'ACADEMIC_LEVEL').values,
