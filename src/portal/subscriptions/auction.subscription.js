@@ -1,12 +1,15 @@
 const rollbar = require('rollbar.js');
 
-const AuctionParticipants = require('portal/models/mg/AuctionParticipants');
+const AuctionParticipantsModel = require('portal/models/mg/AuctionParticipants');
 
 const auctionStart = async (message) => {
   try {
     const incomeData = JSON.parse(message.data.toString());
-    console.log(`auctionStart incoming message for (${incomeData.loanApplicationId}) loan auction`);
-    const auctionParticipants = new AuctionParticipants(incomeData);
+    console.log(`>>>>>> auctionStart incoming message for (${incomeData.loanApplicationId}) loan auction <<<<<<`);
+    const auctionParticipants = new AuctionParticipantsModel({
+      ...incomeData,
+      simulationId: incomeData.loanApplicationId,
+    });
     await auctionParticipants.save();
     message.ack();
     return;
@@ -19,8 +22,10 @@ const auctionStart = async (message) => {
 const auctionResponses = async (message) => {
   try {
     const incomeData = JSON.parse(message.data.toString());
-    console.log(`auctionResponses incoming message for (${incomeData.loanApplicationId}) loan auction`);
-    const auctionParticipants = await AuctionParticipants.findOne({ loanApplicationId: +incomeData.loanApplicationId });
+    console.log(`>>>>>> auctionResponses incoming message for (${incomeData.loanApplicationId}) loan auction <<<<<<`);
+    const auctionParticipants = await AuctionParticipantsModel.findOne({
+      loanApplicationId: +incomeData.loanApplicationId,
+    });
     if (!auctionParticipants) {
       throw new Error(`Auction ${incomeData.loanApplicationId} not found for update`);
     }
