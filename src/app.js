@@ -9,6 +9,7 @@ const morgan = require('morgan');
 dotenv.config();
 const {
   GCP_PUBSUB_AUCTION_START_SUBSCRIPTION_NAME,
+  GCP_PUBSUB_AUCTION_FINISH_SUBSCRIPTION_NAME,
   GCP_PUBSUB_AUCTION_RESPONSES_SUBSCRIPTION_NAME,
   GCP_PUBSUB_SIMULATION_SAVE_SUBSCRIPTION_NAME,
 } = process.env;
@@ -25,6 +26,10 @@ pubSub.subscribe({
 pubSub.subscribe({
   subscriptionName: GCP_PUBSUB_AUCTION_RESPONSES_SUBSCRIPTION_NAME,
   messageHandler: auctionSubscriptionHandler.auctionResponses,
+});
+pubSub.subscribe({
+  subscriptionName: GCP_PUBSUB_AUCTION_FINISH_SUBSCRIPTION_NAME,
+  messageHandler: auctionSubscriptionHandler.auctionFinish,
 });
 pubSub.subscribe({
   subscriptionName: GCP_PUBSUB_SIMULATION_SAVE_SUBSCRIPTION_NAME,
