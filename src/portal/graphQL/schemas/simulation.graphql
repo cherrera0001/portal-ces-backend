@@ -2,6 +2,9 @@ input Customer {
   rut: String
   email: String
   phone: String
+  name: String
+  lastName: String
+  motherLastName: String
 }
 
 input Vehicle {
@@ -81,9 +84,22 @@ input FinancingEntityInsuranceInput {
 input SurchargesAndInsurancesInput {
   amicarAssistance: [AmicarAssistanceInput]
   dealerSurcharges: [FinancingEntitySurchargesInput]
-  dealerInsurance: [FinancingEntitySurchargesInput] #Not defined
+  dealerInsurance: [FinancingEntitySurchargesInput]
   financingEntitySurcharges: [FinancingEntitySurchargesInput]
   financingEntityInsurance: [FinancingEntityInsuranceInput]
+}
+
+input TradeInCarInput {
+  type: String
+  price: Int
+  brandName: String
+  modelName: String
+  version: String
+  year: Int
+  mileage: Int
+  prepaidAmount: Int
+  licensePlate: String
+  additionalDescription: String
 }
 
 input Simulation {
@@ -94,6 +110,7 @@ input Simulation {
   vehicle: Vehicle
   loan: Loan
   surchargesAndInsurances: SurchargesAndInsurancesInput
+  tradeInCar: TradeInCarInput
 }
 
 type FinalLoanValues {
