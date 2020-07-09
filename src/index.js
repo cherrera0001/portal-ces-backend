@@ -3,10 +3,10 @@ const { createServer } = require('http');
 const { ApolloServer } = require('apollo-server-express');
 const { applyMiddleware } = require('graphql-middleware');
 const createError = require('http-errors');
+const socketIo = require('socket.io');
 require('app-module-path/register');
 
 const app = require('app');
-const Socket = require('socket');
 const { debugApp } = require('debugger');
 const schemaDef = require('portal/helpers/gqlSchemasExport');
 const rollbar = require('rollbar');
@@ -45,8 +45,7 @@ app.use((req, res, next) => {
 });
 
 const httpServer = createServer(app);
-
-const socketIo = new Socket(httpServer);
+const socket = socketIo(httpServer);
 
 const {
   GCP_PUBSUB_AUCTION_START_SUBSCRIPTION_NAME,
@@ -58,22 +57,19 @@ const {
 // ############ INIT PUB/SUB SUBSCRIPTIONS ############
 pubSub.subscribe({
   subscriptionName: GCP_PUBSUB_AUCTION_START_SUBSCRIPTION_NAME,
-  messageHandler: (message) => auctionSubscriptionHandler.auctionStart(message, socketIo),
+  messageHandler: auctionSubscriptionHandler.auctionStart,
 });
 pubSub.subscribe({
   subscriptionName: GCP_PUBSUB_AUCTION_RESPONSES_SUBSCRIPTION_NAME,
-  messageHandler: auctionSubscriptionHandler.auctionResponses,
-  socketIo,
+  messageHandler: (message) => auctionSubscriptionHandler.auctionResponses(message, socket),
 });
 pubSub.subscribe({
   subscriptionName: GCP_PUBSUB_AUCTION_FINISH_SUBSCRIPTION_NAME,
   messageHandler: auctionSubscriptionHandler.auctionFinish,
-  socketIo,
 });
 pubSub.subscribe({
   subscriptionName: GCP_PUBSUB_SIMULATION_SAVE_SUBSCRIPTION_NAME,
   messageHandler: simulationSubscriptionHandler.simulationSave,
-  socketIo,
 });
 // ####################################################
 
