@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 const { createServer } = require('http');
-const { ApolloServer, PubSub } = require('apollo-server-express');
+const { ApolloServer } = require('apollo-server-express');
 const { applyMiddleware } = require('graphql-middleware');
 const createError = require('http-errors');
+const socketIo = require('socket.io');
 require('app-module-path/register');
 
 const app = require('app');
@@ -14,7 +15,6 @@ require('mongo')();
 
 const { PORT, NODE_ENV } = process.env;
 const apiPort = PORT || 8085;
-const pubsub = new PubSub();
 const schema = applyMiddleware(schemaDef, permissions);
 
 const server = new ApolloServer({
@@ -30,7 +30,7 @@ const server = new ApolloServer({
     const accessToken = req && req.headers ? req.headers['x-access-token'] : '';
     const refreshToken = req && req.headers ? req.headers['x-refresh-token'] : '';
     const { user, claims } = await getUser(accessToken, refreshToken, res);
-    return { req, res, rollbar, pubsub, user, claims };
+    return { req, res, rollbar, user, claims };
   },
 });
 
@@ -41,13 +41,20 @@ app.use((req, res, next) => {
 });
 
 const httpServer = createServer(app);
-server.installSubscriptionHandlers(httpServer);
+
+const io = socketIo(httpServer);
+
+io.on('connection', (socket) => {
+  console.log('New client connected');
+  socket.on('disconnect', () => {
+    console.log('Client disconnected');
+  });
+});
 
 httpServer.listen(apiPort, () => {
   debugApp("Let's rock!! 🤘🏻🚀");
   debugApp(`Server running at http://127.0.0.1:${apiPort}/`);
   debugApp(`graphQL server running at http://127.0.0.1:${apiPort}${server.graphqlPath}/`);
-  debugApp(`🚀 Subscriptions ready at ws://127.0.0.1:${apiPort}${server.subscriptionsPath}`);
 });
 
 module.exports = app;

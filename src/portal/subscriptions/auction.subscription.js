@@ -1,4 +1,5 @@
 const rollbar = require('rollbar.js');
+// const socket = require('socket.io');
 
 const AuctionParticipantsModel = require('portal/models/mg/AuctionParticipants');
 const LoansApplicationModel = require('portal/models/mg/LoansApplication');
@@ -35,6 +36,7 @@ const auctionResponses = async (message) => {
     auctionParticipants.auctionParticipants = incomeData.auctionParticipants;
     await auctionParticipants.save();
     message.ack();
+    // socket.emit('RELOAD_AUCTION');
     return;
   } catch (err) {
     rollbar.log(`${__dirname}/${__filename} auctionResponses::ERROR: ${err.message}`);

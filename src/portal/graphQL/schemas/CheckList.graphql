@@ -5,37 +5,56 @@ type Document {
   uuid: String
 }
 
-type DocumentSet {
-  id: String
-  name: String
-  step: Int
-  documentType: String
-  wasSent: Boolean
-  feError: String
-  documents: [Document]
+# type DocumentSet {
+# id: String
+# name: String
+# step: Int
+# documentType: String
+# wasSent: Boolean
+# feError: String
+# documents: [Document]
+# }
+
+# type File {
+#   filename: String!
+#   mimetype: String!
+#   encoding: String!
+# }
+
+type CheckListItem {
+  id: Int
+  checklistId: Int
+  coreParamId: Int
+  value: String
+  folderPath: String
+  uuid: String
+  # CoreParam: {
+  #     name: String
+  # }
 }
 
 type CheckList {
-  financingEntityId: String
-  loanId: String
-  checkList: [DocumentSet]
+  ChecklistItems: [CheckListItem]
 }
 
-type File {
-  filename: String!
-  mimetype: String!
-  encoding: String!
+type FinancingEntity {
+  id: Int
+  identificationValue: String
+  name: String
+}
+
+type AuctionParticipants {
+  id: String
+  status: String
+  FinancingEntity: FinancingEntity
+  Checklists: [CheckList]
 }
 
 type Query {
-  getCheckList(loanId: String!): CheckList
+  getCheckList(loanApplicationId: String!): [AuctionParticipants]
 }
 
 type Mutation {
-  uploadDocuments(files: [Upload]!, loanId: String!, documentSetId: String!, documentType: String!): CheckList
-  updateDocumentStatus(loanId: String!, documentSetId: String!, state: String!): Boolean
-}
-
-type Subscription {
-  documentStatusUpdated(loanId: String!): CheckList
+  uploadDocuments(files: [Upload]!, loanApplicationId: String!): Boolean
+  # updateDocumentStatus(loanApplicationId: String!, documentSetId: String!, state: String!): Boolean
 }

@@ -9,13 +9,8 @@ const resolvers = {
   },
   Mutation: {
     uploadDocuments: async (_root, arg, { rollbar }) => uploadDocuments({ data: arg, rollbar }),
-    updateDocumentStatus: async (_root, arg, { pubsub, rollbar }) =>
-      updateDocumentStatus({ data: arg, pubsub, rollbar }),
-  },
-  Subscription: {
-    documentStatusUpdated: {
-      subscribe: async (_root, arg, { pubsub }) => documentStatusUpdated({ data: arg, pubsub }),
-    },
+    // updateDocumentStatus: async (_root, arg, { pubsub, rollbar }) =>
+    //   updateDocumentStatus({ data: arg, pubsub, rollbar }),
   },
 };
 
