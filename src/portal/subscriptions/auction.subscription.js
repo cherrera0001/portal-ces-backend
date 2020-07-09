@@ -6,7 +6,7 @@ const LoansApplicationModel = require('portal/models/mg/LoansApplication');
 
 const parseMessage = (message) => JSON.parse(message.data.toString());
 
-const auctionStart = async (message) => {
+const auctionStart = async (message, socketIo) => {
   try {
     const incomeData = parseMessage(message);
     console.log(`>>>>>> auctionStart incoming message for (${incomeData.loanApplicationId}) loan auction <<<<<<`);
@@ -16,6 +16,7 @@ const auctionStart = async (message) => {
     });
     await auctionParticipants.save();
     message.ack();
+    socketIo.emit('test-message', { foo: 'bar' });
     return;
   } catch (err) {
     rollbar.log(`${__dirname}/${__filename} auctionStart::ERROR: ${err.message}`);

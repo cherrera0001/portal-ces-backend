@@ -3,14 +3,18 @@ const { createServer } = require('http');
 const { ApolloServer } = require('apollo-server-express');
 const { applyMiddleware } = require('graphql-middleware');
 const createError = require('http-errors');
-const socketIo = require('socket.io');
 require('app-module-path/register');
 
 const app = require('app');
+const Socket = require('socket');
 const { debugApp } = require('debugger');
 const schemaDef = require('portal/helpers/gqlSchemasExport');
 const rollbar = require('rollbar');
 const { permissions, getUser } = require('portal/auth');
+const pubSub = require('pubSub');
+const auctionSubscriptionHandler = require('portal/subscriptions/auction.subscription');
+const simulationSubscriptionHandler = require('portal/subscriptions/simulation.subscription');
+
 require('mongo')();
 
 const { PORT, NODE_ENV } = process.env;
@@ -42,14 +46,36 @@ app.use((req, res, next) => {
 
 const httpServer = createServer(app);
 
-const io = socketIo(httpServer);
+const socketIo = new Socket(httpServer);
 
-io.on('connection', (socket) => {
-  console.log('New client connected');
-  socket.on('disconnect', () => {
-    console.log('Client disconnected');
-  });
+const {
+  GCP_PUBSUB_AUCTION_START_SUBSCRIPTION_NAME,
+  GCP_PUBSUB_AUCTION_FINISH_SUBSCRIPTION_NAME,
+  GCP_PUBSUB_AUCTION_RESPONSES_SUBSCRIPTION_NAME,
+  GCP_PUBSUB_SIMULATION_SAVE_SUBSCRIPTION_NAME,
+} = process.env;
+
+// ############ INIT PUB/SUB SUBSCRIPTIONS ############
+pubSub.subscribe({
+  subscriptionName: GCP_PUBSUB_AUCTION_START_SUBSCRIPTION_NAME,
+  messageHandler: (message) => auctionSubscriptionHandler.auctionStart(message, socketIo),
 });
+pubSub.subscribe({
+  subscriptionName: GCP_PUBSUB_AUCTION_RESPONSES_SUBSCRIPTION_NAME,
+  messageHandler: auctionSubscriptionHandler.auctionResponses,
+  socketIo,
+});
+pubSub.subscribe({
+  subscriptionName: GCP_PUBSUB_AUCTION_FINISH_SUBSCRIPTION_NAME,
+  messageHandler: auctionSubscriptionHandler.auctionFinish,
+  socketIo,
+});
+pubSub.subscribe({
+  subscriptionName: GCP_PUBSUB_SIMULATION_SAVE_SUBSCRIPTION_NAME,
+  messageHandler: simulationSubscriptionHandler.simulationSave,
+  socketIo,
+});
+// ####################################################
 
 httpServer.listen(apiPort, () => {
   debugApp("Let's rock!! 🤘🏻🚀");
