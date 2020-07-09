@@ -10,6 +10,7 @@
     }
   },
   "dependencies": {
+    "@google-cloud/pubsub": "^2.1.0",
     "@hapi/joi": "^17.1.1",
     "api-query-params": "^4.15.0",
     "apollo-server-express": "^2.12.0",
