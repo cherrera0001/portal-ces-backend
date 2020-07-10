@@ -8,18 +8,18 @@ module.exports = async ({ data, rollbar }) => {
     const loan = await AuctionParticipantsModel.findOne({ loanApplicationId });
     if (!loan) throw new Error('LOAN_ID_NOT_FOUND');
     const winner = loan.auctionParticipants.find((el) => el.status === 'WINNER');
-    if (!winner) throw new Error('NO_WINNER_FOUND');
-    if (!winner.Checklists) throw new Error('NO_WINNER_CHECKLISTS_FOUND');
+    if (!winner) throw new Error('WINNER_NOT_FOUND');
+    if (!winner.Checklists) throw new Error('WINNER_CHECKLISTS_NOT_FOUND');
 
     return {
       financingEntityId: winner.FinancingEntity.id,
       checklistId: winner.Checklists[0].id,
-      checklistError: null,
+      checklistError: winner.Checklists[0].comments,
       checklist: winner.Checklists[0].ChecklistItems.map((item) => ({
         id: item.id,
         name: item.CoreParam.name,
         value: item.value,
-        step: 0,
+        step: item.status,
       })),
     };
   } catch (err) {

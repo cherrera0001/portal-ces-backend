@@ -3,22 +3,24 @@ const path = require('path');
 const { ApolloError } = require('apollo-server-express');
 const { ConfigModel } = require('portal/helpers/modelsExport');
 const { PATH_CORE_ENDPOINT_ALFRESCO } = require('portal/core.services');
+const headers = require('portal/helpers/headers');
 
 const { CORE_URL } = process.env;
 
 const uploadDocuments = async (loanApplicationId, checklistId, files) => {
-  const response = await axios({
-    method: 'post',
-    url: `${CORE_URL}${PATH_CORE_ENDPOINT_ALFRESCO}`,
-    data: {
+  const response = await axios.post(
+    `${CORE_URL}${PATH_CORE_ENDPOINT_ALFRESCO}`,
+    {
       loanSimulationDataId: loanApplicationId,
       checklistId,
       files,
     },
-  });
+    { headers },
+  );
   if (response.status !== 200) {
-    throw new Error(`${__dirname}/uploadDocument::ERROR`);
+    throw new Error(`${__dirname}/uploadDocuments::ERROR`);
   }
+  return response;
 };
 
 module.exports = async ({ data, rollbar }) => {
@@ -55,8 +57,8 @@ module.exports = async ({ data, rollbar }) => {
       });
     }
 
-    await uploadDocuments(loanApplicationId, checklistId, filesToUpload);
-    return true;
+    const response = await uploadDocuments(loanApplicationId, checklistId, filesToUpload);
+    return response.status === 200;
   } catch (err) {
     if (err.message === 'INCORRECT_FILE_TYPE')
       throw new ApolloError('Incorrect file type. Must be one of: jpeg, jpg, png, pdf', 'INCORRECT_FILE_TYPE');

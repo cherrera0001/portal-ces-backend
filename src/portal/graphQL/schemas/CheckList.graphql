@@ -1,23 +1,23 @@
 scalar Upload
 
 type Documents {
-  id: String
+  id: Int
   name: String
   value: String
   step: Int
 }
 
 type CheckList {
-  financingEntityId: String
-  checklistId: String
+  financingEntityId: Int
+  checklistId: Int
   checklistError: String
   checklist: [Documents]
 }
 
 type Query {
-  getCheckList(loanApplicationId: String!): CheckList
+  getCheckList(loanApplicationId: Int!): CheckList
 }
 
 type Mutation {
-  uploadDocuments(loanApplicationId: String!, checklistId: String!, files: [Upload]!, checklistItemId: String): Boolean
+  uploadDocuments(files: [Upload]!, loanApplicationId: Int!, checklistId: Int!, checklistItemId: Int): Boolean
 }

@@ -6,11 +6,11 @@ chai.use(chaiHttp);
 chai.should();
 
 describe('EFICAR AUCTIONS', () => {
-  describe('GET -> /eficar/auctions', () => {
+  describe('GET -> /eficar/chl/v1/auctions', () => {
     it('Should get a list or a response object', (done) => {
       chai
         .request(server)
-        .get('/eficar/auctions')
+        .get('/eficar/chl/v1/auctions')
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
@@ -18,14 +18,17 @@ describe('EFICAR AUCTIONS', () => {
         });
     });
   });
-  describe('POST -> /eficar/auctions', () => {
+  describe('POST -> /eficar/chl/v1/auctions', () => {
     it('Should get a 201 Response', (done) => {
       chai
         .request(server)
-        .post('/eficar/auctions/132343234-3')
+        .post('/eficar/chl/v1/auctions/132343234-3')
         .send({
           customer: {
             name: 'JhonDoe',
+          },
+          loanSimulationData: {
+            id: '132343234-3',
           },
           customerRequestData: {
             name: 'test',
@@ -39,39 +42,53 @@ describe('EFICAR AUCTIONS', () => {
           expenses: {
             name: 'test',
           },
-          taxReturn: {
-            name: 'test',
-          },
+          taxReturn: [
+            {
+              name: 'test',
+            },
+          ],
           spouseData: {
             name: 'test',
           },
           buyForAnother: {
             name: 'test',
           },
-          guarantor: {
-            name: 'test',
-          },
-          bankInformation: {
-            name: 'test',
-          },
-          heritage: {
-            name: 'test',
-          },
-          personalReferences: {
-            name: 'test',
-          },
+          guarantor: [
+            {
+              name: 'test',
+            },
+          ],
+          bankInformation: [
+            {
+              name: 'test',
+            },
+          ],
+          heritage: [
+            {
+              name: 'test',
+            },
+          ],
+          personalReferences: [
+            {
+              name: 'test',
+            },
+          ],
           finalLoanValues: {
             name: 'test',
           },
           equivalentAnnualCharge: {
             name: 'test',
           },
-          amortizationSchedule: {
-            name: 'test',
-          },
-          surchargesAndInsurances: {
-            name: 'test',
-          },
+          amortizationSchedule: [
+            {
+              name: 'test',
+            },
+          ],
+          surchargesAndInsurances: [
+            {
+              name: 'test',
+            },
+          ],
           loanSimulationCar: {
             name: 'test',
           },
