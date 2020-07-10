@@ -1,60 +1,23 @@
 scalar Upload
 
-type Document {
+type Documents {
   id: String
-  uuid: String
-}
-
-# type DocumentSet {
-# id: String
-# name: String
-# step: Int
-# documentType: String
-# wasSent: Boolean
-# feError: String
-# documents: [Document]
-# }
-
-# type File {
-#   filename: String!
-#   mimetype: String!
-#   encoding: String!
-# }
-
-type CheckListItem {
-  id: Int
-  checklistId: Int
-  coreParamId: Int
+  name: String
   value: String
-  folderPath: String
-  uuid: String
-  # CoreParam: {
-  #     name: String
-  # }
+  step: Int
 }
 
 type CheckList {
-  ChecklistItems: [CheckListItem]
-}
-
-type FinancingEntity {
-  id: Int
-  identificationValue: String
-  name: String
-}
-
-type AuctionParticipants {
-  id: String
-  status: String
-  FinancingEntity: FinancingEntity
-  Checklists: [CheckList]
+  financingEntityId: String
+  checklistId: String
+  checklistError: String
+  checklist: [Documents]
 }
 
 type Query {
-  getCheckList(loanApplicationId: String!): [AuctionParticipants]
+  getCheckList(loanApplicationId: String!): CheckList
 }
 
 type Mutation {
-  uploadDocuments(files: [Upload]!, loanApplicationId: String!): Boolean
-  # updateDocumentStatus(loanApplicationId: String!, documentSetId: String!, state: String!): Boolean
+  uploadDocuments(loanApplicationId: String!, checklistId: String!, files: [Upload]!, checklistItemId: String): Boolean
 }

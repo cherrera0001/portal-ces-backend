@@ -6,7 +6,22 @@ module.exports = async ({ data, rollbar }) => {
     if (!data.loanApplicationId) throw new Error('MISSING_LOAN_ID');
     const { loanApplicationId } = data;
     const loan = await AuctionParticipantsModel.findOne({ loanApplicationId });
-    return loan;
+    if (!loan) throw new Error('LOAN_ID_NOT_FOUND');
+    const winner = loan.auctionParticipants.find((el) => el.status === 'WINNER');
+    if (!winner) throw new Error('NO_WINNER_FOUND');
+    if (!winner.Checklists) throw new Error('NO_WINNER_CHECKLISTS_FOUND');
+
+    return {
+      financingEntityId: winner.FinancingEntity.id,
+      checklistId: winner.Checklists[0].id,
+      checklistError: null,
+      checklist: winner.Checklists[0].ChecklistItems.map((item) => ({
+        id: item.id,
+        name: item.CoreParam.name,
+        value: item.value,
+        step: 0,
+      })),
+    };
   } catch (err) {
     rollbar.log(`src/methods/chl/v1/getCheckList/index::ERROR: ${err.message}`);
     if (err.message === 'MISSING_LOAN_ID') throw new ApolloError('Missing loanId field.', 'MISSING_LOAN_ID');
