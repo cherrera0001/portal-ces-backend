@@ -1,10 +1,29 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const server = require('index');
-const { getCheckListQuery } = require('../src/portal/graphQL/queries/getCheckList');
 
 const { expect } = chai;
 chai.use(chaiHttp);
+
+const getCheckListQuery = (loanApplicationId) => ({
+  operationName: 'getCheckList',
+  variables: { loanApplicationId },
+  query: `
+    query getCheckList($loanApplicationId: Int!) {
+      getCheckList(loanApplicationId: $loanApplicationId) {
+        checklistId
+        financingEntityId
+        checklistError
+        checklist {
+          id
+          name
+          value
+          step
+        }
+      }
+    }
+  `,
+});
 
 describe('CheckList', () => {
   describe('/POST gets a FE checklist for a given loanId', () => {
