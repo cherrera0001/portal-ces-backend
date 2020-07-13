@@ -12,7 +12,7 @@ module.exports = async ({ data, rollbar }) => {
     if (response.status !== 200) {
       throw new ApolloError(response.statusText, 'ERROR_SAVING_SIMULATION');
     }
-    const simulation = await Simulation(data);
+    const simulation = await Simulation({ ...data.simulation, simulationId: response.data.simulationId });
     await simulation.save();
     return response.data;
   } catch (err) {

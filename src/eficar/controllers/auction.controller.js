@@ -19,7 +19,7 @@ const all = async (req, res) => {
 };
 
 const create = async (req, res) => {
-  const auction = new Auction({ ...req.body });
+  const auction = new Auction({ ...req.body, simulationId: req.body.loanSimulationData.id });
   auction.save();
   res.status(201).end();
 };

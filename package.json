@@ -10,6 +10,7 @@
     }
   },
   "dependencies": {
+    "@google-cloud/pubsub": "^2.1.0",
     "@hapi/joi": "^17.1.1",
     "api-query-params": "^4.15.0",
     "apollo-server-express": "^2.12.0",
@@ -41,6 +42,7 @@
     "morgan": "^1.9.1",
     "rollbar": "^2.13.0",
     "sinon": "^7.5.0",
+    "socket.io": "^2.3.0",
     "subscriptions-transport-ws": "^0.9.16"
   },
   "devDependencies": {
