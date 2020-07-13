@@ -7,6 +7,7 @@ const Simulation = require('portal/models/mg/Simulation');
 const { CORE_URL } = process.env;
 
 module.exports = async ({ data, rollbar }) => {
+  console.log(data);
   try {
     const response = await axios.post(`${CORE_URL}${PATH_ENDPOINT_SAVE_SIMULATION}`, data.simulation, { headers });
     if (response.status !== 200) {
