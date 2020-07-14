@@ -22,8 +22,6 @@ describe('/POST Updates Core Params before running other tests', () => {
       .send(getUpdateCoreParamsQuery())
       .end((err, res) => {
         expect(res.status).to.equal(200);
-        expect(res.body).to.be.a('object');
-        expect(res.body.data.updateCoreParams).to.equal('done');
         done();
       });
   });
