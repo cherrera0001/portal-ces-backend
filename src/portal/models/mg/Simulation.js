@@ -9,6 +9,7 @@ const schema = new mongoose.Schema({
   vehicle: { type: Object, required: true },
   loan: { type: Object, required: true },
   surchargesAndInsurances: { type: Object, required: true },
+  selectedScenario: { type: Object, required: true },
 });
 
 module.exports = mongoose.model('Simulation', schema);

@@ -102,6 +102,17 @@ input TradeInCarInput {
   additionalDescription: String
 }
 
+input SelectedScenarioInput {
+  surchargesAndInsurances: SurchargesAndInsurancesInput
+  loanType: String
+  monthlyPayment: Float
+  term: Int
+  customerRate: Float
+  vfg: Float
+  totalLoanCost: Float
+  cae: Float
+}
+
 input Simulation {
   transactionId: String
   sellerIdentificationValue: String
@@ -110,6 +121,7 @@ input Simulation {
   vehicle: Vehicle
   loan: Loan
   surchargesAndInsurances: SurchargesAndInsurancesInput
+  selectedScenario: SelectedScenarioInput
   tradeInCar: TradeInCarInput
 }
 
@@ -224,7 +236,6 @@ type SaveSimulationResponse {
 
 extend type Query {
   Simulation(simulation: Simulation!): [SimulationResponse]
-  getSimulationById(simulationId: Int): Boolean
 }
 
 extend type Mutation {

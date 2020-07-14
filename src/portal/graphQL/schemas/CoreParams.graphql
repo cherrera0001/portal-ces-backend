@@ -26,6 +26,6 @@ type CoreParamsList {
 }
 
 extend type Query {
-  getCoreParams(type: String!, name: String, externalCode: String, parentId: Int): [CoreParams]
+  getCoreParams(type: String!, name: String, externalCode: [String], parentId: Int): [CoreParams]
   getCoreParamsLists: CoreParamsList
 }

@@ -1,12 +1,10 @@
 const getSimulation = require('portal/methods/chl/v1/simulation');
 const sendEmail = require('portal/methods/chl/v1/simulation/sendEmail');
 const saveSimulation = require('portal/methods/chl/v1/simulation/saveSimulation');
-const getSimulationById = require('portal/methods/chl/v1/simulation/getSimulationById');
 
 const resolvers = {
   Query: {
     Simulation: async (_root, arg, { rollbar }) => getSimulation({ data: arg, rollbar }),
-    getSimulationById: async (_root, arg, { rollbar }) => getSimulationById({ data: arg, rollbar }),
   },
   Mutation: {
     sendEmail: async (_root, arg, { rollbar }) => sendEmail({ data: arg, rollbar }),
