@@ -7,11 +7,11 @@ chai.use(chaiHttp);
 chai.should();
 
 describe('PORTAL LOANS APPLICATIONS', () => {
-  describe('GET -> /portal/chl/v1/loans-applications', () => {
+  describe('GET -> /portal/loans-applications', () => {
     it('Should get a list or a response object', (done) => {
       chai
         .request(server)
-        .get('/portal/chl/v1/loans-applications')
+        .get('/portal/loans-applications')
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
@@ -19,11 +19,11 @@ describe('PORTAL LOANS APPLICATIONS', () => {
         });
     });
   });
-  describe('POST -> /portal/chl/v1/loans-applications', () => {
+  describe('POST -> /portal/loans-applications', () => {
     it('Should get a 201 Response', (done) => {
       chai
         .request(server)
-        .post('/portal/chl/v1/loans-applications')
+        .post('/portal/loans-applications')
         .send(request)
         .end((err, res) => {
           res.should.have.status(201);
