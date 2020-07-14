@@ -32,42 +32,62 @@ mongo --eval "
     amicarExecutiveIdentificationValue: '156681911',
   }, { upsert: true });
 
-  db.loans.update({ loanId: '0065500000FcXi2AAF' }, {
-    loanId: '0065500000FcXi2AAF',
-    financingEntityId: '4,760022934',
-    checkList: [
+  db.auctionParticipants.update({ loanApplicationId: 10000042 }, {
+    loanApplicationId: 10000042,
+    auctionParticipants: [
       {
-        id: '731b4',
-        name: 'Liquidaciones',
-        step: 0,
-        wasSent: false,
-        documentType: '74',
-        feError: null,
-        documents: [
+        id: 30,
+        status: 'WINNER',
+        monthlyPayment: 379569,
+        finalCapital: 10429540,
+        totalLoanCost: 13664482,
+        annualCAE: 29.5,
+        FinancingEntity: {
+          id: 13,
+          identificationValue: '965096604',
+          name: 'BANCO FALABELLA'
+        },
+        Checklists: [
           {
-            id: '8747d',
-            uuid: 'DOCUMENT_UUID',
-          },
-          {
-            id: '87ddd',
-            uuid: 'DOCUMENT_UUID',
-          },
-        ],
-      },
-      {
-        id: '9da13',
-        name: 'Contrato',
-        step: 3,
-        wasSent: true,
-        documentType: '58',
-        feError: 'Documento ilegible',
-        documents: [
-          {
-            id: '8345f',
-            uuid: 'DOCUMENT_UUID',
-          },
-        ],
-      },
-    ],
+            id: 6,
+            IdEF1: 1,
+            IdEF2: 4,
+            createdAt: '2020-07-10T03:34:38.583Z',
+            ChecklistItems: [
+              {
+                id: 16,
+                coreParamId: 646,
+                value: null,
+                folderPath: null,
+                uuid: null,
+                CoreParam: {
+                    name: 'Carnet de Identidad'
+                }
+              },
+              {
+                id: 17,
+                coreParamId: 647,
+                value: null,
+                folderPath: null,
+                uuid: null,
+                CoreParam: {
+                    name: 'Tres Ultimas Liquidaciones de Sueldo'
+                }
+              },
+              {
+                id: 18,
+                coreParamId: 659,
+                value: 'Certificado residencia junta vecinal',
+                folderPath: null,
+                uuid: null,
+                CoreParam: {
+                    name: 'Otros'
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
   }, { upsert: true });
 "

@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
-  loanSimulationData: [{ type: Object, required: true }],
-  finalLoanValues: [{ type: Object, required: true }],
+  loanSimulationData: { type: Object, required: true },
+  finalLoanValues: { type: Object, required: true },
   equivalentAnnualCharge: [{ type: Object, required: true }],
   customerRequestData: { type: Object, required: true },
   income: { type: Object, required: true },
@@ -24,9 +24,10 @@ const schema = new mongoose.Schema({
   heritage: [{ type: Object, required: true }],
   customer: { type: Object, required: true },
   stage: { type: Number, required: false },
-  simulationId: { type: Number, required: false },
+  simulationId: { type: Number, required: true, unique: true, index: true },
+  status: { type: String, required: true, index: true },
   sellerIdentificationValue: { type: String, required: false },
   amicarExecutiveIdentificationValue: { type: String, required: false },
 });
 
-module.exports = mongoose.model('LoansApplication', schema);
+module.exports = mongoose.model('LoansApplication', schema, 'loansApplications');

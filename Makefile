@@ -3,9 +3,7 @@ SHELL := /bin/bash
 all: build run
 
 run: build
-	docker-compose run app npm i
-	migrate-mongo up
-	docker-compose up --remove-orphans
+	docker-compose up
 build: .built
 
 .built: Dockerfile

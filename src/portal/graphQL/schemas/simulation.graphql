@@ -2,6 +2,9 @@ input Customer {
   rut: String
   email: String
   phone: String
+  name: String
+  lastName: String
+  motherLastName: String
 }
 
 input Vehicle {
@@ -81,9 +84,33 @@ input FinancingEntityInsuranceInput {
 input SurchargesAndInsurancesInput {
   amicarAssistance: [AmicarAssistanceInput]
   dealerSurcharges: [FinancingEntitySurchargesInput]
-  dealerInsurance: [FinancingEntitySurchargesInput] #Not defined
+  dealerInsurance: [FinancingEntitySurchargesInput]
   financingEntitySurcharges: [FinancingEntitySurchargesInput]
   financingEntityInsurance: [FinancingEntityInsuranceInput]
+}
+
+input TradeInCarInput {
+  type: String
+  price: Int
+  brandName: String
+  modelName: String
+  version: String
+  year: Int
+  mileage: Int
+  prepaidAmount: Int
+  licensePlate: String
+  additionalDescription: String
+}
+
+input SelectedScenarioInput {
+  surchargesAndInsurances: SurchargesAndInsurancesInput
+  loanType: String
+  monthlyPayment: Float
+  term: Int
+  customerRate: Float
+  vfg: Float
+  totalLoanCost: Float
+  cae: Float
 }
 
 input Simulation {
@@ -94,6 +121,8 @@ input Simulation {
   vehicle: Vehicle
   loan: Loan
   surchargesAndInsurances: SurchargesAndInsurancesInput
+  selectedScenario: SelectedScenarioInput
+  tradeInCar: TradeInCarInput
 }
 
 type FinalLoanValues {
@@ -207,7 +236,6 @@ type SaveSimulationResponse {
 
 extend type Query {
   Simulation(simulation: Simulation!): [SimulationResponse]
-  getSimulationById(simulationId: Int): Boolean
 }
 
 extend type Mutation {
