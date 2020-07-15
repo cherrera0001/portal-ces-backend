@@ -8,7 +8,6 @@ build: .built
 
 .built: Dockerfile
 	docker-compose build
-	touch .built
 
 stop:
 	docker-compose stop

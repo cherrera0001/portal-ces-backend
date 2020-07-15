@@ -1,15 +1,13 @@
-const axios = require('axios');
 const { ApolloError } = require('apollo-server-express');
-const headers = require('portal/helpers/headers');
+const HTTP = require('http');
 const { PATH_ENDPOINT_SAVE_SIMULATION } = require('portal/core.services');
 const Simulation = require('portal/models/simulation.model');
 
 const { CORE_URL } = process.env;
 
 module.exports = async ({ data, rollbar }) => {
-  console.log(data);
   try {
-    const response = await axios.post(`${CORE_URL}${PATH_ENDPOINT_SAVE_SIMULATION}`, data.simulation, { headers });
+    const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_SAVE_SIMULATION}`, data.simulation);
     if (response.status !== 200) {
       throw new ApolloError(response.statusText, 'ERROR_SAVING_SIMULATION');
     }
