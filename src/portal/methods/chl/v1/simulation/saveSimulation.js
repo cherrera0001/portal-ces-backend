@@ -1,5 +1,5 @@
 const { ApolloError } = require('apollo-server-express');
-const HTTP = require('http');
+const HTTP = require('requests');
 const { PATH_ENDPOINT_SAVE_SIMULATION } = require('portal/core.services');
 const Simulation = require('portal/models/simulation.model');
 

@@ -1,4 +1,4 @@
-const HTTP = require('http');
+const HTTP = require('requests');
 const { PATH_ENDPOINT_EMAIL } = require('portal/core.services');
 
 const { CORE_URL } = process.env;

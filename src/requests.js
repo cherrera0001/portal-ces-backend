@@ -5,8 +5,8 @@ const headers = {
   'x-api-key': process.env.API_KEY_PORTAL,
 };
 
-const get = async (url, body) => {
-  return axios.get(url, body, { headers });
+const get = async (url) => {
+  return axios.get(url, { headers });
 };
 
 const post = async (url, body) => {

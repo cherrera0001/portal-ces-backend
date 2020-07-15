@@ -1,5 +1,5 @@
 const path = require('path');
-const HTTP = require('http');
+const HTTP = require('requests');
 const { ApolloError } = require('apollo-server-express');
 const ConfigModel = require('portal/models/config.model');
 const { PATH_CORE_ENDPOINT_ALFRESCO } = require('portal/core.services');

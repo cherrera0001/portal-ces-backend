@@ -1,5 +1,5 @@
 const CoreParamsModel = require('portal/models/coreParams.model');
-const HTTP = require('http');
+const HTTP = require('requests');
 const { PATH_ENDPOINT_CORE_PARAMS } = require('portal/core.services');
 
 const { CORE_URL } = process.env;
