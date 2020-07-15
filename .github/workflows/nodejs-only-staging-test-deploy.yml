@@ -52,12 +52,7 @@ jobs:
     needs: build_and_test
     runs-on: ubuntu-latest
 
-    services:
-      mongo:
-        image: mongo:latest
-
     steps:
-      - run: sh mongo-init.sh
       - uses: actions/checkout@v2
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
