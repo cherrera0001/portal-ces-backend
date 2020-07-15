@@ -1,18 +1,12 @@
-const axios = require('axios');
 const CoreParamsModel = require('portal/models/coreParams.model');
-const headers = require('portal/helpers/headers');
+const HTTP = require('http');
 const { PATH_ENDPOINT_CORE_PARAMS } = require('portal/core.services');
 
 const { CORE_URL } = process.env;
 
 module.exports = async ({ rollbar }) => {
   try {
-    const response = await axios({
-      method: 'GET',
-      url: `${CORE_URL}${PATH_ENDPOINT_CORE_PARAMS}`,
-      headers,
-    });
-
+    const response = await HTTP.get(`${CORE_URL}${PATH_ENDPOINT_CORE_PARAMS}`);
     await CoreParamsModel.remove();
     await CoreParamsModel.insertMany(response.data);
     return 'done';
