@@ -1,0 +1,12 @@
+---
+  steps:
+    - args:
+        - build
+        - gcr.io/${_GCP_PROJECT}/portal-backend-${_DEPLOY_IMG}
+        - '.'
+      name: 'gcr.io/cloud-builders/docker'
+  logsBucket: 'gs://${_GCP_PROJECT}.appspot.com/logs'
+  images: ['gcr.io/${_GCP_PROJECT}/portal-backend-${_DEPLOY_IMG}']
+  substitutions:
+    _DEPLOY_IMG: 'ambiente'
+    _GCP_PROJECT: 'prueba'
