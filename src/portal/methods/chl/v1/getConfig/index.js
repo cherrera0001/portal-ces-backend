@@ -1,4 +1,4 @@
-const { ConfigModel } = require('portal/helpers/modelsExport');
+const ConfigModel = require('portal/models/config.model');
 
 module.exports = async ({ rollbar }) => {
   try {

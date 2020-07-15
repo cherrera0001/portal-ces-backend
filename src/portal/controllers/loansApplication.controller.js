@@ -1,5 +1,5 @@
 const aqp = require('api-query-params');
-const LoansApplication = require('portal/models/mg/LoansApplication');
+const LoansApplication = require('portal/models/loansApplication.model');
 
 const create = async (req, res) => {
   const loansApplication = new LoansApplication({ ...req.body });

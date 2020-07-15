@@ -1,4 +1,4 @@
-const Simulation = require('portal/models/mg/Simulation');
+const Simulation = require('portal/models/simulation.model');
 const errors = require('eficar/errors');
 
 const one = async (req, res) => {

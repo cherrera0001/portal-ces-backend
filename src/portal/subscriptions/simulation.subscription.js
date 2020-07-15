@@ -1,5 +1,5 @@
 const rollbar = require('rollbar');
-const LoansApplicationModel = require('portal/models/mg/LoansApplication');
+const LoansApplicationModel = require('portal/models/loansApplication.model');
 
 const simulationSave = async (message) => {
   try {

@@ -1,8 +1,8 @@
 const rollbar = require('rollbar.js');
 // const socket = require('socket.io');
 
-const AuctionParticipantsModel = require('portal/models/mg/AuctionParticipants');
-const LoansApplicationModel = require('portal/models/mg/LoansApplication');
+const AuctionParticipantsModel = require('portal/models/auctionParticipant.model');
+const LoansApplicationModel = require('portal/models/loansApplication.model');
 
 const parseMessage = (message) => JSON.parse(message.data.toString());
 

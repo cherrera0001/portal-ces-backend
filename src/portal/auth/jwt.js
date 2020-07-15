@@ -1,5 +1,5 @@
 const { sign, verify } = require('jsonwebtoken');
-const { UsersModel } = require('portal/helpers/modelsExport');
+const UsersModel = require('portal/models/user.model');
 
 const { JWT_SECRET } = process.env;
 

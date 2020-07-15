@@ -1,6 +1,6 @@
 const { ApolloError } = require('apollo-server-express');
 const bcrypt = require('bcryptjs');
-const { UsersModel } = require('portal/helpers/modelsExport');
+const UsersModel = require('portal/models/user.model');
 const { setTokens } = require('portal/auth');
 
 module.exports = async ({ data: { email, password }, rollbar }) => {

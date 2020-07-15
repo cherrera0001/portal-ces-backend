@@ -1,5 +1,5 @@
 const { ApolloError } = require('apollo-server-express');
-const AuctionParticipantsModel = require('portal/models/mg/AuctionParticipants');
+const AuctionParticipantsModel = require('portal/models/auctionParticipant.model');
 
 module.exports = async ({ data, rollbar }) => {
   try {
