@@ -1,7 +1,7 @@
 const axios = require('axios');
 const path = require('path');
 const { ApolloError } = require('apollo-server-express');
-const { ConfigModel } = require('portal/helpers/modelsExport');
+const ConfigModel = require('portal/models/config.model');
 const { PATH_CORE_ENDPOINT_ALFRESCO } = require('portal/core.services');
 const headers = require('portal/helpers/headers');
 

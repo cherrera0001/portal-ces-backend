@@ -1,4 +1,4 @@
-const Param = require('portal/models/mg/CoreParams');
+const Param = require('portal/models/coreParams.model');
 const aqp = require('api-query-params');
 
 const all = async (req, res) => {

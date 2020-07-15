@@ -1,12 +1,9 @@
 const mongoose = require('mongoose');
 const rollbar = require('rollbar');
 
-const { NODE_ENV, MONGO_COMMAND, MONGO_USERNAME, MONGO_PASSWORD, MONGO_HOST, MONGO_DB } = process.env;
-
 const connectDB = async () => {
   try {
-    const MONGO_URI = `${MONGO_COMMAND}${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}/${MONGO_DB}_${NODE_ENV}`;
-    mongoose.connect(`${MONGO_URI}?retryWrites=true&w=majority`, {
+    mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,

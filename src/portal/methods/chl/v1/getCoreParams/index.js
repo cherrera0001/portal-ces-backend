@@ -1,4 +1,4 @@
-const { CoreParamsModel } = require('portal/helpers/modelsExport');
+const CoreParamsModel = require('portal/models/coreParams.model');
 
 module.exports = async ({ data, rollbar }) => {
   try {

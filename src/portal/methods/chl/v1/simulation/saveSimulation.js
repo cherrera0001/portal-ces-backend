@@ -2,7 +2,7 @@ const axios = require('axios');
 const { ApolloError } = require('apollo-server-express');
 const headers = require('portal/helpers/headers');
 const { PATH_ENDPOINT_SAVE_SIMULATION } = require('portal/core.services');
-const Simulation = require('portal/models/mg/Simulation');
+const Simulation = require('portal/models/simulation.model');
 
 const { CORE_URL } = process.env;
 

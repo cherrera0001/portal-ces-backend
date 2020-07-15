@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { CoreParamsModel } = require('portal/helpers/modelsExport');
+const CoreParamsModel = require('portal/models/coreParams.model');
 const headers = require('portal/helpers/headers');
 const { PATH_ENDPOINT_CORE_PARAMS } = require('portal/core.services');
 
