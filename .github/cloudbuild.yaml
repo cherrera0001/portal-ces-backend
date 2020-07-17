@@ -2,6 +2,7 @@
   steps:
     - args:
         - build
+        - '-t'
         - gcr.io/${_GCP_PROJECT}/portal-backend-${_DEPLOY_IMG}
         - '.'
       name: 'gcr.io/cloud-builders/docker'
