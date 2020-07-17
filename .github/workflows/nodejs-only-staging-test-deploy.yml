@@ -62,4 +62,4 @@ jobs:
       JWT_SECRET: ${{ secrets.JWT_SECRET_STAGING }}
       CORE_URL: ${{ secrets.CORE_URL_STAGING }}
       API_KEY_PORTAL: ${{ secrets.API_KEY_PORTAL_STAGING }}
-      GCP_PROJECT: ${{ secrets.GCP_PROJECT_STAGING }}
+      GCP_PROJECT_STAGING: ${{ secrets.GCP_PROJECT_STAGING }}
