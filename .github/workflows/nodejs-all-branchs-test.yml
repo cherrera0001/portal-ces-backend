@@ -11,11 +11,6 @@ on:
 jobs:
   build_and_test:
     runs-on: ubuntu-latest
-
-    services:
-      mongo:
-        image: mongo:latest
-
     steps:
       - name: Git checkout
         uses: actions/checkout@v2
@@ -30,21 +25,14 @@ jobs:
         with:
           node-version: 12.x
 
-      - run: sh mongo-init.sh
       - run: npm install
+      - run: npm run fixtures
       - run: npm run test
-env:
-  CI: true
-  NODE_ENV: test
-  PORT: 8085
-  SERVER_HOST: 127.0.0.1
-  MONGO_INITDB_DATABASE: admin
-  MONGO_INITDB_ROOT_USERNAME: root
-  MONGO_INITDB_ROOT_PASSWORD: pass
-  MONGO_DB: amicar
-  MONGO_COMMAND: mongodb://
-  MONGO_HOST: localhost:27017
-  MONGO_USERNAME: root
-  MONGO_PASSWORD: pass
-  ACTIONS_RUNNER_DEBUG: true
-  TERM: xterm
+    env:
+      CI: true
+      NODE_ENV: test
+      PORT: 8085
+      SERVER_HOST: 127.0.0.1
+      MONGO_URI: mongodb://localhost:27017/amicar_test
+      ACTIONS_RUNNER_DEBUG: true
+      TERM: xterm
