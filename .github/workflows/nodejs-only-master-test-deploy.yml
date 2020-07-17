@@ -11,11 +11,6 @@ on:
 jobs:
   build_and_test:
     runs-on: ubuntu-latest
-
-    services:
-      mongo:
-        image: mongo:latest
-
     steps:
       - name: Git checkout
         uses: actions/checkout@v2
@@ -30,22 +25,15 @@ jobs:
         with:
           node-version: 12.x
 
-      - run: sh mongo-init.sh
       - run: npm install
+      - run: npm run fixtures
       - run: npm run test
     env:
       CI: true
       NODE_ENV: test
       PORT: 8085
       SERVER_HOST: 127.0.0.1
-      MONGO_INITDB_DATABASE: admin
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: pass
-      MONGO_DB: amicar
-      MONGO_COMMAND: mongodb://
-      MONGO_HOST: localhost:27017
-      MONGO_USERNAME: root
-      MONGO_PASSWORD: pass
+      MONGO_URI: mongodb://localhost:27017/amicar_test
       ACTIONS_RUNNER_DEBUG: true
       TERM: xterm
   deploy_master:
@@ -69,15 +57,8 @@ jobs:
     env:
       CI: true
       NODE_ENV: production
-      MONGO_INITDB_DATABASE: admin
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: pass
-      MONGO_DB: amicar
-      MONGO_COMMAND: mongodb+srv://
-      MONGO_USERNAME: ${{ secrets.MONGO_USERNAME_STAGING }}
-      MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD_STAGING }}
-      MONGO_HOST: ${{ secrets.MONGO_HOST_STAGING }}
-      ROLLBAR_TOKEN: ${{ secrets.ROLLBAR_TOKEN_STAGING }}
-      JWT_SECRET: ${{ secrets.JWT_SECRET_STAGING }}
-      CORE_URL: ${{ secrets.CORE_URL_STAGING }}
-      API_KEY_PORTAL: ${{ secrets.API_KEY_PORTAL_STAGING }}
+      MONGO_URI: ${{ secrets.MONGO_URI_PRODUCTION }}
+      ROLLBAR_TOKEN: ${{ secrets.ROLLBAR_TOKEN_PRODUCTION }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET_PRODUCTION }}
+      CORE_URL: ${{ secrets.CORE_URL_PRODUCTION }}
+      API_KEY_PORTAL: ${{ secrets.API_KEY_PORTAL_PRODUCTION }}

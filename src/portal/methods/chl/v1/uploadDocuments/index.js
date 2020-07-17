@@ -1,22 +1,17 @@
-const axios = require('axios');
 const path = require('path');
+const HTTP = require('requests');
 const { ApolloError } = require('apollo-server-express');
 const ConfigModel = require('portal/models/config.model');
 const { PATH_CORE_ENDPOINT_ALFRESCO } = require('portal/core.services');
-const headers = require('portal/helpers/headers');
 
 const { CORE_URL } = process.env;
 
 const uploadDocuments = async (loanApplicationId, checklistId, files) => {
-  const response = await axios.post(
-    `${CORE_URL}${PATH_CORE_ENDPOINT_ALFRESCO}`,
-    {
-      loanSimulationDataId: loanApplicationId,
-      checklistId,
-      files,
-    },
-    { headers },
-  );
+  const response = await HTTP.post(`${CORE_URL}${PATH_CORE_ENDPOINT_ALFRESCO}`, {
+    loanSimulationDataId: loanApplicationId,
+    checklistId,
+    files,
+  });
   if (response.status !== 200) {
     throw new Error(`${__dirname}/uploadDocuments::ERROR`);
   }

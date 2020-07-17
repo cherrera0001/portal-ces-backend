@@ -2,10 +2,9 @@
   "scripts": {
     "test": "NODE_PATH=./src nyc --check-coverage --lines 60 --branches 10 --statements 40 --functions 20 --reporter=lcov --reporter=text-summary node ./node_modules/.bin/_mocha --timeout 12000 --exit ./test/**/**/*.test.js",
     "start": "NODE_PATH=./src DEBUG='app, route, mongo' node src/index.js",
-    "prestart": "npm run fixtures",
-    "predev": "npm run fixtures",
-    "dev": "NODE_PATH=./src DEBUG='app, route, mongo' nodemon src/index.js",
-    "fixtures": "NODE_PATH=./src node src/fixtures/index.js"
+    "dev": "npm run fixtures && NODE_PATH=./src DEBUG='app, route, mongo' nodemon src/index.js",
+    "fixtures": "NODE_PATH=./src node src/fixtures/index.js",
+    "prestart": "npm run fixtures"
   },
   "husky": {
     "hooks": {

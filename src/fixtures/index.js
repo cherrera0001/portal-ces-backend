@@ -31,7 +31,7 @@ require('mongo')();
       sellerIdentificationValue: '112223339',
       amicarExecutiveIdentificationValue: '156681911',
     },
-    { upsert: true },
+    { upsert: true, useFindAndModify: false },
   );
   // AUCTIONS PARTICIPANTS
   await AuctionParticipant.findOneAndUpdate(
@@ -94,6 +94,8 @@ require('mongo')();
         },
       ],
     },
-    { upsert: true },
+    { upsert: true, useFindAndModify: false },
   );
+  console.log('end');
+  process.exit(0);
 })();
