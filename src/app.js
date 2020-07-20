@@ -8,7 +8,7 @@ const morgan = require('morgan');
 
 dotenv.config();
 
-const rollbar = require('rollbar.js');
+const rollbar = require('./rollbar');
 
 rollbar.log('Server Loaded!');
 

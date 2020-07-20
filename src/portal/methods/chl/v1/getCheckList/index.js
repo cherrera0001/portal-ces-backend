@@ -1,28 +1,27 @@
-const axios = require('axios');
 const { ApolloError } = require('apollo-server-express');
-const { LoansModel } = require('portal/helpers/modelsExport');
-const { getCheckListQuery } = require('portal/graphQL/queries/getCheckList');
-const { PATH_CORE_ENDPOINT_GQL } = require('portal/core.services');
-
-const { CORE_URL } = process.env;
-
-const getCheckList = async (loanId) => {
-  return axios({
-    method: 'post',
-    url: `${CORE_URL}${PATH_CORE_ENDPOINT_GQL}`,
-    data: getCheckListQuery(loanId),
-  });
-};
+const AuctionParticipantsModel = require('portal/models/auctionParticipant.model');
 
 module.exports = async ({ data, rollbar }) => {
   try {
-    if (!data.loanId) throw new Error('MISSING_LOAN_ID');
-    const { loanId } = data;
-    // const response = await getCheckList(loanId);
-    // const loan = await new LoansModel(response);
-    // loan.save();
-    const loan = await LoansModel.findOne({ loanId });
-    return loan;
+    if (!data.loanApplicationId) throw new Error('MISSING_LOAN_ID');
+    const { loanApplicationId } = data;
+    const loan = await AuctionParticipantsModel.findOne({ loanApplicationId });
+    if (!loan) throw new Error('LOAN_ID_NOT_FOUND');
+    const winner = loan.auctionParticipants.find((el) => el.status === 'WINNER');
+    if (!winner) throw new Error('WINNER_NOT_FOUND');
+    if (!winner.Checklists) throw new Error('WINNER_CHECKLISTS_NOT_FOUND');
+
+    return {
+      financingEntityId: winner.FinancingEntity.id,
+      checklistId: winner.Checklists[0].id,
+      checklistError: winner.Checklists[0].comments,
+      checklist: winner.Checklists[0].ChecklistItems.map((item) => ({
+        id: item.id,
+        name: item.CoreParam.name,
+        value: item.value,
+        step: item.status,
+      })),
+    };
   } catch (err) {
     rollbar.log(`src/methods/chl/v1/getCheckList/index::ERROR: ${err.message}`);
     if (err.message === 'MISSING_LOAN_ID') throw new ApolloError('Missing loanId field.', 'MISSING_LOAN_ID');

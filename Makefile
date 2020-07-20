@@ -3,14 +3,11 @@ SHELL := /bin/bash
 all: build run
 
 run: build
-	docker-compose run app npm i
-	migrate-mongo up
-	docker-compose up --remove-orphans
+	docker-compose up
 build: .built
 
 .built: Dockerfile
 	docker-compose build
-	touch .built
 
 stop:
 	docker-compose stop
@@ -19,7 +16,8 @@ restart: build
 	docker-compose restart app
 
 clean: stop
-	rm -rf .mongo-volume
+	docker-compose down
+	docker volume rm portal-ces-backend_db
 	rm -f tmp/pids/*
 	rm -f .bundled
 	docker-compose rm -f

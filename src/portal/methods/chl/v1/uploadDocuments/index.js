@@ -1,30 +1,28 @@
-const axios = require('axios');
+const path = require('path');
+const HTTP = require('requests');
 const { ApolloError } = require('apollo-server-express');
-const { LoansModel, ConfigModel } = require('portal/helpers/modelsExport');
+const ConfigModel = require('portal/models/config.model');
 const { PATH_CORE_ENDPOINT_ALFRESCO } = require('portal/core.services');
 
 const { CORE_URL } = process.env;
 
-const uploadDocument = async (loanId, file, fileName, documentType) => {
-  const response = await axios({
-    method: 'post',
-    url: `${CORE_URL}${PATH_CORE_ENDPOINT_ALFRESCO}`,
-    data: {
-      loanId,
-      file,
-      fileName,
-      documentType,
-    },
+const uploadDocuments = async (loanApplicationId, checklistId, files) => {
+  const response = await HTTP.post(`${CORE_URL}${PATH_CORE_ENDPOINT_ALFRESCO}`, {
+    loanSimulationDataId: loanApplicationId,
+    checklistId,
+    files,
   });
   if (response.status !== 200) {
-    throw new Error(`${__dirname}/uploadDocument::ERROR`);
+    throw new Error(`${__dirname}/uploadDocuments::ERROR`);
   }
+  return response;
 };
 
 module.exports = async ({ data, rollbar }) => {
   try {
-    const { files, loanId, documentSetId, documentType } = data;
+    const { loanApplicationId, checklistId, files, checklistItemId } = data;
     const config = await ConfigModel.findOne();
+    const filesToUpload = [];
     if (!config) throw new Error('CONFIG_NOT_FOUND');
 
     for await (const fileStream of files) {
@@ -43,21 +41,19 @@ module.exports = async ({ data, rollbar }) => {
       );
 
       const file = Buffer.concat(chunks);
-
       if (file.byteLength >= config.maxFileSizeInKB) throw new Error('INCORRECT_FILE_SIZE');
-
-      // await uploadDocument(loanId, file.toString('base64'), filename, documentType);
-
-      const loan = await LoansModel.findOne({ loanId, 'checkList.id': documentSetId });
-      loan.checkList.forEach((document) => {
-        if (document.id === documentSetId) {
-          document.wasSent = true;
-          document.step = 1;
-        }
+      filesToUpload.push({
+        file: file.toString('base64'),
+        fileExtension: path
+          .extname(filename)
+          .split('.')
+          .join(''),
+        checklistItemId,
       });
-      loan.save();
-      return loan;
     }
+
+    const response = await uploadDocuments(loanApplicationId, checklistId, filesToUpload);
+    return response.status === 200;
   } catch (err) {
     if (err.message === 'INCORRECT_FILE_TYPE')
       throw new ApolloError('Incorrect file type. Must be one of: jpeg, jpg, png, pdf', 'INCORRECT_FILE_TYPE');

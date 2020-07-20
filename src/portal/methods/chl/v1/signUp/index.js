@@ -1,6 +1,6 @@
 const { ApolloError } = require('apollo-server-express');
 const bcrypt = require('bcryptjs');
-const { UsersModel } = require('portal/helpers/modelsExport');
+const UsersModel = require('portal/models/user.model');
 const { setTokens } = require('portal/auth');
 
 const PASSWORD_REGEX = /(?=.*d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
