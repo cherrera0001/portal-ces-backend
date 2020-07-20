@@ -101,7 +101,6 @@ require('mongo')();
     { upsert: true, useFindAndModify: false },
   );
 
-  updateCoreParams();
-  console.log('end');
+  await updateCoreParams();
   process.exit(0);
 })();
