@@ -102,13 +102,26 @@ input TradeInCarInput {
   additionalDescription: String
 }
 
+input VfgInput {
+  beginningBalance: Int
+  cumulativeInterest: Int
+  daysBetweenExpirationsDates: Int
+  endingBalance: Int
+  expirationDate: String
+  interest: Int
+  payment: Int
+  paymentNumber: Int
+  principal: Int
+  quotaType: String
+}
+
 input SelectedScenarioInput {
   surchargesAndInsurances: SurchargesAndInsurancesInput
   loanType: String
   monthlyPayment: Float
   term: Int
   customerRate: Float
-  vfg: Float
+  vfg: VfgInput
   totalLoanCost: Float
   cae: Float
 }

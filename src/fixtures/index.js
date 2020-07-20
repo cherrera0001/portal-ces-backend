@@ -2,6 +2,7 @@ require('dotenv').config();
 const User = require('portal/models/user.model');
 const Config = require('portal/models/config.model');
 const AuctionParticipant = require('portal/models/auctionParticipant.model');
+const updateCoreParams = require('portal/methods/chl/v1/updateCoreParams');
 require('mongo')();
 
 (async () => {
@@ -99,6 +100,7 @@ require('mongo')();
     },
     { upsert: true, useFindAndModify: false },
   );
-  console.log('end');
+
+  await updateCoreParams();
   process.exit(0);
 })();
