@@ -17,7 +17,6 @@ restart: build
 
 clean: stop
 	docker-compose down
-	docker volume rm portal-ces-backend_db
 	rm -f tmp/pids/*
 	rm -f .bundled
 	docker-compose rm -f

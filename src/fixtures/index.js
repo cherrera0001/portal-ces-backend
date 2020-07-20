@@ -99,6 +99,6 @@ require('mongo')();
     },
     { upsert: true, useFindAndModify: false },
   );
-  console.log('end');
+
   process.exit(0);
 })();
