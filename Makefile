@@ -16,7 +16,8 @@ restart: build
 	docker-compose restart app
 
 clean: stop
-	rm -rf .mongo-volume
+	docker-compose down
+	docker volume rm portal-ces-backend_db
 	rm -f tmp/pids/*
 	rm -f .bundled
 	docker-compose rm -f

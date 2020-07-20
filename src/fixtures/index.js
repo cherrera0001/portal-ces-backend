@@ -62,6 +62,7 @@ require('mongo')();
                   id: 16,
                   coreParamId: 646,
                   value: null,
+                  status: 0,
                   folderPath: null,
                   uuid: null,
                   CoreParam: {
@@ -71,6 +72,7 @@ require('mongo')();
                 {
                   id: 17,
                   coreParamId: 647,
+                  status: 0,
                   value: null,
                   folderPath: null,
                   uuid: null,
@@ -81,6 +83,7 @@ require('mongo')();
                 {
                   id: 18,
                   coreParamId: 659,
+                  status: 0,
                   value: 'Certificado residencia junta vecinal',
                   folderPath: null,
                   uuid: null,
