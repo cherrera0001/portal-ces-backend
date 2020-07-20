@@ -1,6 +1,7 @@
 const aqp = require('api-query-params');
-const LoansApplicationFE = require('portal/models/mg/LoansApplicationFE');
-const LoansApplication = require('portal/models/mg/LoansApplication');
+const LoansApplicationFE = require('portal/models/loansApplicationFE.model');
+const LoansApplication = require('portal/models/loansApplication.model');
+
 const errors = require('portal/errors');
 
 const create = async (req, res) => {
