@@ -22,4 +22,6 @@ exports.create = Joi.object().keys({
   surchargesAndInsurances: Joi.array(),
   loanSimulationCar: Joi.object(),
   customerActivity: Joi.object(),
+  simulationId: Joi.number().optional(),
+  status: Joi.string().optional(),
 });
