@@ -15,7 +15,8 @@ const pubSub = require('pubSub');
 const auctionSubscriptionHandler = require('portal/subscriptions/auction.subscription');
 const simulationSubscriptionHandler = require('portal/subscriptions/simulation.subscription');
 
-require('mongo')();
+require('mongoPortal')();
+require('mongoEficar')();
 
 const { PORT, NODE_ENV } = process.env;
 const apiPort = PORT || 8085;
