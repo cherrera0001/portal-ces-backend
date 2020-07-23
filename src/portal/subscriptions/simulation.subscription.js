@@ -1,25 +1,45 @@
 const rollbar = require('rollbar');
-const LoansApplicationModel = require('portal/models/loansApplication.model');
+const LoansApplication = require('portal/models/loansApplication.model');
+
+const formatLoanApplication = (incomeData) => {
+  const loanType = incomeData.loanSimulationData.LoanType.cod;
+  const vfg =
+    loanType === 'SMART' ? incomeData.amortizationSchedule.find((schedule) => schedule.quotaType === 'SMART') : null;
+  const formatedPower = {
+    ...incomeData,
+    loan: {
+      ...incomeData.loanSimulationData,
+      rateType: incomeData.loanSimulationData.Rate.RateType.cod,
+      cae: incomeData.loanSimulationData.annualCAE,
+      loanType,
+      vfg,
+    },
+    vehicleData: {
+      brandName: incomeData.loanSimulationCar.carBrandDescription,
+      modelName: incomeData.loanSimulationCar.carModelDescription,
+      version: incomeData.loanSimulationCar.carVersion,
+      year: incomeData.loanSimulationCar.year,
+    },
+    simulationId: incomeData.loanSimulationData.id,
+  };
+  return formatedPower;
+};
 
 const simulationSave = async (message) => {
   try {
     const incomeData = JSON.parse(message.data.toString());
-    console.log(`>>>>>> simulationSave incoming message for (${incomeData.loanSimulationData.id}) simulation <<<<<<`);
-    let simulationObject;
-    simulationObject = await LoansApplicationModel.findOne({
-      simulationId: +incomeData.loanSimulationData.id,
+    const { loanSimulationData } = incomeData;
+    console.log(`>>>>>> simulationSave incoming message for (${loanSimulationData.id}) simulation <<<<<<`);
+    let simulationObject = await LoansApplication.findOne({
+      simulationId: +loanSimulationData.id,
     });
     if (simulationObject) {
-      for (const key of Object.keys(incomeData)) {
-        simulationObject[key] = incomeData[key];
-      }
-      simulationObject.status = incomeData.loanSimulationData.status;
+      if (simulationObject.externalIds.includes(loanSimulationData.externalId)) return;
+      simulationObject.externalIds.push(loanSimulationData.externalId);
+      simulationObject = formatLoanApplication(incomeData, simulationObject.externalIds);
     } else {
-      simulationObject = new LoansApplicationModel({
-        ...incomeData,
-        status: incomeData.loanSimulationData.status,
-        simulationId: incomeData.loanSimulationData.id,
-      });
+      const loanApplication = formatLoanApplication(incomeData, [incomeData.loanSimulationData.externalId]);
+      simulationObject = new LoansApplication(loanApplication);
     }
     await simulationObject.save();
     message.ack();
