@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoEficar')();
+
 const schema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   loanSimulationData: {

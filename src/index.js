@@ -12,7 +12,8 @@ const schemaDef = require('portal/helpers/gqlSchemasExport');
 const rollbar = require('rollbar');
 const { permissions, getUser } = require('portal/auth');
 
-require('mongo')();
+require('mongoPortal')();
+require('mongoEficar')();
 
 const { PORT, NODE_ENV } = process.env;
 const apiPort = PORT || 8085;
