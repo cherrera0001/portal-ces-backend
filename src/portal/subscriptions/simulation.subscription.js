@@ -1,83 +1,103 @@
 const rollbar = require('rollbar');
 const LoansApplication = require('portal/models/loansApplication.model');
 
+const getExternalCode = (coreParam) => {
+  return coreParam ? coreParam.externalCode : '';
+};
+
 const formatLoanApplication = (incomeData) => {
-  const loanType = incomeData.loanSimulationData.LoanType.cod;
-  const vfg =
-    loanType === 'SMART' ? incomeData.amortizationSchedule.find((schedule) => schedule.quotaType === 'SMART') : null;
+  const {
+    // customer,
+    customerRequestData,
+    customerActivity,
+    spouseData,
+    buyForAnother,
+    guarantor,
+    bankInformation,
+    heritage,
+    personalReferences,
+    loanSimulationData,
+    loanSimulationCar,
+    amortizationSchedule,
+  } = incomeData;
+  const loanType = loanSimulationData.LoanType.cod;
+  const vfg = loanType === 'SMART' ? amortizationSchedule.find((schedule) => schedule.quotaType === 'SMART') : null;
+
   const formatedPower = {
     ...incomeData,
-    customer: {
-      ...incomeData.customer,
-      nationality: incomeData.customer.nationality.externalCode,
-      geographicDataId: incomeData.customer.geographicDataId.externalCode,
-      gender: incomeData.customer.gender.externalCode,
-    },
     customerRequestData: {
-      ...incomeData.customerRequestData,
-      maritalStatus: incomeData.customerRequestData.maritalStatus.externalCode,
-      maritalRegime: incomeData.customerRequestData.maritalRegime.externalCode,
-      academicLevel: incomeData.customerRequestData.academicLevel.externalCode,
-      livingHousehold: incomeData.customerRequestData.livingHousehold.externalCode,
+      ...customerRequestData,
+      maritalStatus: getExternalCode(customerRequestData.maritalStatus),
+      maritalRegime: getExternalCode(customerRequestData.maritalRegime),
+      academicLevel: getExternalCode(customerRequestData.academicLevel),
+      livingHousehold: getExternalCode(customerRequestData.livingHousehold),
     },
     customerActivity: {
-      ...incomeData.customerActivity,
-      workType: incomeData.customerActivity.workType.externalCode,
-      activityTypeId: incomeData.customerActivity.activityTypeId.externalCode,
-      businessSectorId: incomeData.customerActivity.businessSectorId.externalCode,
-      workGeographicDataId: incomeData.customerActivity.workGeographicDataId.externalCode,
-      employmentContractType: incomeData.customerActivity.employmentContractType.externalCode,
-      salaryType: incomeData.customerActivity.salaryType.externalCode,
+      ...customerActivity,
+      workType: getExternalCode(customerActivity.workType),
+      // activityTypeId: getExternalCode(customerActivity.activityTypeId),
+      // businessSectorId: getExternalCode(customerActivity.businessSectorId),
+      // workGeographicDataId: getExternalCode(customerActivity.workGeographicDataId),
+      employmentContractType: getExternalCode(customerActivity.employmentContractType),
+      salaryType: getExternalCode(customerActivity.salaryType),
     },
     spouseData: {
-      ...incomeData.spouseData,
-      spouseGeographicDataId: incomeData.spouseData.spouseGeographicDataId.externalCode,
-      workType: incomeData.spouseData.workType.externalCode,
-      activityTypeId: incomeData.spouseData.activityTypeId.externalCode,
+      ...spouseData,
+      // spouseGeographicDataId: getExternalCode(spouseData.spouseGeographicDataId),
+      workType: getExternalCode(spouseData.workType),
+      // activityTypeId: getExternalCode(spouseData.activityTypeId),
     },
     buyForAnother: {
-      ...incomeData.buyForAnother,
-      geographicDataId: incomeData.buyForAnother.geographicDataId.externalCode,
-      nationalityId: incomeData.buyForAnother.nationalityId.externalCode,
-      maritalStatus: incomeData.buyForAnother.maritalStatus.externalCode,
-      maritalRegime: incomeData.buyForAnother.maritalRegime.externalCode,
+      ...buyForAnother,
+      // geographicDataId: getExternalCode(buyForAnother.geographicDataId),
+      // nationalityId: getExternalCode(buyForAnother.nationalityId),
+      // maritalStatus: getExternalCode(buyForAnother.maritalStatus),
+      // maritalRegime: getExternalCode(buyForAnother.maritalRegime),
     },
-    // guarantor: {
-    //   ...incomeData.guarantor,
-    //   geographicDataId: incomeData.guarantor.geographicDataId.externalCode,
-    //   nationalityId: incomeData.guarantor.nationalityId.externalCode,
-    //   maritalStatus: incomeData.guarantor.maritalStatus.externalCode,
-    //   maritalRegime: incomeData.guarantor.maritalRegime.externalCode,
-    //   workType: incomeData.guarantor.workType.externalCode,
-    //   activityTypeId: incomeData.guarantor.activityTypeId.externalCode,
-    // },
-    // bankInformation: {
-    //   ...incomeData.bankInformation,
-    //   codeId: incomeData.bankInformation.codeId.externalCode,
-    // },
-    heritage: {
-      ...incomeData.heritage,
-      // financing: incomeData.heritage ? incomeData.heritage.financing.externalCode,
-      type: incomeData.heritage.type.externalCode,
-    },
-    // personalReferences: {
-    //   ...incomeData.personalReferences,
-    //   type: incomeData.personalReferences.type.externalCode,
-    // },
+    guarantor: guarantor.length
+      ? guarantor.map((el) => ({
+          ...el,
+          // geographicDataId: getExternalCode(el.geographicDataId),
+          // nationalityId: getExternalCode(el.nationalityId),
+          maritalStatus: getExternalCode(el.maritalStatus),
+          maritalRegime: getExternalCode(el.maritalRegime),
+          workType: getExternalCode(el.workType),
+          // activityTypeId: getExternalCode(el.activityTypeId),
+        }))
+      : [],
+    bankInformation: bankInformation.length
+      ? bankInformation.map((el) => ({
+          ...el,
+          // codeId: getExternalCode(bankInformation.codeId),
+        }))
+      : [],
+    heritage: heritage.length
+      ? heritage.map((el) => ({
+          ...el,
+          // financing: getExternalCode(heritage.financing),
+          type: getExternalCode(heritage.type),
+        }))
+      : [],
+    personalReferences: personalReferences.length
+      ? personalReferences.map((el) => ({
+          ...el,
+          // type: getExternalCode(personalReferences.type),
+        }))
+      : [],
     loan: {
-      ...incomeData.loanSimulationData,
-      rateType: incomeData.loanSimulationData.Rate.RateType.cod,
-      cae: incomeData.loanSimulationData.annualCAE,
+      ...loanSimulationData,
+      rateType: loanSimulationData.Rate.RateType.cod,
+      cae: loanSimulationData.annualCAE,
       loanType,
       vfg,
     },
     vehicleData: {
-      brandName: incomeData.loanSimulationCar.carBrandDescription,
-      modelName: incomeData.loanSimulationCar.carModelDescription,
-      version: incomeData.loanSimulationCar.carVersion,
-      year: incomeData.loanSimulationCar.year,
+      brandName: loanSimulationCar.carBrandDescription,
+      modelName: loanSimulationCar.carModelDescription,
+      version: loanSimulationCar.carVersion,
+      year: loanSimulationCar.year,
     },
-    simulationId: incomeData.loanSimulationData.id,
+    simulationId: loanSimulationData.id,
   };
   return formatedPower;
 };
