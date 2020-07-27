@@ -5,9 +5,8 @@ const getExternalCode = (coreParam) => {
   return coreParam ? coreParam.externalCode : '';
 };
 
-const formatLoanApplication = (incomeData) => {
+const formatLoanApplication = (incomeData, externalIds) => {
   const {
-    // customer,
     customerRequestData,
     customerActivity,
     spouseData,
@@ -98,6 +97,7 @@ const formatLoanApplication = (incomeData) => {
       year: loanSimulationCar.year,
     },
     simulationId: loanSimulationData.id,
+    externalIds,
   };
   return formatedPower;
 };
@@ -113,7 +113,7 @@ const simulationSave = async (message) => {
     if (simulationObject) {
       if (simulationObject.externalIds.includes(loanSimulationData.externalId)) return;
       simulationObject.externalIds.push(loanSimulationData.externalId);
-      simulationObject = formatLoanApplication(incomeData, simulationObject.externalIds);
+      simulationObject.update(formatLoanApplication(incomeData, simulationObject.externalIds));
     } else {
       const loanApplication = formatLoanApplication(incomeData, [incomeData.loanSimulationData.externalId]);
       simulationObject = new LoansApplication(loanApplication);
