@@ -8,7 +8,13 @@ const { CORE_URL } = process.env;
 module.exports = async ({ data, rollbar }) => {
   try {
     const { simulation } = data;
-    const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_SAVE_SIMULATION}`, simulation);
+    const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_SAVE_SIMULATION}`, {
+      ...simulation,
+      loan: {
+        ...simulation.loan,
+        rateType: simulation.selectedScenario.rateType.externalCode,
+      },
+    });
     if (response.status !== 200) {
       throw new ApolloError(response.statusText, 'ERROR_SAVING_SIMULATION');
     }
@@ -19,7 +25,14 @@ module.exports = async ({ data, rollbar }) => {
         identificationValue: simulation.customer.rut,
       },
       simulationId: response.data.simulationId,
-      loan: { ...simulation.loan, ...simulation.selectedScenario },
+      loan: {
+        ...simulation.loan,
+        ...simulation.selectedScenario,
+        rateType: {
+          description: simulation.selectedScenario.rateType.name,
+          cod: simulation.selectedScenario.rateType.externalCode,
+        },
+      },
       vehicleData: simulation.vehicle,
       externalIds: [simulation.transactionId],
     });

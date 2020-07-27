@@ -157,7 +157,10 @@ const schema = new mongoose.Schema({
   },
   loan: {
     loanType: { type: String, default: '' },
-    rateType: { type: String, default: '' },
+    rateType: {
+      description: { type: String, default: '' },
+      cod: { type: String, default: '' },
+    },
     cae: { type: Number, default: 0 },
     customerRate: { type: Number, default: 0 },
     monthlyPayment: { type: Number, default: 0 },

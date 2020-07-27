@@ -85,7 +85,7 @@ const formatLoanApplication = (incomeData, externalIds) => {
       : [],
     loan: {
       ...loanSimulationData,
-      rateType: loanSimulationData.Rate.RateType.cod,
+      rateType: loanSimulationData.Rate.RateType,
       cae: loanSimulationData.annualCAE,
       loanType,
       vfg,

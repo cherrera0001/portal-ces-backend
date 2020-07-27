@@ -21,6 +21,24 @@ input ModifyTerm {
   payment: Int
 }
 
+input RateTypeInput {
+  id: Int
+  parentId: Int
+  externalCode: String
+  name: String
+  cod: String
+  description: String
+}
+
+type RateType {
+  id: Int
+  parentId: Int
+  externalCode: String
+  name: String
+  cod: String
+  description: String
+}
+
 input Loan {
   downPayment: Int
   balance: Int
@@ -29,7 +47,7 @@ input Loan {
   startDate: String
   firstDueDate: String
   financingEntity: String
-  rateType: String
+  rateType: RateTypeInput
   saleChannel: String
   saleChannelType: String
   salesRoomId: Int
@@ -118,6 +136,7 @@ input VfgInput {
 input SelectedScenarioInput {
   surchargesAndInsurances: SurchargesAndInsurancesInput
   loanType: String
+  rateType: RateTypeInput
   monthlyPayment: Float
   term: Int
   customerRate: Float
@@ -140,6 +159,7 @@ input Simulation {
 
 type FinalLoanValues {
   loanType: String
+  rateType: RateType
   term: Int
   balance: Int
   UFValue: Float
