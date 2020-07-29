@@ -7,7 +7,7 @@ const { CORE_URL } = process.env;
 module.exports = async () => {
   try {
     const response = await HTTP.get(`${CORE_URL}${PATH_ENDPOINT_CORE_PARAMS}`);
-    await CoreParamsModel.remove();
+    await CoreParamsModel.deleteMany();
     await CoreParamsModel.insertMany(response.data);
     return 'done';
   } catch (err) {
