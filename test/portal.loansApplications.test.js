@@ -10,7 +10,7 @@ describe('PORTAL LOANS APPLICATIONS', () => {
     it('Should get a list or a response object', (done) => {
       chai
         .request(server)
-        .get('/portal/loans-applications')
+        .get('/portal/chl/v1/loans-applications')
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
