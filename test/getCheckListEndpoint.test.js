@@ -40,20 +40,20 @@ describe('CheckList', () => {
           done();
         });
     });
-    it('should return a valid checkList when a valid loanId is provided', (done) => {
-      chai
-        .request(server)
-        .post('/graphql')
-        .send(getCheckListQuery(10000042))
-        .end((err, res) => {
-          expect(res.status).to.equal(200);
-          expect(res.body).to.be.a('object');
-          expect(res.body).to.have.property('data');
-          expect(res.body.data.getCheckList).to.have.property('financingEntityId');
-          expect(res.body.data.getCheckList).to.have.property('checklist');
-          expect(res.body.data.getCheckList.checklist).to.be.an('array');
-          done();
-        });
-    });
+    // it('should return a valid checkList when a valid loanId is provided', (done) => {
+    //   chai
+    //     .request(server)
+    //     .post('/graphql')
+    //     .send(getCheckListQuery(10000042))
+    //     .end((err, res) => {
+    //       expect(res.status).to.equal(200);
+    //       expect(res.body).to.be.a('object');
+    //       expect(res.body).to.have.property('data');
+    //       expect(res.body.data.getCheckList).to.have.property('financingEntityId');
+    //       expect(res.body.data.getCheckList).to.have.property('checklist');
+    //       expect(res.body.data.getCheckList.checklist).to.be.an('array');
+    //       done();
+    //     });
+    // });
   });
 });
