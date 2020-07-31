@@ -2,7 +2,8 @@ require('dotenv').config();
 const User = require('portal/models/user.model');
 const Config = require('portal/models/config.model');
 const AuctionParticipant = require('portal/models/auctionParticipant.model');
-require('mongo')();
+require('mongoPortal')();
+require('mongoEficar')();
 
 (async () => {
   // CONFIG
