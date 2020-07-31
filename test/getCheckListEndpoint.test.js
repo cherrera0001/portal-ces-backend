@@ -9,7 +9,7 @@ const getCheckListQuery = (loanApplicationId) => ({
   operationName: 'getCheckList',
   variables: { loanApplicationId },
   query: `
-    query getCheckList($loanApplicationId: Int!) {
+    mutation getCheckList($loanApplicationId: Int!) {
       getCheckList(loanApplicationId: $loanApplicationId) {
         checklistId
         financingEntityId

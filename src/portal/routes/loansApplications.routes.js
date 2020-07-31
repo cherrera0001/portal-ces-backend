@@ -6,6 +6,7 @@ const schema = require('portal/validations/loans-application.validation');
 router.route('').get(controller.all);
 router.route('/:id/status').get(controller.status);
 router.route('/save').post(controller.save);
+router.route('/saveExternal').post(controller.saveExternal);
 router.route('').post(validate(schema.create), controller.create);
 
 module.exports = router;

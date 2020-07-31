@@ -16,11 +16,7 @@ restart: build
 	docker-compose restart app
 
 clean: stop
-	docker-compose down
-	rm -f tmp/pids/*
-	rm -f .bundled
-	docker-compose rm -f
-	rm -f .built
+	docker-compose down -v --rmi all --remove-orphans
 
 test: build
 	docker-compose run -e NODE_ENV=test app npm t
