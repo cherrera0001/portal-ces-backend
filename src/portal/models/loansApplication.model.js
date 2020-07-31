@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoPortal')();
 
 const schema = new mongoose.Schema({
   stage: { type: Number, default: 0 },

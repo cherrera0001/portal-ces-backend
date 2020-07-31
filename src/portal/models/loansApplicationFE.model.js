@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoPortal')();
 
 const schema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },

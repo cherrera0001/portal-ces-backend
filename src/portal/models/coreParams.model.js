@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoPortal')();
 
 const CoreParamsSchema = new mongoose.Schema(
   {
