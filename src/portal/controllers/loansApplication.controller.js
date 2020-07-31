@@ -155,7 +155,7 @@ const saveExternal = async (req, res) => {
       simulationId: +loanSimulationData.id,
     });
     if (simulationObject) {
-      if (simulationObject.externalIds.includes(loanSimulationData.externalId)) return;
+      if (simulationObject.externalIds.includes(loanSimulationData.externalId)) return res.status(200).end();
       simulationObject.externalIds.push(loanSimulationData.externalId);
       simulationObject.update(formatLoanApplication(incomeData, simulationObject.externalIds));
     } else {
