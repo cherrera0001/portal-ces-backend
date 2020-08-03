@@ -1,4 +1,4 @@
-const mongoose = require('mongoPortal')();
+const mongoose = require('mongoose');
 
 const CoreParamsSchema = new mongoose.Schema(
   {
@@ -16,4 +16,5 @@ const CoreParamsSchema = new mongoose.Schema(
   },
 );
 
-module.exports = mongoose.model('CoreParams', CoreParamsSchema);
+const db = mongoose.connection.useDb('portal');
+module.exports = db.model('CoreParams', CoreParamsSchema);

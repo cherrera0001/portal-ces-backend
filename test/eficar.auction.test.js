@@ -22,13 +22,13 @@ describe('EFICAR AUCTIONS', () => {
     it('Should get a 201 Response', (done) => {
       chai
         .request(server)
-        .post('/eficar/chl/v1/auctions/132343234-3')
+        .post('/eficar/chl/v1/auctions/1323432343')
         .send({
           customer: {
             name: 'JhonDoe',
           },
           loanSimulationData: {
-            id: '132343234-3',
+            id: '1323432343',
           },
           customerRequestData: {
             name: 'test',

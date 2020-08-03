@@ -8,7 +8,6 @@ const connectDB = () => {
       useUnifiedTopology: true,
       useCreateIndex: true,
     });
-    return mongoose;
   } catch (err) {
     rollbar.log(`mongoose-connection::ERROR: ${err.message}`);
     throw new Error(err.message);

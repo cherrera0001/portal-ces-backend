@@ -1,4 +1,4 @@
-const mongoose = require('mongoPortal')();
+const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
   stage: { type: Number, default: 0 },
@@ -174,4 +174,5 @@ const schema = new mongoose.Schema({
   externalIds: [{ type: String, required: true }],
 });
 
-module.exports = mongoose.model('LoansApplication', schema, 'loansApplications');
+const db = mongoose.connection.useDb('portal');
+module.exports = db.model('LoansApplication', schema, 'loansApplications');

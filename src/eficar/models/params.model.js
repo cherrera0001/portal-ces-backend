@@ -1,4 +1,4 @@
-const mongoose = require('mongoEficar')();
+const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema(
   {
@@ -16,4 +16,5 @@ const schema = new mongoose.Schema(
   },
 );
 
-module.exports = mongoose.model('Params', schema);
+const db = mongoose.connection.useDb('eficar');
+module.exports = db.model('Params', schema);
