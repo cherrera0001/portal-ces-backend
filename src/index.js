@@ -12,7 +12,7 @@ const schemaDef = require('portal/helpers/gqlSchemasExport');
 const rollbar = require('rollbar');
 const { permissions, getUser } = require('portal/auth');
 
-require('mongoPortal')();
+require('mongoAmices')();
 require('mongoEficar')();
 
 const { PORT, NODE_ENV } = process.env;

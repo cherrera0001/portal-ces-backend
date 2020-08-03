@@ -16,5 +16,5 @@ const schema = new mongoose.Schema(
   },
 );
 
-const db = mongoose.connection.useDb('eficar');
+const db = mongoose.connection.useDb(`eficar_${process.env.NODE_ENV}`);
 module.exports = db.model('Params', schema);

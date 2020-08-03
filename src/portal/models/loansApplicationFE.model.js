@@ -30,5 +30,5 @@ const schema = new mongoose.Schema({
   loansApplication: { type: mongoose.Schema.Types.ObjectId, ref: 'LoansApplication' },
 });
 
-const db = mongoose.connection.useDb('portal');
+const db = mongoose.connection.useDb(`amices_${process.env.NODE_ENV}`);
 module.exports = db.model('LoansApplicationFE', schema, 'loansApplicationFE');

@@ -14,5 +14,5 @@ const AuctionParticipantsSchema = new mongoose.Schema(
   },
 );
 
-const db = mongoose.connection.useDb('portal');
+const db = mongoose.connection.useDb(`amices_${process.env.NODE_ENV}`);
 module.exports = db.model('AuctionParticipants', AuctionParticipantsSchema, 'auctionParticipants');

@@ -33,8 +33,8 @@ jobs:
       NODE_ENV: test
       PORT: 8085
       SERVER_HOST: 127.0.0.1
-      MONGO_URI_PORTAL: mongodb://localhost:27017/portal?authSource=admin&retryWrites=true&w=majority
-      MONGO_URI_EFICAR: mongodb://localhost:27017/eficar?authSource=admin&retryWrites=true&w=majority
+      MONGO_URI_AMICES: mongodb://localhost:27017/amices_test?authSource=admin&retryWrites=true&w=majority
+      MONGO_URI_EFICAR: mongodb://localhost:27017/eficar_test?authSource=admin&retryWrites=true&w=majority
       ACTIONS_RUNNER_DEBUG: true
       TERM: xterm
   deploy_master:
@@ -58,7 +58,7 @@ jobs:
     env:
       CI: true
       NODE_ENV: production
-      MONGO_URI_PORTAL: ${{ secrets.MONGO_URI_PORTAL_PRODUCTION }}
+      MONGO_URI_AMICES: ${{ secrets.MONGO_URI_AMICES_PRODUCTION }}
       MONGO_URI_EFICAR: ${{ secrets.MONGO_URI_EFICAR_PRODUCTION }}
       ROLLBAR_TOKEN: ${{ secrets.ROLLBAR_TOKEN_PRODUCTION }}
       JWT_SECRET: ${{ secrets.JWT_SECRET_PRODUCTION }}
