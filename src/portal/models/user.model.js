@@ -1,4 +1,4 @@
-const mongoose = require('mongoPortal')();
+const mongoose = require('mongoose');
 
 const UsersSchema = new mongoose.Schema(
   {
@@ -18,4 +18,5 @@ const UsersSchema = new mongoose.Schema(
   },
 );
 
-module.exports = mongoose.model('Users', UsersSchema);
+const db = mongoose.connection.useDb('portal');
+module.exports = db.model('Users', UsersSchema);

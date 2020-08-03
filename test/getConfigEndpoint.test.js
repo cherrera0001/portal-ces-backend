@@ -30,11 +30,11 @@ describe('Config', () => {
         .post('/graphql')
         .send(getConfigQuery())
         .end((err, res) => {
-          // expect(res.status).to.equal(200);
-          // expect(res.body).to.be.a('object');
-          // expect(res.body.data.getConfig).to.have.property('allowedMimeTypes');
-          // expect(res.body.data.getConfig).to.have.property('maxFileSizeInKB');
-          // expect(res.body.data.getConfig).to.have.property('terms');
+          expect(res.status).to.equal(200);
+          expect(res.body).to.be.a('object');
+          expect(res.body.data.getConfig).to.have.property('allowedMimeTypes');
+          expect(res.body.data.getConfig).to.have.property('maxFileSizeInKB');
+          expect(res.body.data.getConfig).to.have.property('terms');
           done();
         });
     });

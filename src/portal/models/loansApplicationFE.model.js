@@ -1,4 +1,4 @@
-const mongoose = require('mongoPortal')();
+const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
@@ -30,4 +30,5 @@ const schema = new mongoose.Schema({
   loansApplication: { type: mongoose.Schema.Types.ObjectId, ref: 'LoansApplication' },
 });
 
-module.exports = mongoose.model('LoansApplicationFE', schema, 'loansApplicationFE');
+const db = mongoose.connection.useDb('portal');
+module.exports = db.model('LoansApplicationFE', schema, 'loansApplicationFE');

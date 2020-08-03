@@ -45,8 +45,8 @@ services:
       context: .
       dockerfile: dev.Dockerfile
     environment:
-      - MONGO_URI_EFICAR=mongodb://root:pass@mongo/eficar_development?authSource=admin&retryWrites=true&w=majority
-      - MONGO_URI_PORTAL=mongodb://root:pass@mongo/amicar_development?authSource=admin&retryWrites=true&w=majority
+      - MONGO_URI_EFICAR=mongodb://root:pass@ces-database/eficar?authSource=admin&retryWrites=true&w=majority
+      - MONGO_URI_PORTAL=mongodb://root:pass@ces-database/portal?authSource=admin&retryWrites=true&w=majority
       - NODE_ENV
       - CORE_URL
       - API_KEY_PORTAL
