@@ -3,7 +3,7 @@ const rollbar = require('rollbar');
 
 const connectDB = () => {
   try {
-    mongoose.connect(process.env.MONGO_URI_PORTAL, {
+    mongoose.connect(process.env.MONGO_URI_AMICES, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,

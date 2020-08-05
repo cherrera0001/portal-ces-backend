@@ -25,7 +25,7 @@ const schema = new mongoose.Schema({
     maritalRegime: { type: String, default: '' },
     academicLevel: { type: String, default: '' },
     livingHousehold: { type: String, default: '' },
-    profession: { type: String, default: '' },
+    profession: { type: String, default: ' ' },
     generalComments: { type: String, default: '' },
   },
   customerActivity: {
@@ -174,5 +174,5 @@ const schema = new mongoose.Schema({
   externalIds: [{ type: String, required: true }],
 });
 
-const db = mongoose.connection.useDb('portal');
+const db = mongoose.connection.useDb(`amices_${process.env.NODE_ENV}`);
 module.exports = db.model('LoansApplication', schema, 'loansApplications');

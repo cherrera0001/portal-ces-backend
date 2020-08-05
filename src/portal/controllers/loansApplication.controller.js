@@ -138,11 +138,15 @@ const status = async (req, res) => {
 };
 
 const save = async (req, res) => {
-  await LoansApplication.findOneAndUpdate({ simulationId: req.body.simulationId }, req.body, {
-    useFindAndModify: false,
-  });
-  const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_LOAN_APPLICATION}`, req.body);
-  res.status(response.status).end();
+  try {
+    await LoansApplication.findOneAndUpdate({ simulationId: req.body.simulationId }, req.body, {
+      useFindAndModify: false,
+    });
+    const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_LOAN_APPLICATION}`, req.body);
+    res.status(response.status).end();
+  } catch (err) {
+    console.log('errr', err.message);
+  }
 };
 
 const saveExternal = async (req, res) => {
