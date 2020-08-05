@@ -30,4 +30,9 @@ const schema = new mongoose.Schema({
   loansApplication: { type: mongoose.Schema.Types.ObjectId, ref: 'LoansApplication' },
 });
 
+<<<<<<< HEAD
 module.exports = mongoose.model('LoansApplicationFE', schema, 'loansApplicationFE');
+=======
+const db = mongoose.connection.useDb('portal');
+module.exports = db.model('LoansApplicationFE', schema, 'loansApplicationFE');
+>>>>>>> 0a01489fda6a4650ca5e8eeec0ad3d45c9e4306b

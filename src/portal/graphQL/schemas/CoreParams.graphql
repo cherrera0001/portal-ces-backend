@@ -25,7 +25,7 @@ type CoreParamsList {
   nationality: [CoreParams]
 }
 
-extend type Query {
+type Query {
   getCoreParams(type: String!, name: String, externalCode: [String], parentId: Int): [CoreParams]
   getCoreParamsLists: CoreParamsList
 }

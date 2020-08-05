@@ -1,31 +1,30 @@
 const rollbar = require('rollbar.js');
-// const socket = require('socket.io');
-
 const AuctionParticipantsModel = require('portal/models/auctionParticipant.model');
 const LoansApplicationModel = require('portal/models/loansApplication.model');
 
-const parseMessage = (message) => JSON.parse(message.data.toString());
+const parseMessage = (message) => JSON.parse(Buffer.from(message, 'base64').toString());
 
-const auctionStart = async (message) => {
+const start = async (req, res) => {
   try {
-    const incomeData = parseMessage(message);
+    if (!req.body.message.data) throw Error();
+    const incomeData = parseMessage(req.body.message.data);
     console.log(`>>>>>> auctionStart incoming message for (${incomeData.loanApplicationId}) loan auction <<<<<<`);
     const auctionParticipants = new AuctionParticipantsModel({
       ...incomeData,
       simulationId: incomeData.loanApplicationId,
     });
     await auctionParticipants.save();
-    message.ack();
-    return;
+    return res.status(200).json();
   } catch (err) {
     rollbar.log(`${__dirname}/${__filename} auctionStart::ERROR: ${err.message}`);
-    throw new Error(err.message);
+    return res.status(500).json({ error: err.message });
   }
 };
 
-const auctionResponses = async (message, socket) => {
+const responses = async (req, res) => {
   try {
-    const incomeData = parseMessage(message);
+    if (!req.body.message.data) throw Error();
+    const incomeData = parseMessage(req.body.message.data);
     console.log(`>>>>>> auctionResponses incoming message for (${incomeData.loanApplicationId}) loan auction <<<<<<`);
     const auctionParticipants = await AuctionParticipantsModel.findOne({
       loanApplicationId: +incomeData.loanApplicationId,
@@ -35,18 +34,18 @@ const auctionResponses = async (message, socket) => {
     }
     auctionParticipants.auctionParticipants = incomeData.auctionParticipants;
     await auctionParticipants.save();
-    message.ack();
-    socket.emit('RELOAD_AUCTION');
-    return;
+    req.app.socketIo.emit(`RELOAD_AUCTION_${incomeData.loanApplicationId}`);
+    return res.status(200).json();
   } catch (err) {
     rollbar.log(`${__dirname}/${__filename} auctionResponses::ERROR: ${err.message}`);
-    throw new Error(err.message);
+    return res.status(500).json({ error: err.message });
   }
 };
 
-const auctionFinish = async (message) => {
+const finish = async (req, res) => {
   try {
-    const incomeData = parseMessage(message);
+    if (!req.body.message.data) throw Error();
+    const incomeData = parseMessage(req.body.message.data);
     console.log(`>>>>>> auctionFinish incoming message for (${incomeData.loanApplicationId}) loan auction <<<<<<`);
     const loansApplication = await LoansApplicationModel.findOne({ simulationId: incomeData.loanApplicationId });
     if (!loansApplication) {
@@ -54,12 +53,11 @@ const auctionFinish = async (message) => {
     }
     loansApplication.status = incomeData.status;
     await loansApplication.save();
-    message.ack();
-    return;
+    return res.status(200).json();
   } catch (err) {
     rollbar.log(`${__dirname}/${__filename} auctionFinish::ERROR: ${err.message}`);
-    throw new Error(err.message);
+    return res.status(500).json({ error: err.message });
   }
 };
 
-module.exports = { auctionStart, auctionResponses, auctionFinish };
+module.exports = { start, responses, finish };

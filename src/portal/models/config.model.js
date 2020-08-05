@@ -20,4 +20,5 @@ const ConfigSchema = new mongoose.Schema(
   },
 );
 
-module.exports = mongoose.model('Config', ConfigSchema);
+const db = mongoose.connection.useDb('portal');
+module.exports = db.model('Config', ConfigSchema);

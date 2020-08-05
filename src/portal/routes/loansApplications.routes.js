@@ -4,7 +4,9 @@ const validate = require('portal/middlewares/validate.middleware');
 const schema = require('portal/validations/loans-application.validation');
 
 router.route('').get(controller.all);
+router.route('/:id/status').get(controller.status);
+router.route('/save').post(controller.save);
+router.route('/save-external').post(controller.saveExternal);
 router.route('').post(validate(schema.create), controller.create);
-router.route('/:id/status').post(controller.status);
 
 module.exports = router;

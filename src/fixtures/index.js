@@ -3,6 +3,10 @@ const User = require('portal/models/user.model');
 const Config = require('portal/models/config.model');
 const AuctionParticipant = require('portal/models/auctionParticipant.model');
 require('mongoPortal')();
+<<<<<<< HEAD
+=======
+require('mongoEficar')();
+>>>>>>> 0a01489fda6a4650ca5e8eeec0ad3d45c9e4306b
 
 (async () => {
   // CONFIG

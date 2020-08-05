@@ -11,9 +11,6 @@ const { debugApp } = require('debugger');
 const schemaDef = require('portal/helpers/gqlSchemasExport');
 const rollbar = require('rollbar');
 const { permissions, getUser } = require('portal/auth');
-const pubSub = require('pubSub');
-const auctionSubscriptionHandler = require('portal/subscriptions/auction.subscription');
-const simulationSubscriptionHandler = require('portal/subscriptions/simulation.subscription');
 
 require('mongoPortal')();
 require('mongoEficar')();
@@ -46,33 +43,8 @@ app.use((req, res, next) => {
 });
 
 const httpServer = createServer(app);
-const socket = socketIo(httpServer);
 
-const {
-  GCP_PUBSUB_AUCTION_START_SUBSCRIPTION_NAME,
-  GCP_PUBSUB_AUCTION_FINISH_SUBSCRIPTION_NAME,
-  GCP_PUBSUB_AUCTION_RESPONSES_SUBSCRIPTION_NAME,
-  GCP_PUBSUB_SIMULATION_SAVE_SUBSCRIPTION_NAME,
-} = process.env;
-
-// ############ INIT PUB/SUB SUBSCRIPTIONS ############
-pubSub.subscribe({
-  subscriptionName: GCP_PUBSUB_AUCTION_START_SUBSCRIPTION_NAME,
-  messageHandler: auctionSubscriptionHandler.auctionStart,
-});
-pubSub.subscribe({
-  subscriptionName: GCP_PUBSUB_AUCTION_RESPONSES_SUBSCRIPTION_NAME,
-  messageHandler: (message) => auctionSubscriptionHandler.auctionResponses(message, socket),
-});
-pubSub.subscribe({
-  subscriptionName: GCP_PUBSUB_AUCTION_FINISH_SUBSCRIPTION_NAME,
-  messageHandler: auctionSubscriptionHandler.auctionFinish,
-});
-pubSub.subscribe({
-  subscriptionName: GCP_PUBSUB_SIMULATION_SAVE_SUBSCRIPTION_NAME,
-  messageHandler: simulationSubscriptionHandler.simulationSave,
-});
-// ####################################################
+app.socketIo = socketIo(httpServer);
 
 httpServer.listen(apiPort, () => {
   debugApp("Let's rock!! 🤘🏻🚀");

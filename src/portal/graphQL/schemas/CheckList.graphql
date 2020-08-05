@@ -14,10 +14,7 @@ type CheckList {
   checklist: [Documents]
 }
 
-type Query {
-  getCheckList(loanApplicationId: Int!): CheckList
-}
-
 type Mutation {
+  getCheckList(loanApplicationId: Int!): CheckList
   uploadDocuments(files: [Upload]!, loanApplicationId: Int!, checklistId: Int!, checklistItemId: Int): Boolean
 }

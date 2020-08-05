@@ -14,4 +14,5 @@ const AuctionParticipantsSchema = new mongoose.Schema(
   },
 );
 
-module.exports = mongoose.model('AuctionParticipants', AuctionParticipantsSchema, 'auctionParticipants');
+const db = mongoose.connection.useDb('portal');
+module.exports = db.model('AuctionParticipants', AuctionParticipantsSchema, 'auctionParticipants');

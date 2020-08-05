@@ -14,8 +14,8 @@ services:
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
 
-  mongo:
-    container_name: mongo
+  ces-database:
+    container_name: ces-database
     image: mongo:3.4
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
@@ -29,10 +29,11 @@ services:
     container_name: mongoui
     image: mongo-express
     depends_on:
-      - mongo
+      - ces-database
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: pass
+      ME_CONFIG_MONGODB_SERVER: ces-database
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.mongoui.rule=Host(`mongo.localhost`)'
@@ -44,24 +45,24 @@ services:
       context: .
       dockerfile: dev.Dockerfile
     environment:
+<<<<<<< HEAD
       - MONGO_URI_EFICAR=mongodb://root:pass@mongo/eficar_development?authSource=admin&retryWrites=true&w=majority
       - MONGO_URI_PORTAL=mongodb://root:pass@mongo/amicar_development?authSource=admin&retryWrites=true&w=majority
+=======
+      - MONGO_URI_EFICAR=mongodb://root:pass@ces-database/eficar?authSource=admin&retryWrites=true&w=majority
+      - MONGO_URI_PORTAL=mongodb://root:pass@ces-database/portal?authSource=admin&retryWrites=true&w=majority
+>>>>>>> 0a01489fda6a4650ca5e8eeec0ad3d45c9e4306b
       - NODE_ENV
       - CORE_URL
       - API_KEY_PORTAL
       - JWT_SECRET
       - PORT
-      - GCP_PUBSUB_AUCTION_START_SUBSCRIPTION_NAME
-      - GCP_PUBSUB_AUCTION_RESPONSES_SUBSCRIPTION_NAME
-      - GCP_PUBSUB_AUCTION_FINISH_SUBSCRIPTION_NAME
-      - GCP_PUBSUB_SIMULATION_SAVE_SUBSCRIPTION_NAME
-      - GOOGLE_APPLICATION_CREDENTIALS
     volumes:
       - './:/src'
       - '/src/node_modules'
     restart: always
     depends_on:
-      - mongo
+      - ces-database
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.api.rule=Host(`api.localhost`)'
