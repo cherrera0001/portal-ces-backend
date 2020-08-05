@@ -1,4 +1,4 @@
-const mongoose = require('mongoEficar')();
+const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
@@ -133,10 +133,6 @@ const schema = new mongoose.Schema({
   sellerIdentificationValue: { type: String, required: false },
   amicarExecutiveIdentificationValue: { type: String, required: false },
 });
-<<<<<<< HEAD
-module.exports = mongoose.model('Auction', schema, 'auctions');
-=======
 
 const db = mongoose.connection.useDb('eficar');
 module.exports = db.model('Auction', schema, 'auctions');
->>>>>>> 0a01489fda6a4650ca5e8eeec0ad3d45c9e4306b
