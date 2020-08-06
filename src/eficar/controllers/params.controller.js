@@ -24,4 +24,13 @@ const updateFromCore = async (req, res) => {
   res.status(201).end();
 };
 
-module.exports = { all, updateFromCore };
+const getOne = async (filter) => {
+  const response = await Params.findOne(filter);
+  return response;
+};
+
+const get = async (filter) => {
+  const response = await Params.find(filter);
+  return response;
+};
+module.exports = { all, updateFromCore, getOne, get };

@@ -1,5 +1,5 @@
 const aqp = require('api-query-params');
-const Params = require('eficar/models/params.model');
+const Params = require('eficar/controllers/params.controller');
 const Auction = require('eficar/models/auction.model');
 const { query } = require('express');
 const { flatMap } = require('lodash');
@@ -58,55 +58,29 @@ const checklist = async (req, res) => {
     .select(projection)
     .populate(population);
 
-  let identificationType = await Params.findOne({
+  let identificationType = await Params.getOne({
     type: 'IDENTIFICATION_TYPE',
     id: loanSimulationData.customer.identificationTypeId,
-  })
-    .skip(skip)
-    .limit(limit)
-    .sort(sort)
-    .select(projection)
-    .populate(population);
+  });
 
   let customerTypeCode = customerTypeMap[identificationType.externalCode];
-  let checklistType = await Params.findOne({ type: 'CHECKLIST_TYPE', externalCode: stage })
-    .skip(skip)
-    .limit(limit)
-    .sort(sort)
-    .select(projection)
-    .populate(population);
+  let checklistType = await Params.getOne({ type: 'CHECKLIST_TYPE', externalCode: stage });
 
-  let checklistCustomertType = await Params.findOne({
+  let checklistCustomertType = await Params.getOne({
     type: 'CHECKLIST_CUSTOMER_TYPE',
     parentId: checklistType.id,
     externalCode: customerTypeCode,
-  })
-    .skip(skip)
-    .limit(limit)
-    .sort(sort)
-    .select(projection)
-    .populate(population);
+  });
 
-  let checklistWorkingType = await Params.findOne({
+  let checklistWorkingType = await Params.getOne({
     type: 'CHECKLIST_WORK_TYPE',
     parentId: checklistCustomertType.id,
     externalCode: loanSimulationData.customerActivity.workType.externalCode,
-  })
-    .skip(skip)
-    .limit(limit)
-    .sort(sort)
-    .select(projection)
-    .populate(population);
-
-  let checklist = await Params.find({
+  });
+  let checklist = await Params.get({
     type: 'CHECKLIST',
     parentId: checklistWorkingType.id,
-  })
-    .skip(skip)
-    .limit(limit)
-    .sort(sort)
-    .select(projection)
-    .populate(population);
+  });
 
   res.json({
     result: checklist,
