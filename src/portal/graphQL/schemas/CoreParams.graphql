@@ -16,6 +16,7 @@ type CoreParamsList {
   heritageType: [CoreParams]
   bank: [CoreParams]
   salaryType: [CoreParams]
+  businessSector: [CoreParams]
   employmentContractType: [CoreParams]
   activityType: [CoreParams]
   workType: [CoreParams]
