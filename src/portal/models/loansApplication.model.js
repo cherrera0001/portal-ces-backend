@@ -86,7 +86,7 @@ const schema = new mongoose.Schema({
     lastName: { type: String, default: '' },
     motherLastName: { type: String, default: '' },
     address: { type: String, default: '' },
-    spouseGeographicDataId: { type: String, default: '5602' },
+    spouseGeographicDataId: { type: String, default: '' },
     workType: { type: String, default: 'DE' },
     activityTypeId: { type: String, default: '8' },
     employerName: { type: String, default: '' },
@@ -101,7 +101,7 @@ const schema = new mongoose.Schema({
     lastName: { type: String, default: '' },
     motherLastName: { type: String, default: '' },
     address: { type: String, default: '' },
-    geographicDataId: { type: String, default: '155' },
+    geographicDataId: { type: String, default: '' },
     dob: { type: String, default: '' },
     nationalityId: { type: String, default: '' },
     maritalStatus: { type: String, default: '' },
@@ -133,13 +133,6 @@ const schema = new mongoose.Schema({
         accountNumber: { type: String, default: '' },
       },
     ],
-    default: [
-      {
-        codeId: '11',
-        automaticPayment: false,
-        accountNumber: '1234432',
-      },
-    ],
   },
   heritage: [
     {
@@ -157,14 +150,6 @@ const schema = new mongoose.Schema({
         type: { type: String, default: '' },
         address: { type: String, default: '' },
         phone: { type: String, default: 'defult' },
-      },
-    ],
-    default: [
-      {
-        name: 'default',
-        type: 'Padre o Madre',
-        address: 'default',
-        phone: 'default',
       },
     ],
   },
