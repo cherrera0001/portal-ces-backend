@@ -52,6 +52,9 @@ services:
       - API_KEY_PORTAL
       - JWT_SECRET
       - PORT
+      - LDAP_URL
+      - LDAP_USER
+      - LDAP_PASSWORD
     volumes:
       - './:/src'
       - '/src/node_modules'
