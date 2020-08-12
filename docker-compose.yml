@@ -1,36 +1,66 @@
-version: '3'
+version: '3.3'
 services:
-  mongo:
-    image: mongo:latest
+  proxy:
+    image: traefik:v2.2
+    container_name: traefik
+    command:
+      - '--api.insecure=true'
+      - '--providers.docker=true'
+      - '--providers.docker.exposedbydefault=false'
+      - '--entrypoints.web.address=:80'
     ports:
-      - '27017:27017'
-    command: --quiet
-    env_file:
-      - .env
+      - '80:80'
+      - '8080:8080'
     volumes:
-      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
-      - ./.mongo-volume:/data/db
-  app:
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+
+  ces-database:
+    container_name: ces-database
+    image: mongo:3.4
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: pass
+    volumes:
+      - db:/data/db
+    ports:
+      - 27018:27017
+
+  mongoui:
+    container_name: mongoui
+    image: mongo-express
     depends_on:
-      - mongo
+      - ces-database
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: pass
+      ME_CONFIG_MONGODB_SERVER: ces-database
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.mongoui.rule=Host(`mongo.localhost`)'
+      - 'traefik.http.routers.mongoui.entrypoints=web'
+
+  api:
+    container_name: api
     build:
       context: .
+      dockerfile: dev.Dockerfile
     environment:
-      - NODE_ENV
-      - TERM=xterm
-      - PORT=8085
-      - SERVER_HOST
-      - MONGO_URI
-      - MONGO_INITDB_DATABASE
-      - MONGO_INITDB_ROOT_USERNAME
-      - MONGO_INITDB_ROOT_PASSWORD
-      - MONGO_USERNAME
-      - MONGO_PASSWORD
-      - MONGO_DB
-      - MONGO_HOST
-    ports:
-      - '8085:8085'
-    command: npm run start
+      - MONGO_URI_EFICAR=mongodb://root:pass@ces-database/eficar_development?authSource=admin&retryWrites=true&w=majority
+      - MONGO_URI_AMICES=mongodb://root:pass@ces-database/amices_development?authSource=admin&retryWrites=true&w=majority
+      - NODE_ENV=development
+      - CORE_URL
+      - API_KEY_PORTAL
+      - JWT_SECRET
+      - PORT
     volumes:
-      - .:/usr/src/
-      - /usr/node_modules
+      - './:/src'
+      - '/src/node_modules'
+    restart: always
+    depends_on:
+      - ces-database
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.api.rule=Host(`api.localhost`)'
+volumes:
+  db:
+    driver: local

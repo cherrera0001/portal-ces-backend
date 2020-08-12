@@ -1,0 +1,13 @@
+---
+  steps:
+    - args:
+        - build
+        - '-t'
+        - gcr.io/${_GCP_PROJECT}/amices-backend-${_DEPLOY_IMG}
+        - '.'
+      name: 'gcr.io/cloud-builders/docker'
+  logsBucket: 'gs://${_GCP_PROJECT}_cloudbuild/logs'
+  images: ['gcr.io/${_GCP_PROJECT}/amices-backend-${_DEPLOY_IMG}']
+  substitutions:
+    _DEPLOY_IMG: 'ambiente'
+    _GCP_PROJECT: 'prueba'

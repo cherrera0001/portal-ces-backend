@@ -1,8 +1,0 @@
-type FileUploadingConfig {
-  allowedMimeTypes: [String]
-  maxFileSizeInKB: Int
-}
-
-extend type Query {
-  getFileUploadingConfig: FileUploadingConfig
-}
