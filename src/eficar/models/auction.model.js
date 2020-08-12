@@ -130,6 +130,7 @@ const schema = new mongoose.Schema({
   customer: { type: Object, required: true },
   stage: { type: Number, required: false },
   simulationId: { type: Number, required: true, index: true },
+  financingEntityId: { type: String, required: true, index: true },
   sellerIdentificationValue: { type: String, required: false },
   amicarExecutiveIdentificationValue: { type: String, required: false },
 });

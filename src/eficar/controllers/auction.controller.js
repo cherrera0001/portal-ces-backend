@@ -64,7 +64,11 @@ const create = async (req, res) => {
   req.body.status = status[req.body.status];
   req.body.loanSimulationData.status = status[req.body.loanSimulationData.status];
 
-  const auction = new Auction({ ...req.body, simulationId: req.body.loanSimulationData.id });
+  const auction = new Auction({
+    ...req.body,
+    simulationId: req.body.loanSimulationData.id,
+    financingEntityId: req.params.rut,
+  });
   auction.save();
   res.status(201).end();
 };
