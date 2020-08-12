@@ -24,6 +24,7 @@ require('mongoEficar')();
   await User.findOneAndUpdate(
     { email: 'mail1@mail.com' },
     {
+      identificationValue: '966675608',
       name: 'name1',
       email: 'mail1@mail.com',
       password: '$2a$10$0ZXz5YX.2sHGxLMjbT50xuYUBr3./cyUSTXgix6YQ3TkS9rhjBG4S',
