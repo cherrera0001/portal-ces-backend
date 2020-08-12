@@ -41,7 +41,7 @@ const schema = new mongoose.Schema({
     workGeographicDataId: { type: String, default: '' },
     workPhone: { type: String, default: '' },
     employmentContractType: { type: String, default: '' },
-    salaryType: { type: String, default: '' },
+    salaryType: { type: String, default: 'FI' },
     salaryPayday: { type: Number, default: 0 },
   },
   income: {
@@ -87,8 +87,8 @@ const schema = new mongoose.Schema({
     motherLastName: { type: String, default: '' },
     address: { type: String, default: '' },
     spouseGeographicDataId: { type: String, default: '' },
-    workType: { type: String, default: '' },
-    activityTypeId: { type: String, default: '' },
+    workType: { type: String, default: 'DE' },
+    activityTypeId: { type: String, default: '8' },
     employerName: { type: String, default: '' },
     workPhone: { type: String, default: '' },
     combinedIncome: { type: Boolean, default: false },
@@ -125,13 +125,15 @@ const schema = new mongoose.Schema({
       salary: { type: Number, default: 0 },
     },
   ],
-  bankInformation: [
-    {
-      codeId: { type: String, default: '' },
-      automaticPayment: { type: Boolean, default: false },
-      accountNumber: { type: String, default: '' },
-    },
-  ],
+  bankInformation: {
+    type: [
+      {
+        codeId: { type: String, default: '' },
+        automaticPayment: { type: Boolean, default: false },
+        accountNumber: { type: String, default: '' },
+      },
+    ],
+  },
   heritage: [
     {
       type: { type: String, default: '' },
@@ -141,14 +143,16 @@ const schema = new mongoose.Schema({
       stillPaying: { type: Boolean, default: false },
     },
   ],
-  personalReferences: [
-    {
-      name: { type: String, default: '' },
-      type: { type: String, default: '' },
-      address: { type: String, default: '' },
-      phone: { type: String, default: '' },
-    },
-  ],
+  personalReferences: {
+    type: [
+      {
+        name: { type: String, default: '' },
+        type: { type: String, default: '' },
+        address: { type: String, default: '' },
+        phone: { type: String, default: '' },
+      },
+    ],
+  },
   vehicleData: {
     brandName: { type: String, default: '' },
     modelName: { type: String, default: '' },

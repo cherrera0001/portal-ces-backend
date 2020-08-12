@@ -28,6 +28,7 @@ module.exports = async ({ rollbar }) => {
       maritalRegime: coreParams.find((el) => el.type === 'MARITAL_REGIME').values,
       academicLevel: coreParams.find((el) => el.type === 'ACADEMIC_LEVEL').values,
       genderType: coreParams.find((el) => el.type === 'GENDER_TYPE').values,
+      businessSector: coreParams.find((el) => el.type === 'BUSINESS_SECTOR').values,
       livingHousehold: coreParams.find((el) => el.type === 'LIVING_HOUSEHOLD').values,
       region: coreParams.find((el) => el.type === 'REGION').values,
       commune: coreParams.find((el) => el.type === 'COMMUNE').values,
