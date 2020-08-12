@@ -149,7 +149,7 @@ const schema = new mongoose.Schema({
         name: { type: String, default: '' },
         type: { type: String, default: '' },
         address: { type: String, default: '' },
-        phone: { type: String, default: 'defult' },
+        phone: { type: String, default: '' },
       },
     ],
   },
