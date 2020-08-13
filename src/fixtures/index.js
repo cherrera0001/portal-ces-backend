@@ -2,7 +2,7 @@ require('dotenv').config();
 const User = require('models/user.model');
 const AmicesConfig = require('amices/models/config.model');
 const EficarConfig = require('eficar/models/config.model');
-const AuctionParticipant = require('portal/models/auctionParticipant.model');
+const AuctionParticipant = require('amices/models/auctionParticipant.model');
 
 require('mongoAmices')();
 require('mongoEficar')();
