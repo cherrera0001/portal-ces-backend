@@ -14,7 +14,8 @@ const customerTypeMap = {
 const all = async (req, res) => {
   const { filter, skip, limit, sort, projection, population } = aqp({ ...req.query });
   console.log(filter);
-  const auctions = await Auction.find(filter)
+
+  const auctions = await Auction.find({ ...filter, ...{ financingEntityId: req.user.rut } })
     .skip(skip)
     .limit(limit)
     .sort(sort)
