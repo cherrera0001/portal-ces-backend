@@ -50,11 +50,10 @@ jobs:
         env:
           GCLOUD_SERVICE_KEY: ${{ secrets.GCLOUD_SERVICE_KEY_PRODUCTION }}
       - run: gcloud --quiet config set run/region us-east1
-      - run: gcloud --quiet config set project amicar-tech-255421
+      - run: gcloud --quiet config set project ${{ secrets.GCP_PROJECT_PRODUCTION }}
       - run: gcloud info
-      - run: gcloud builds submit --tag gcr.io/amicar-tech-255421/portal-backend-production --async
-      - run: sleep 120
-      - run: gcloud run deploy portal-backend-production --image gcr.io/amicar-tech-255421/portal-backend-production --platform managed --set-env-vars NODE_ENV=production,MONGO_USERNAME=$MONGO_USERNAME,MONGO_PASSWORD=$MONGO_PASSWORD,MONGO_DB=amicar,MONGO_HOST=$MONGO_HOST,ROLLBAR_TOKEN=$ROLLBAR_TOKEN,JWT_SECRET=$JWT_SECRET,CORE_URL=$CORE_URL,API_KEY_PORTAL=$API_KEY_PORTAL
+      - run: gcloud builds submit --config=.github/cloudbuild.yaml --substitutions=_GCP_PROJECT=$GCP_PROJECT_PRODUCTION,_DEPLOY_IMG=$NODE_ENV
+      - run: gcloud run deploy amices-backend-production --image gcr.io/${{ secrets.GCP_PROJECT_PRODUCTION }}/amices-backend-production --platform managed --set-env-vars NODE_ENV=$NODE_ENV,MONGO_URI_AMICES=$MONGO_URI_AMICES,MONGO_URI_EFICAR=$MONGO_URI_EFICAR,ROLLBAR_TOKEN=$ROLLBAR_TOKEN,JWT_SECRET=$JWT_SECRET,CORE_URL=$CORE_URL,API_KEY_PORTAL=$API_KEY_PORTAL
     env:
       CI: true
       NODE_ENV: production
@@ -64,3 +63,4 @@ jobs:
       JWT_SECRET: ${{ secrets.JWT_SECRET_PRODUCTION }}
       CORE_URL: ${{ secrets.CORE_URL_PRODUCTION }}
       API_KEY_PORTAL: ${{ secrets.API_KEY_PORTAL_PRODUCTION }}
+      GCP_PROJECT_PRODUCTION: ${{ secrets.GCP_PROJECT_PRODUCTION }}
