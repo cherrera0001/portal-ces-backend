@@ -4,11 +4,10 @@ const jwt = require('security/jwt.security');
 const login = async (req, res) => {
   const localUser = await User.findOne({ username: req.user.sAMAccountName });
   if (!localUser) {
-    // this should be a new user?
     const user = new User({
       name: req.user.displayName,
       username: req.user.sAMAccountName,
-      companyIdentificationValue: req.user.companyIdentificationValue, // add this field to  ldap
+      companyIdentificationValue: req.user.companyIdentificationValue,
       rut: req.user.description,
       email: req.user.mail ? req.user.mail : null,
       memberOf: req.user.memberOf,

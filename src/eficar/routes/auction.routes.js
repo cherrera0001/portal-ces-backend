@@ -8,7 +8,7 @@ router.route('').get(authenticate, controller.all);
 router.route('/:id').get(authenticate, controller.get);
 router.route('/checklist/:stage/:loanSimulationDataId').get(authenticate, controller.checklist);
 router.route('/customerHistory/:rut').get(authenticate, controller.getCustomerHistory);
-router.route('').post(authenticate, validate(schema.create), controller.create);
-router.route('/:rut').post(authenticate, validate(schema.create), controller.create);
+router.route('').post(validate(schema.create), controller.create);
+router.route('/:rut').post(validate(schema.create), controller.create);
 
 module.exports = router;

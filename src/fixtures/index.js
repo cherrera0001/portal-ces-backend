@@ -1,13 +1,13 @@
 require('dotenv').config();
-const User = require('portal/models/user.model');
-const Config = require('portal/models/config.model');
-const AuctionParticipant = require('portal/models/auctionParticipant.model');
+const User = require('models/user.model');
+const Config = require('amices/models/config.model');
+
 require('mongoAmices')();
 require('mongoEficar')();
 
 (async () => {
   // CONFIG
-  await Config.deleteOne();
+  await Config.deleteMany({});
   const config = new Config({
     allowedMimeTypes: ['application/pdf', 'image/jpeg', 'image/png'],
     maxFileSizeInKB: 40000000,
@@ -24,80 +24,14 @@ require('mongoEficar')();
   await User.findOneAndUpdate(
     { email: 'mail1@mail.com' },
     {
-      identificationValue: '966675608',
       name: 'name1',
+      username: 'name1',
+      rut: '966675608',
       email: 'mail1@mail.com',
       password: '$2a$10$0ZXz5YX.2sHGxLMjbT50xuYUBr3./cyUSTXgix6YQ3TkS9rhjBG4S',
-      type: 'user',
-      claims: ['read-metrics'],
+      companyIdentificationValue: '966675608',
       sellerIdentificationValue: '112223339',
       amicarExecutiveIdentificationValue: '156681911',
-    },
-    { upsert: true, useFindAndModify: false },
-  );
-  // AUCTIONS PARTICIPANTS
-  await AuctionParticipant.findOneAndUpdate(
-    { loanApplicationId: 10000042 },
-    {
-      loanApplicationId: 10000042,
-      auctionParticipants: [
-        {
-          id: 30,
-          status: 'WINNER',
-          monthlyPayment: 379569,
-          finalCapital: 10429540,
-          totalLoanCost: 13664482,
-          annualCAE: 29.5,
-          FinancingEntity: {
-            id: 13,
-            identificationValue: '965096604',
-            name: 'BANCO FALABELLA',
-          },
-          Checklists: [
-            {
-              id: 6,
-              IdEF1: 1,
-              IdEF2: 4,
-              createdAt: '2020-07-10T03:34:38.583Z',
-              ChecklistItems: [
-                {
-                  id: 16,
-                  coreParamId: 646,
-                  value: null,
-                  status: 0,
-                  folderPath: null,
-                  uuid: null,
-                  CoreParam: {
-                    name: 'Carnet de Identidad',
-                  },
-                },
-                {
-                  id: 17,
-                  coreParamId: 647,
-                  status: 0,
-                  value: null,
-                  folderPath: null,
-                  uuid: null,
-                  CoreParam: {
-                    name: 'Tres Ultimas Liquidaciones de Sueldo',
-                  },
-                },
-                {
-                  id: 18,
-                  coreParamId: 659,
-                  status: 0,
-                  value: 'Certificado residencia junta vecinal',
-                  folderPath: null,
-                  uuid: null,
-                  CoreParam: {
-                    name: 'Otros',
-                  },
-                },
-              ],
-            },
-          ],
-        },
-      ],
     },
     { upsert: true, useFindAndModify: false },
   );
