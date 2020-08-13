@@ -2,6 +2,7 @@ require('dotenv').config();
 const User = require('models/user.model');
 const AmicesConfig = require('amices/models/config.model');
 const EficarConfig = require('eficar/models/config.model');
+const AuctionParticipant = require('portal/models/auctionParticipant.model');
 
 require('mongoAmices')();
 require('mongoEficar')();
@@ -47,6 +48,73 @@ require('mongoEficar')();
     amicarExecutiveIdentificationValue: '156681911',
   });
   await testUser.save();
+
+  // AUCTIONS PARTICIPANTS
+  await AuctionParticipant.findOneAndUpdate(
+    { loanApplicationId: 10000042 },
+    {
+      loanApplicationId: 10000042,
+      auctionParticipants: [
+        {
+          id: 30,
+          status: 'WINNER',
+          monthlyPayment: 379569,
+          finalCapital: 10429540,
+          totalLoanCost: 13664482,
+          annualCAE: 29.5,
+          FinancingEntity: {
+            id: 13,
+            identificationValue: '965096604',
+            name: 'BANCO FALABELLA',
+          },
+          Checklists: [
+            {
+              id: 6,
+              IdEF1: 1,
+              IdEF2: 4,
+              createdAt: '2020-07-10T03:34:38.583Z',
+              ChecklistItems: [
+                {
+                  id: 16,
+                  coreParamId: 646,
+                  value: null,
+                  status: 0,
+                  folderPath: null,
+                  uuid: null,
+                  CoreParam: {
+                    name: 'Carnet de Identidad',
+                  },
+                },
+                {
+                  id: 17,
+                  coreParamId: 647,
+                  status: 0,
+                  value: null,
+                  folderPath: null,
+                  uuid: null,
+                  CoreParam: {
+                    name: 'Tres Ultimas Liquidaciones de Sueldo',
+                  },
+                },
+                {
+                  id: 18,
+                  coreParamId: 659,
+                  status: 0,
+                  value: 'Certificado residencia junta vecinal',
+                  folderPath: null,
+                  uuid: null,
+                  CoreParam: {
+                    name: 'Otros',
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    { upsert: true, useFindAndModify: false },
+  );
 
   process.exit(0);
 })();
