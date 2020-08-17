@@ -133,6 +133,18 @@ const schema = new mongoose.Schema({
   financingEntityId: { type: String, required: true, index: true },
   loanStatus: { type: Object, required: true },
   riskAnalyst: { type: Object, default: null },
+  checkListSent: {
+    type: {
+      status: { type: String, required: false },
+      sentAt: { type: Date, required: false },
+      checkListItems: [
+        {
+          type: Object,
+        },
+      ],
+    },
+    default: null,
+  },
   sellerIdentificationValue: { type: String, required: false },
   amicarExecutiveIdentificationValue: { type: String, required: false },
 });

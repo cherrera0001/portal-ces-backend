@@ -26,6 +26,7 @@ require('mongoEficar')();
   const eficarConfig = new EficarConfig({
     allowedMimeTypes: ['application/pdf', 'image/jpeg', 'image/png'],
     maxFileSizeInKB: 40000000,
+    minimumRate: 0.5,
     loanStatus: [
       { code: 'SAVED_SIMULATION', status: 'No accesada', color: 'black' },
       { code: 'SIMULATION_SENT', status: 'No accesada', color: 'black' },

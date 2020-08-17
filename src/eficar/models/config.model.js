@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const ConfigSchema = new mongoose.Schema(
   {
     loanStatus: [{ code: String, status: String, color: String }],
+    minimumRate: { type: mongoose.Schema.Types.Number },
     allowedMimeTypes: [{ type: mongoose.Schema.Types.String }],
     maxFileSizeInKB: { type: mongoose.Schema.Types.Number },
   },

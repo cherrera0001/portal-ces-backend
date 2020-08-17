@@ -1,12 +1,23 @@
 const aqp = require('api-query-params');
 const Params = require('eficar/controllers/params.controller');
 const Auction = require('eficar/models/auction.model');
+const Config = require('eficar/models/config.model');
 const findLoanStatus = require('eficar/helpers/findLoanStatus');
 const errors = require('eficar/errors');
+const HTTP = require('requests');
+const { PATH_ENDPOINT_CORE_SEND_FE_RESPONSE } = require('eficar/core.services');
+
+const { CORE_URL } = process.env;
 
 const customerTypeMap = {
-  'R.U.N': 'PJ',
-  'R.U.T': 'PN',
+  RUC: 'PJ',
+  DNI: 'PN',
+};
+
+const statusMap = {
+  AP: 'Crédito Aprobado',
+  CA: 'Crédito Condicionado',
+  RA: 'Crédito Rechazado',
 };
 
 const all = async (req, res) => {
@@ -57,10 +68,10 @@ const checklist = async (req, res) => {
 
   const identificationType = await Params.getOne({
     type: 'IDENTIFICATION_TYPE',
-    id: loanSimulationData.customer.identificationTypeId,
+    externalCode: loanSimulationData.customer.identificationTypeId,
   });
 
-  const customerTypeCode = customerTypeMap[identificationType.externalCode];
+  const customerTypeCode = customerTypeMap[identificationType.name];
 
   const checklistType = await Params.getOne({ type: 'CHECKLIST_TYPE', externalCode: stage });
 
@@ -87,7 +98,7 @@ const checklist = async (req, res) => {
 };
 
 const get = async (req, res) => {
-  const auction = await Auction.findOne({
+  let auction = await Auction.findOne({
     simulationId: req.params.id,
     financingEntityId: req.user.companyIdentificationValue,
   });
@@ -95,14 +106,44 @@ const get = async (req, res) => {
   if (!auction) return errors.notFound(res);
 
   const loanStatus = await findLoanStatus('EVALUATION_IN_PROCESS');
+  const config = await Config.findOne({});
 
   auction.riskAnalyst = req.user;
   auction.loanStatus = loanStatus;
   await auction.save();
 
+  auction = auction.toObject();
+  auction.minimumRate = config.minimumRate;
+
   res.json({
     result: auction,
   });
+};
+
+const sendResponse = async (req, res) => {
+  const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_CORE_SEND_FE_RESPONSE}`, {
+    ...req.body,
+    feIdentificationValue: req.user.companyIdentificationValue,
+  });
+
+  if (response.status !== 200) return errors.badRequest(res);
+
+  const auction = await Auction.findOne({
+    simulationId: req.body.loanSimulationDataId,
+    financingEntityId: req.user.companyIdentificationValue,
+  });
+
+  if (!auction) return errors.notFound(res);
+
+  auction.checkListSent = {
+    sentAt: new Date(),
+    status: statusMap[req.body.feResponseStatus],
+    checklistItems: req.body.checklistItems,
+  };
+
+  auction.save();
+
+  res.status(201).end();
 };
 
 const create = async (req, res) => {
@@ -116,4 +157,4 @@ const create = async (req, res) => {
   res.status(201).end();
 };
 
-module.exports = { all, get, create, getCustomerHistory, checklist };
+module.exports = { all, get, create, getCustomerHistory, checklist, sendResponse };

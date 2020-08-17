@@ -1,6 +1,7 @@
 const aqp = require('api-query-params');
 const Params = require('eficar/models/params.model');
 const updateParams = require('eficar/methods/chl/v1/updateCoreParams');
+
 const all = async (req, res) => {
   const { filter, skip, limit, sort, projection, population } = aqp({ ...req.query });
   console.log(filter);
@@ -33,4 +34,5 @@ const get = async (filter) => {
   const response = await Params.find(filter);
   return response;
 };
+
 module.exports = { all, updateFromCore, getOne, get };
