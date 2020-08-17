@@ -135,7 +135,6 @@ const schema = new mongoose.Schema({
   riskAnalyst: { type: Object, default: null },
   checkListSent: {
     type: {
-      status: { type: String, required: false },
       sentAt: { type: Date, required: false },
       checkListItems: [
         {

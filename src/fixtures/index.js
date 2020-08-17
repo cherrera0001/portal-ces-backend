@@ -32,6 +32,9 @@ require('mongoEficar')();
       { code: 'SIMULATION_SENT', status: 'No accesada', color: 'black' },
       { code: 'WINNER', status: 'Otorgado', color: 'green' },
       { code: 'LOSER', status: 'Asignada a Otra EF', color: 'red' },
+      { code: 'REJECTED', status: 'Crédito Rechazado', color: 'red' },
+      { code: 'APPROVED', status: 'Crédito Aprobado', color: '#007BDC' },
+      { code: 'CONDITIONED', status: 'Crédito Condicionado', color: '#007BDC' },
       { code: 'EVALUATION_IN_PROCESS', status: 'Pendiente o en Proceso', color: '#007BDC' },
     ],
   });
