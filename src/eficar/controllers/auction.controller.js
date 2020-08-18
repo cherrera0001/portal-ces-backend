@@ -86,6 +86,13 @@ const checklist = async (req, res) => {
     parentId: checklistWorkingType.id,
   });
 
+  checklist.push(
+    checklist.splice(
+      checklist.findIndex((el) => el.name === 'Otros'),
+      1,
+    )[0],
+  );
+
   res.json({
     result: checklist,
   });
@@ -99,9 +106,8 @@ const get = async (req, res) => {
 
   if (!auction) return errors.notFound(res);
 
-  if (auction.status === 'SIMULATION_SENT') {
-    const loanStatus = await findLoanStatus('EVALUATION_IN_PROCESS');
-    auction.loanStatus = loanStatus;
+  if (auction.loanStatus.code === 'SIMULATION_SENT') {
+    auction.loanStatus = await findLoanStatus('EVALUATION_IN_PROCESS');
   }
 
   const config = await Config.findOne({});
