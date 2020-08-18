@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { type } = require('os');
 
 const schema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
@@ -132,6 +133,7 @@ const schema = new mongoose.Schema({
   simulationId: { type: Number, required: true, index: true },
   financingEntityId: { type: String, required: true, index: true },
   loanStatus: { type: Object, required: true },
+  finalLoanStatus: { type: Object, required: false },
   riskAnalyst: { type: Object, default: null },
   checkListSent: {
     type: {
@@ -141,6 +143,7 @@ const schema = new mongoose.Schema({
           type: Object,
         },
       ],
+      proposedBaseRate: { type: Number, required: false },
     },
     default: null,
   },

@@ -32,9 +32,11 @@ require('mongoEficar')();
       { code: 'SIMULATION_SENT', status: 'No accesada', color: 'black' },
       { code: 'WINNER', status: 'Otorgado', color: 'green' },
       { code: 'LOSER', status: 'Asignada a Otra EF', color: 'red' },
-      { code: 'REJECTED', status: 'Crédito Rechazado', color: 'red' },
+      { code: 'REJECTED', status: 'Crédito Rechazado', color: 'black' },
       { code: 'APPROVED', status: 'Crédito Aprobado', color: '#007BDC' },
       { code: 'CONDITIONED', status: 'Crédito Condicionado', color: '#007BDC' },
+      { code: 'CHECKLIST_REJECTED', status: 'Documentos Rechazados', color: 'black' },
+      { code: 'EXPIRED', status: 'No se entregó Respuesta a Tiempo', color: 'black' },
       { code: 'EVALUATION_IN_PROCESS', status: 'Pendiente o en Proceso', color: '#007BDC' },
     ],
   });

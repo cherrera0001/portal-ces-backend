@@ -156,15 +156,46 @@ const sendResponse = async (req, res) => {
   res.status(201).end();
 };
 
+const auctionUpdate = async (req, res) => {
+  const { loanApplicationId, status, proposedBaseRate, checkListItems } = req.body;
+
+  const auction = await Auction.findOne({ simulationId: loanApplicationId, financingEntityId: req.params.id });
+
+  if (!auction) return errors.notFound(res);
+
+  const lockedStatus = ['APPROVED', 'REJECTED', 'CONDITIONED'];
+  const newStatus = await findLoanStatus(status);
+
+  if (lockedStatus.includes(newStatus.code)) return res.status(201).end();
+
+  auction.loanStatus = newStatus;
+  auction.checkListSent = { checkListItems, proposedBaseRate, sentAt: new Date() };
+  auction.save();
+  res.status(201).end();
+};
+
+const auctionGranted = async (req, res) => {
+  const { status, loanApplicationId } = req.body;
+
+  const auction = await Auction.findOne({ simulationId: loanApplicationId, financingEntityId: req.params.id });
+  if (!auction) return errors.notFound(res);
+
+  const statusToSet = status === 'WINNER' ? status : 'LOSER';
+  auction.finalLoanStatus = await findLoanStatus(statusToSet);
+  auction.save();
+  res.status(201).end();
+};
+
 const create = async (req, res) => {
+  const { id, status } = req.body;
   const auction = new Auction({
     ...req.body,
-    simulationId: req.body.loanSimulationData.id,
+    simulationId: id,
     financingEntityId: req.params.rut,
-    loanStatus: await findLoanStatus(req.body.loanSimulationData.status),
+    loanStatus: await findLoanStatus(status),
   });
   auction.save();
   res.status(201).end();
 };
 
-module.exports = { all, get, create, getCustomerHistory, checklist, sendResponse };
+module.exports = { all, get, create, getCustomerHistory, checklist, sendResponse, auctionUpdate, auctionGranted };
