@@ -8,16 +8,15 @@ require('app-module-path/register');
 
 const app = require('app');
 const { debugApp } = require('debugger');
-const schemaDef = require('portal/helpers/gqlSchemasExport');
+const schemaDef = require('amices/helpers/gqlSchemasExport');
 const rollbar = require('rollbar');
-const { permissions, getUser } = require('portal/auth');
 
 require('mongoAmices')();
 require('mongoEficar')();
 
 const { PORT, NODE_ENV } = process.env;
 const apiPort = PORT || 8085;
-const schema = applyMiddleware(schemaDef, permissions);
+const schema = applyMiddleware(schemaDef);
 
 const server = new ApolloServer({
   schema,
@@ -29,10 +28,7 @@ const server = new ApolloServer({
     return err;
   },
   context: async ({ req, res }) => {
-    const accessToken = req && req.headers ? req.headers['x-access-token'] : '';
-    const refreshToken = req && req.headers ? req.headers['x-refresh-token'] : '';
-    const { user, claims } = await getUser(accessToken, refreshToken, res);
-    return { req, res, rollbar, user, claims };
+    return { req, res, rollbar };
   },
 });
 

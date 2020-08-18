@@ -130,6 +130,20 @@ const schema = new mongoose.Schema({
   customer: { type: Object, required: true },
   stage: { type: Number, required: false },
   simulationId: { type: Number, required: true, index: true },
+  financingEntityId: { type: String, required: true, index: true },
+  loanStatus: { type: Object, required: true },
+  riskAnalyst: { type: Object, default: null },
+  checkListSent: {
+    type: {
+      sentAt: { type: Date, required: false },
+      checkListItems: [
+        {
+          type: Object,
+        },
+      ],
+    },
+    default: null,
+  },
   sellerIdentificationValue: { type: String, required: false },
   amicarExecutiveIdentificationValue: { type: String, required: false },
 });

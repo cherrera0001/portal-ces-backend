@@ -32,12 +32,12 @@ app.use(morgan('tiny'));
 
 app.get('', (req, res) => {
   res.json({
-    message: 'Welcome to AMICAR Portal',
+    message: 'Welcome to AMICAR',
   });
 });
 
 app.use('', require('routes'));
-app.use('/portal', require('portal/routes'));
-app.use('/eficar', require('eficar/routes'));
+app.use('/amices/chl/v1', require('amices/routes'));
+app.use('/eficar/chl/v1', require('eficar/routes'));
 
 module.exports = app;

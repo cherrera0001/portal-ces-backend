@@ -7,13 +7,12 @@ chai.should();
 
 describe('EFICAR AUCTIONS', () => {
   describe('GET -> /eficar/chl/v1/auctions', () => {
-    it('Should get a list or a response object', (done) => {
+    it('Should not get a response if the user is not logged in', (done) => {
       chai
         .request(server)
         .get('/eficar/chl/v1/auctions')
         .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.a('object');
+          res.should.have.status(401);
           done();
         });
     });

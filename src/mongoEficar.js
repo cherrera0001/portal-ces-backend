@@ -3,10 +3,10 @@ const rollbar = require('rollbar');
 
 const connectDB = () => {
   try {
+    mongoose.set('useCreateIndex', true);
     mongoose.connect(process.env.MONGO_URI_EFICAR, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      useCreateIndex: true,
     });
   } catch (err) {
     rollbar.log(`mongoose-connection::ERROR: ${err.message}`);
