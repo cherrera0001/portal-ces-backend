@@ -54,14 +54,14 @@ jobs:
       - run: gcloud --quiet config set project ${{ secrets.GCP_PROJECT_STAGING }}
       - run: gcloud info
       - run: gcloud builds submit --config=.github/cloudbuild.yaml --substitutions=_GCP_PROJECT=$GCP_PROJECT_STAGING,_DEPLOY_IMG=$NODE_ENV
-      - run: gcloud run deploy amices-backend-staging --image gcr.io/${{ secrets.GCP_PROJECT_STAGING }}/amices-backend-staging --platform managed --set-env-vars NODE_ENV=$NODE_ENV,MONGO_URI_AMICES=$MONGO_URI_AMICES,MONGO_URI_EFICAR=$MONGO_URI_EFICAR,ROLLBAR_TOKEN=$ROLLBAR_TOKEN,JWT_SECRET=$JWT_SECRET,CORE_URL=$CORE_URL,API_KEY_PORTAL=$API_KEY_PORTAL
+      - run: gcloud run deploy amices-backend-staging --image gcr.io/${{ secrets.GCP_PROJECT_STAGING }}/amices-backend-staging --platform managed --set-env-vars NODE_ENV=$NODE_ENV,MONGO_URI_AMICES=$MONGO_URI_AMICES,MONGO_URI_EFICAR=$MONGO_URI_EFICAR,ROLLBAR_TOKEN=$ROLLBAR_TOKEN,CORE_URL=$CORE_URL,API_KEY_PORTAL=$API_KEY_PORTAL,SECRET=$SECRET
     env:
       CI: true
       NODE_ENV: staging
       MONGO_URI_AMICES: ${{ secrets.MONGO_URI_AMICES_STAGING }}
       MONGO_URI_EFICAR: ${{ secrets.MONGO_URI_EFICAR_STAGING }}
       ROLLBAR_TOKEN: ${{ secrets.ROLLBAR_TOKEN_STAGING }}
-      JWT_SECRET: ${{ secrets.JWT_SECRET_STAGING }}
       CORE_URL: ${{ secrets.CORE_URL_STAGING }}
       API_KEY_PORTAL: ${{ secrets.API_KEY_PORTAL_STAGING }}
       GCP_PROJECT_STAGING: ${{ secrets.GCP_PROJECT_STAGING }}
+      SECRET: ${{ secrets.SECRET_STAGING }}
