@@ -30,7 +30,7 @@ require('mongoEficar')();
     loanStatus: [
       { code: 'SAVED_SIMULATION', status: 'No accesada', color: 'black' },
       { code: 'SIMULATION_SENT', status: 'No accesada', color: 'black' },
-      { code: 'WINNER', status: 'Otorgado', color: 'green' },
+      { code: 'WINNER', status: 'Otorgado', color: '#3DAC00' },
       { code: 'LOSER', status: 'Asignada a Otra EF', color: 'red' },
       { code: 'REJECTED', status: 'Crédito Rechazado', color: 'black' },
       { code: 'APPROVED', status: 'Crédito Aprobado', color: '#007BDC' },

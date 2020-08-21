@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { type } = require('os');
 
 const schema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
@@ -138,6 +137,7 @@ const schema = new mongoose.Schema({
   checkListSent: {
     type: {
       sentAt: { type: Date, required: false },
+      checklistId: { type: Number, required: false },
       checkListItems: [
         {
           type: Object,
