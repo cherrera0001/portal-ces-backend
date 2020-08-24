@@ -69,10 +69,9 @@ const getCompleteItems = async (items) => {
     });
 
     checklistItems.push({
-      coreParamId: completeItem.id,
-      checklistId: item.checklistId,
+      ...item,
       name: completeItem.name,
-      ...(item.value && { value: item.value }),
+      status: item.status === 0 ? 2 : item.status,
     });
   }
 
@@ -155,32 +154,12 @@ const get = async (req, res) => {
 };
 
 const sendResponse = async (req, res) => {
-  const { feResponseStatus } = req.body;
   const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_CORE_SEND_FE_RESPONSE}`, {
     ...req.body,
     feIdentificationValue: req.user.companyIdentificationValue,
   });
 
   if (response.status !== 200) return errors.badRequest(res);
-
-  const checklistItems = await getCompleteItems(req.body.checklistItems);
-  const auction = await Auction.findOneAndUpdate(
-    {
-      simulationId: req.body.loanSimulationDataId,
-      financingEntityId: req.user.companyIdentificationValue,
-    },
-    {
-      $set: {
-        loanStatus: await findLoanStatus(loanStatusMap[feResponseStatus]),
-        checkListSent: {
-          checklistItems,
-          sentAt: new Date(),
-        },
-      },
-    },
-  );
-
-  await auction.save();
   res.status(201).end();
 };
 
@@ -198,6 +177,7 @@ const auctionUpdate = async (req, res) => {
   auction.loanStatus = newStatus;
   auction.checkListSent = { checklistItems: completeChecklistItems, proposeBaseRate, sentAt: new Date() };
   auction.save();
+  req.app.socketIo.emit(`RELOAD_EFICAR_${loanSimulationDataId}`);
   res.status(201).end();
 };
 
@@ -225,7 +205,7 @@ const checklistReception = async (req, res) => {
     for (const document of auction.checkListSent.checklistItems) {
       if (document.coreParamId === coreParamId) {
         document.uuids = uuids;
-        document.status = status;
+        document.status = status === 0 ? 2 : status;
       }
     }
 
