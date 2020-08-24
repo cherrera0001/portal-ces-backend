@@ -4,5 +4,6 @@ exports.PATH_ENDPOINT_SIMULATION = '/chl/v1/simulation';
 exports.PATH_ENDPOINT_SAVE_SIMULATION = '/chl/v1/simulation/save';
 exports.PATH_ENDPOINT_CORE_SEND_FE_RESPONSE = '/chl/v1/financing-entity/save-response';
 exports.PATH_ENDPOINT_CORE_DOWNLOAD_DOCUMENT = '/chl/v1/files/checklist/download';
+exports.PATH_ENDPOINT_CORE_DOCUMENT_STATUS = '/chl/v1/financing-entity/checklist-confirmation';
 exports.PATH_CORE_ENDPOINT_ALFRESCO = '/chl/v1/alfresco';
 exports.PATH_CORE_ENDPOINT_GQL = '/graphql';

@@ -13,6 +13,7 @@ router.route('/granted/:rut').post(controller.auctionGranted);
 router.route('/checklist-reception/:rut').post(controller.checklistReception);
 router.route('/checklist-confirmation/:rut').post(controller.checklistConfirmation);
 router.route('/checklist/download-document').post(authenticate, controller.downloadDocument);
+router.route('/checklist/document-status').post(authenticate, controller.documentStatus);
 router.route('').post(validate(schema.create), controller.create);
 router.route('/:rut').post(validate(schema.create), controller.create);
 

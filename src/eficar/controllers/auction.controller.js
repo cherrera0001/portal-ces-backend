@@ -5,7 +5,11 @@ const Config = require('eficar/models/config.model');
 const findLoanStatus = require('eficar/helpers/findLoanStatus');
 const errors = require('eficar/errors');
 const HTTP = require('requests');
-const { PATH_ENDPOINT_CORE_SEND_FE_RESPONSE, PATH_ENDPOINT_CORE_DOWNLOAD_DOCUMENT } = require('eficar/core.services');
+const {
+  PATH_ENDPOINT_CORE_SEND_FE_RESPONSE,
+  PATH_ENDPOINT_CORE_DOWNLOAD_DOCUMENT,
+  PATH_ENDPOINT_CORE_DOCUMENT_STATUS,
+} = require('eficar/core.services');
 
 const { CORE_URL } = process.env;
 
@@ -212,19 +216,22 @@ const checklistReception = async (req, res) => {
   if (!req.body) return errors.badRequest(res);
 
   for (const item of req.body) {
-    const { loanSimulationDataId, checklistId, coreParamId, uuids } = item;
+    const { loanSimulationDataId, checklistId, coreParamId, uuids, status } = item;
     const auction = await Auction.findOne({ simulationId: loanSimulationDataId, financingEntityId: req.params.rut });
     if (!auction) return errors.notFound(res);
 
     auction.checkListSent.checklistId = checklistId;
 
     for (const document of auction.checkListSent.checklistItems) {
-      if (document.coreParamId === coreParamId) document.uuids = uuids;
+      if (document.coreParamId === coreParamId) {
+        document.uuids = uuids;
+        document.status = status;
+      }
     }
 
     auction.markModified('checkListSent');
     await auction.save();
-    req.app.socketIo.emit(`RELOAD_AUCTION_${loanSimulationDataId}`);
+    req.app.socketIo.emit(`RELOAD_EFICAR_${loanSimulationDataId}`);
   }
   res.status(201).end();
 };
@@ -247,12 +254,31 @@ const checklistConfirmation = async (req, res) => {
   res.status(201).end();
 };
 
-const downloadDocument = async (req, res) => {
-  const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_CORE_DOWNLOAD_DOCUMENT}`, req.body);
+const documentStatus = async (req, res) => {
+  const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_CORE_DOCUMENT_STATUS}`, {
+    ...req.body,
+    feIdentificationValue: req.user.companyIdentificationValue,
+  });
+
   if (response.status !== 200) return errors.badRequest(res);
 
   res.json({
-    result: response.data,
+    ...response.data,
+  });
+};
+
+const downloadDocument = async (req, res) => {
+  const { loanSimulationDataId, checklistId, uuid } = req.body;
+  const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_CORE_DOWNLOAD_DOCUMENT}`, {
+    loanSimulationDataId,
+    checklistId,
+    uuid,
+  });
+
+  if (response.status !== 200) return errors.badRequest(res);
+
+  res.json({
+    ...response.data,
   });
 };
 
@@ -281,6 +307,7 @@ module.exports = {
   sendResponse,
   auctionUpdate,
   auctionGranted,
+  documentStatus,
   checklistReception,
   checklistConfirmation,
 };
