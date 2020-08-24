@@ -8,6 +8,7 @@ type CoreParams {
 }
 
 type CoreParamsList {
+  financingType: [CoreParams]
   maritalStatus: [CoreParams]
   maritalRegime: [CoreParams]
   academicLevel: [CoreParams]

@@ -17,6 +17,7 @@ module.exports = async ({ rollbar }) => {
   try {
     const coreParams = await CoreParamsModel.aggregate(getQuery());
     return {
+      financingType: coreParams.find((el) => el.type === 'FINANCING_TYPE').values,
       personalReferencesType: coreParams.find((el) => el.type === 'PERSONAL_REFERENCE_TYPE').values,
       heritageType: coreParams.find((el) => el.type === 'HERITAGE_TYPE').values,
       bank: coreParams.find((el) => el.type === 'BANKS').values,
