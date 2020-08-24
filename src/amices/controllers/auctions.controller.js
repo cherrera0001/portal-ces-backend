@@ -26,6 +26,8 @@ const responses = async (req, res) => {
     if (!req.body.message.data) throw Error();
     const incomeData = parseMessage(req.body.message.data);
     console.log(`>>>>>> auctionResponses incoming message for (${incomeData.loanApplicationId}) loan auction <<<<<<`);
+    console.log(incomeData);
+
     const auctionParticipants = await AuctionParticipantsModel.findOne({
       loanApplicationId: +incomeData.loanApplicationId,
     });
@@ -44,6 +46,7 @@ const responses = async (req, res) => {
 
 const finish = async (req, res) => {
   try {
+    // tienes q tener status FORMALIZED_REQUEST para finalizar remate (cambiarlo a finish_auction), si no, responder 400
     if (!req.body.message.data) throw Error();
     const incomeData = parseMessage(req.body.message.data);
     console.log(`>>>>>> auctionFinish incoming message for (${incomeData.loanApplicationId}) loan auction <<<<<<`);
