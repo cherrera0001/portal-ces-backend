@@ -65,7 +65,7 @@ const getCompleteItems = async (items) => {
   for (const item of items) {
     const completeItem = await Params.getOne({
       type: 'CHECKLIST',
-      externalCode: item.checklistId,
+      id: item.coreParamId,
     });
 
     checklistItems.push({
@@ -164,20 +164,23 @@ const sendResponse = async (req, res) => {
 };
 
 const auctionUpdate = async (req, res) => {
-  const { loanSimulationDataId, feResponseStatus, proposeBaseRate, checklistItems } = req.body;
-  const auction = await Auction.findOne({ simulationId: loanSimulationDataId, financingEntityId: req.params.rut });
+  const { loanApplicationId, feResponseStatus, proposeBaseRate, checklistItems } = req.body;
+  console.log({ loanApplicationId });
+
+  const auction = await Auction.findOne({ simulationId: loanApplicationId, financingEntityId: req.params.rut });
   if (!auction) return errors.notFound(res);
 
   const lockedStatus = ['APPROVED', 'REJECTED', 'CONDITIONED'];
-  const newStatus = await findLoanStatus(loanStatusMap[feResponseStatus]);
+  if (!lockedStatus.includes(auction.loanStatus.code) && feResponseStatus) {
+    auction.loanStatus = await findLoanStatus(loanStatusMap[feResponseStatus]);
+  }
 
-  if (lockedStatus.includes(auction.loanStatus.code)) return res.status(201).end();
   const completeChecklistItems = await getCompleteItems(checklistItems);
 
-  auction.loanStatus = newStatus;
   auction.checkListSent = { checklistItems: completeChecklistItems, proposeBaseRate, sentAt: new Date() };
-  auction.save();
-  req.app.socketIo.emit(`RELOAD_EFICAR_${loanSimulationDataId}`);
+  auction.markModified('checkListSent');
+  await auction.save();
+  req.app.socketIo.emit(`RELOAD_EFICAR_${loanApplicationId}`);
   res.status(201).end();
 };
 
@@ -188,7 +191,7 @@ const auctionGranted = async (req, res) => {
 
   const statusToSet = status === 'WINNER' ? status : 'LOSER';
   auction.finalLoanStatus = await findLoanStatus(statusToSet);
-  auction.save();
+  await auction.save();
   res.status(201).end();
 };
 
