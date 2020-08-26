@@ -71,7 +71,7 @@ const getCompleteItems = async (items) => {
     checklistItems.push({
       ...item,
       name: completeItem.name,
-      status: item.status === 0 ? 2 : item.status,
+      status: item.status,
       externalCode: completeItem.externalCode,
     });
   }
@@ -206,7 +206,7 @@ const checklistReception = async (req, res) => {
     for (const document of auction.checkListSent.checklistItems) {
       if (document.coreParamId === coreParamId) {
         document.uuids = uuids;
-        document.status = status === 0 ? 2 : status;
+        document.status = status;
       }
     }
 
