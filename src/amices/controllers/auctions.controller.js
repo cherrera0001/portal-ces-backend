@@ -28,14 +28,24 @@ const responses = async (req, res) => {
     console.log(`>>>>>> auctionResponses incoming message for (${incomeData.loanApplicationId}) loan auction <<<<<<`);
     console.log(incomeData);
 
-    const auctionParticipants = await AuctionParticipantsModel.findOne({
+    const auction = await AuctionParticipantsModel.findOne({
       loanApplicationId: +incomeData.loanApplicationId,
     });
-    if (!auctionParticipants) {
+    if (!auction) {
       throw new Error(`Auction ${incomeData.loanApplicationId} not found for update`);
     }
-    auctionParticipants.auctionParticipants = incomeData.auctionParticipants;
-    await auctionParticipants.save();
+
+    const winnerAlreadyPresent = auction.auctionParticipants.find((participant) => participant.status === 'WINNER');
+    if (winnerAlreadyPresent) {
+      const incomingStatusForWinner = incomeData.auctionParticipants.find((el) => el.id === winnerAlreadyPresent.id);
+      if (incomingStatusForWinner.status !== 'WINNER') {
+        const incomingWinner = incomeData.auctionParticipants.find((participant) => participant.status === 'WINNER');
+        if (!incomingWinner) return res.status(200).json();
+      }
+    }
+
+    auction.auctionParticipants = incomeData.auctionParticipants;
+    await auction.save();
     req.app.socketIo.emit(`RELOAD_AUCTION_${incomeData.loanApplicationId}`);
     return res.status(200).json();
   } catch (err) {

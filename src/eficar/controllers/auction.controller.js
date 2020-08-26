@@ -72,6 +72,7 @@ const getCompleteItems = async (items) => {
       ...item,
       name: completeItem.name,
       status: item.status === 0 ? 2 : item.status,
+      externalCode: completeItem.externalCode,
     });
   }
 
@@ -165,8 +166,6 @@ const sendResponse = async (req, res) => {
 
 const auctionUpdate = async (req, res) => {
   const { loanApplicationId, feResponseStatus, proposeBaseRate, checklistItems } = req.body;
-  console.log({ loanApplicationId });
-
   const auction = await Auction.findOne({ simulationId: loanApplicationId, financingEntityId: req.params.rut });
   if (!auction) return errors.notFound(res);
 
@@ -176,7 +175,6 @@ const auctionUpdate = async (req, res) => {
   }
 
   const completeChecklistItems = await getCompleteItems(checklistItems);
-
   auction.checkListSent = { checklistItems: completeChecklistItems, proposeBaseRate, sentAt: new Date() };
   auction.markModified('checkListSent');
   await auction.save();
@@ -220,20 +218,14 @@ const checklistReception = async (req, res) => {
 };
 
 const checklistConfirmation = async (req, res) => {
-  const { loanApplicationId, checklistOperation, checklistId, checklistItemId, uuids } = req.body;
-  // revisar checklistOperation rechazo, aprobacion
-
+  const { loanApplicationId, checklistItems } = req.body;
   const auction = await Auction.findOne({ simulationId: loanApplicationId, financingEntityId: req.params.rut });
   if (!auction) return errors.notFound(res);
 
-  auction.checkListSent.checklistId = checklistId;
-
-  for (const item of auction.checkListSent.checklistItems) {
-    if (item.checklistId === checklistItemId) item.uuids = uuids;
-  }
-
+  auction.checkListSent = { ...auction.checkListSent, checklistItems: await getCompleteItems(checklistItems) };
   auction.markModified('checkListSent');
   await auction.save();
+  req.app.socketIo.emit(`RELOAD_EFICAR_${loanApplicationId}`);
   res.status(201).end();
 };
 
