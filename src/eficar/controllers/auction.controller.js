@@ -65,14 +65,14 @@ const getCompleteItems = async (items) => {
   for (const item of items) {
     const completeItem = await Params.getOne({
       type: 'CHECKLIST',
-      externalCode: item.checklistId,
+      id: item.coreParamId,
     });
 
     checklistItems.push({
-      coreParamId: completeItem.id,
-      checklistId: item.checklistId,
+      ...item,
       name: completeItem.name,
-      ...(item.value && { value: item.value }),
+      status: item.status,
+      externalCode: completeItem.externalCode,
     });
   }
 
@@ -155,49 +155,30 @@ const get = async (req, res) => {
 };
 
 const sendResponse = async (req, res) => {
-  const { feResponseStatus } = req.body;
   const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_CORE_SEND_FE_RESPONSE}`, {
     ...req.body,
     feIdentificationValue: req.user.companyIdentificationValue,
   });
 
   if (response.status !== 200) return errors.badRequest(res);
-
-  const checklistItems = await getCompleteItems(req.body.checklistItems);
-  const auction = await Auction.findOneAndUpdate(
-    {
-      simulationId: req.body.loanSimulationDataId,
-      financingEntityId: req.user.companyIdentificationValue,
-    },
-    {
-      $set: {
-        loanStatus: await findLoanStatus(loanStatusMap[feResponseStatus]),
-        checkListSent: {
-          checklistItems,
-          sentAt: new Date(),
-        },
-      },
-    },
-  );
-
-  await auction.save();
   res.status(201).end();
 };
 
 const auctionUpdate = async (req, res) => {
-  const { loanSimulationDataId, feResponseStatus, proposeBaseRate, checklistItems } = req.body;
-  const auction = await Auction.findOne({ simulationId: loanSimulationDataId, financingEntityId: req.params.rut });
+  const { loanApplicationId, feResponseStatus, proposeBaseRate, checklistItems } = req.body;
+  const auction = await Auction.findOne({ simulationId: loanApplicationId, financingEntityId: req.params.rut });
   if (!auction) return errors.notFound(res);
 
   const lockedStatus = ['APPROVED', 'REJECTED', 'CONDITIONED'];
-  const newStatus = await findLoanStatus(loanStatusMap[feResponseStatus]);
+  if (!lockedStatus.includes(auction.loanStatus.code) && feResponseStatus) {
+    auction.loanStatus = await findLoanStatus(loanStatusMap[feResponseStatus]);
+  }
 
-  if (lockedStatus.includes(auction.loanStatus.code)) return res.status(201).end();
   const completeChecklistItems = await getCompleteItems(checklistItems);
-
-  auction.loanStatus = newStatus;
   auction.checkListSent = { checklistItems: completeChecklistItems, proposeBaseRate, sentAt: new Date() };
-  auction.save();
+  auction.markModified('checkListSent');
+  await auction.save();
+  req.app.socketIo.emit(`RELOAD_EFICAR_${loanApplicationId}`);
   res.status(201).end();
 };
 
@@ -208,7 +189,7 @@ const auctionGranted = async (req, res) => {
 
   const statusToSet = status === 'WINNER' ? status : 'LOSER';
   auction.finalLoanStatus = await findLoanStatus(statusToSet);
-  auction.save();
+  await auction.save();
   res.status(201).end();
 };
 
@@ -237,20 +218,14 @@ const checklistReception = async (req, res) => {
 };
 
 const checklistConfirmation = async (req, res) => {
-  const { loanApplicationId, checklistOperation, checklistId, checklistItemId, uuids } = req.body;
-  // revisar checklistOperation rechazo, aprobacion
-
+  const { loanApplicationId, checklistItems } = req.body;
   const auction = await Auction.findOne({ simulationId: loanApplicationId, financingEntityId: req.params.rut });
   if (!auction) return errors.notFound(res);
 
-  auction.checkListSent.checklistId = checklistId;
-
-  for (const item of auction.checkListSent.checklistItems) {
-    if (item.checklistId === checklistItemId) item.uuids = uuids;
-  }
-
+  auction.checkListSent = { ...auction.checkListSent, checklistItems: await getCompleteItems(checklistItems) };
   auction.markModified('checkListSent');
   await auction.save();
+  req.app.socketIo.emit(`RELOAD_EFICAR_${loanApplicationId}`);
   res.status(201).end();
 };
 
