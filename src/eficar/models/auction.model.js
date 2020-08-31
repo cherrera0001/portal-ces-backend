@@ -132,15 +132,18 @@ const schema = new mongoose.Schema({
   simulationId: { type: Number, required: true, index: true },
   financingEntityId: { type: String, required: true, index: true },
   loanStatus: { type: Object, required: true },
+  finalLoanStatus: { type: Object, required: false },
   riskAnalyst: { type: Object, default: null },
   checkListSent: {
     type: {
       sentAt: { type: Date, required: false },
+      checklistId: { type: Number, required: false },
       checkListItems: [
         {
           type: Object,
         },
       ],
+      proposedBaseRate: { type: Number, required: false },
     },
     default: null,
   },

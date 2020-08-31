@@ -1,6 +1,6 @@
 const Config = require('eficar/models/config.model');
 
-const findLoanStatus = async (status) => {
+const findLoanStatus = async (status = 'SIMULATION_SENT') => {
   const config = await Config.findOne();
   if (!config) return { code: 'SIMULATION_SENT', status: 'No accesada', color: 'black' };
   return config.loanStatus.find((el) => el.code === status);
