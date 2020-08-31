@@ -8,12 +8,20 @@ const login = async (req, res) => {
   if (!localUser) return errors.badRequest(res, 'USER_NOT_FOUND');
 
   if (bcrypt.compareSync(req.body.password, localUser.password)) {
-    const { name, amicarExecutiveIdentificationValue, sellerIdentificationValue } = localUser;
+    const {
+      name,
+      amicarExecutiveIdentificationValue,
+      sellerIdentificationValue,
+      forApp,
+      companyIdentificationValue,
+    } = localUser;
     return res.json({
       user: {
         name,
         amicarExecutiveIdentificationValue,
         sellerIdentificationValue,
+        forApp,
+        companyIdentificationValue,
       },
       token: jwt.makeToken(localUser),
     });
