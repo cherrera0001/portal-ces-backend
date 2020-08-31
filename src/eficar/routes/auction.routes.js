@@ -6,15 +6,10 @@ const authenticate = require('middlewares/authenticate.middleware');
 
 router.route('').get(authenticate, controller.all);
 router.route('/:id').get(authenticate, controller.get);
-router.route('/checklist/:stage/:loanSimulationDataId').get(authenticate, controller.checklist);
 router.route('/send-response').post(authenticate, controller.sendResponse);
-router.route('/update/:rut').post(controller.auctionUpdate);
-router.route('/granted/:rut').post(controller.auctionGranted);
-router.route('/checklist-reception/:rut').post(controller.checklistReception);
-router.route('/checklist-confirmation/:rut').post(controller.checklistConfirmation);
-router.route('/checklist/download-document').post(authenticate, controller.downloadDocument);
-router.route('/checklist/document-status').post(authenticate, controller.documentStatus);
-router.route('').post(validate(schema.create), controller.create);
-router.route('/:rut').post(validate(schema.create), controller.create);
+router.route('/update/:rut').post(authenticate, controller.update);
+router.route('/granted/:rut').post(authenticate, controller.granted);
+router.route('').post(authenticate, validate(schema.create), controller.create);
+router.route('/:rut').post(authenticate, validate(schema.create), controller.create);
 
 module.exports = router;

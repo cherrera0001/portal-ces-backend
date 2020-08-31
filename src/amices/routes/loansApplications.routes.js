@@ -1,5 +1,5 @@
 const router = require('express-promise-router')();
-const controller = require('amices/controllers/loansApplication.controller');
+const controller = require('amices/controllers/loanApplications.controller');
 const validate = require('amices/middlewares/validate.middleware');
 const schema = require('amices/validations/loans-application.validation');
 

@@ -5,6 +5,8 @@ const methodOverride = require('method-override');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const parseSubscriptions = require('middlewares/parseSubscriptions.middleware');
+const logErrors = require('middlewares/logErrors.middleware');
 
 dotenv.config();
 
@@ -29,6 +31,7 @@ app.use(
 app.use(helmet());
 app.use(cors());
 app.use(morgan('tiny'));
+app.use(parseSubscriptions);
 
 app.get('', (req, res) => {
   res.json({
@@ -39,5 +42,7 @@ app.get('', (req, res) => {
 app.use('', require('routes'));
 app.use('/amices/chl/v1', require('amices/routes'));
 app.use('/eficar/chl/v1', require('eficar/routes'));
+
+app.use(logErrors);
 
 module.exports = app;

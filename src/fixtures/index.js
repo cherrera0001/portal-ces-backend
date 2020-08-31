@@ -1,15 +1,15 @@
 require('dotenv').config();
-const User = require('models/user.model');
-const AmicesConfig = require('amices/models/config.model');
-const EficarConfig = require('eficar/models/config.model');
-const AuctionParticipant = require('amices/models/auctionParticipant.model');
+const Users = require('models/users.model');
+const AmicesConfigs = require('amices/models/configs.model');
+const EficarConfigs = require('eficar/models/configs.model');
+const AuctionParticipant = require('amices/models/auctionParticipants.model');
 
 require('mongoAmices')();
 require('mongoEficar')();
 
 (async () => {
-  await AmicesConfig.deleteMany({});
-  const config = new AmicesConfig({
+  await AmicesConfigs.deleteMany({});
+  const config = new AmicesConfigs({
     allowedMimeTypes: ['application/pdf', 'image/jpeg', 'image/png'],
     maxFileSizeInKB: 40000000,
     terms: [
@@ -22,8 +22,8 @@ require('mongoEficar')();
   });
   await config.save();
 
-  await EficarConfig.deleteMany({});
-  const eficarConfig = new EficarConfig({
+  await EficarConfigs.deleteMany({});
+  const eficarConfig = new EficarConfigs({
     allowedMimeTypes: ['application/pdf', 'image/jpeg', 'image/png'],
     maxFileSizeInKB: 40000000,
     minimumRate: 0.5,
@@ -42,8 +42,8 @@ require('mongoEficar')();
   });
   await eficarConfig.save();
 
-  await User.deleteOne({ email: 'mail1@mail.com' });
-  const testUser = new User({
+  await Users.deleteOne({ email: 'mail1@mail.com' });
+  const testUser = new Users({
     name: 'Evaluador Web Amicar',
     username: 'Evaluador Web Amicar',
     rut: '966675608',

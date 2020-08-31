@@ -1,10 +1,10 @@
-const User = require('models/user.model');
+const Users = require('models/users.model');
 const jwt = require('security/jwt.security');
 
 const login = async (req, res) => {
-  const localUser = await User.findOne({ username: req.user.sAMAccountName });
+  const localUser = await Users.findOne({ username: req.user.sAMAccountName });
   if (!localUser) {
-    const user = new User({
+    const user = new Users({
       name: req.user.displayName,
       username: req.user.sAMAccountName,
       companyIdentificationValue: req.user.companyIdentificationValue,

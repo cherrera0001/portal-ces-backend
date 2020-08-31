@@ -1,7 +1,7 @@
 const { ApolloError } = require('apollo-server-express');
 const HTTP = require('requests');
 const { PATH_ENDPOINT_SAVE_SIMULATION } = require('amices/core.services');
-const LoansApplication = require('amices/models/loansApplication.model');
+const LoansApplication = require('amices/models/loanApplications.model');
 
 const { CORE_URL } = process.env;
 

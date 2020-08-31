@@ -14,4 +14,4 @@ const schema = new mongoose.Schema({
 });
 
 const db = mongoose.connection.useDb(`amices_${process.env.NODE_ENV}`);
-module.exports = db.model('User', schema);
+module.exports = db.model('Users', schema);

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const ConfigSchema = new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     loanStatus: [{ code: String, status: String, color: String }],
     minimumRate: { type: mongoose.Schema.Types.Number },
@@ -16,4 +16,4 @@ const ConfigSchema = new mongoose.Schema(
 );
 
 const db = mongoose.connection.useDb(`eficar_${process.env.NODE_ENV}`);
-module.exports = db.model('Config', ConfigSchema);
+module.exports = db.model('Configs', schema);

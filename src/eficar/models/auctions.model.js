@@ -115,9 +115,9 @@ const schema = new mongoose.Schema({
   otherIncome: { type: Object, required: true },
   expenses: { type: Object, required: true },
   taxReturn: [{ type: Object, required: true }],
-  spouseData: { type: Object, required: true },
+  spouseData: { type: Object, required: false },
   guarantor: [{ type: Object, required: true }],
-  buyForAnother: { type: Object, required: true },
+  buyForAnother: { type: Object, required: false },
   amortizationSchedule: [{ type: Object, required: true }],
   surchargesAndInsurances: [{ type: Object, required: true }],
   customerActivity: { type: Object, required: true },
@@ -152,4 +152,4 @@ const schema = new mongoose.Schema({
 });
 
 const db = mongoose.connection.useDb(`eficar_${process.env.NODE_ENV}`);
-module.exports = db.model('Auction', schema, 'auctions');
+module.exports = db.model('Auctions', schema);

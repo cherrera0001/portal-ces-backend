@@ -1,5 +1,5 @@
 const { ApolloError } = require('apollo-server-express');
-const AuctionParticipantsModel = require('amices/models/auctionParticipant.model');
+const AuctionParticipantsModel = require('amices/models/auctionParticipants.model');
 
 module.exports = async ({ data, rollbar }) => {
   try {
@@ -14,7 +14,7 @@ module.exports = async ({ data, rollbar }) => {
     return {
       financingEntityId: winner.FinancingEntity.id,
       checklistId: winner.Checklists[0].id,
-      checklistError: winner.Checklists[0].comments,
+      checklistError: winner.Checklists[0].comment,
       checklist: winner.Checklists[0].ChecklistItems.map((item) => ({
         id: item.id,
         name: item.CoreParam.name,
