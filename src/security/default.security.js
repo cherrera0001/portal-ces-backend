@@ -1,29 +1,17 @@
-const User = require('models/user.model');
+const Users = require('models/users.model');
 const jwt = require('security/jwt.security');
 const bcrypt = require('bcryptjs');
 const errors = require('amices/errors');
 
 const login = async (req, res) => {
-  const localUser = await User.findOne({ email: req.body.username });
-  if (!localUser) return errors.badRequest(res, 'USER_NOT_FOUND');
+  const user = await Users.findOne({ email: req.body.username });
+  if (!user) return errors.badRequest(res, 'USER_NOT_FOUND');
 
-  if (bcrypt.compareSync(req.body.password, localUser.password)) {
-    const {
-      name,
-      amicarExecutiveIdentificationValue,
-      sellerIdentificationValue,
-      forApp,
-      companyIdentificationValue,
-    } = localUser;
+  if (bcrypt.compareSync(req.body.password, user.password)) {
+    delete user.password;
     return res.json({
-      user: {
-        name,
-        amicarExecutiveIdentificationValue,
-        sellerIdentificationValue,
-        forApp,
-        companyIdentificationValue,
-      },
-      token: jwt.makeToken(localUser),
+      user,
+      token: jwt.makeToken(user),
     });
   }
   return errors.badRequest(res, 'INVALID_PASSWORD');

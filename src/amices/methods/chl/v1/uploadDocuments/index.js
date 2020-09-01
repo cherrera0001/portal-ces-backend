@@ -1,7 +1,7 @@
 const path = require('path');
 const HTTP = require('requests');
 const { ApolloError } = require('apollo-server-express');
-const ConfigModel = require('amices/models/config.model');
+const Configs = require('amices/models/configs.model');
 const { PATH_CORE_ENDPOINT_ALFRESCO } = require('amices/core.services');
 
 const { CORE_URL } = process.env;
@@ -21,7 +21,7 @@ const uploadDocuments = async (loanApplicationId, checklistId, files) => {
 module.exports = async ({ data, rollbar }) => {
   try {
     const { loanApplicationId, checklistId, files, checklistItemId } = data;
-    const config = await ConfigModel.findOne();
+    const config = await Configs.findOne();
     const filesToUpload = [];
     if (!config) throw new Error('CONFIG_NOT_FOUND');
 

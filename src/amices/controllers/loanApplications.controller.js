@@ -1,12 +1,10 @@
-const rollbar = require('rollbar.js');
 const aqp = require('api-query-params');
 const HTTP = require('requests');
-const LoansApplication = require('amices/models/loansApplication.model');
+const LoansApplication = require('amices/models/loanApplications.model');
 const { PATH_ENDPOINT_LOAN_APPLICATION } = require('amices/core.services');
+const errors = require('amices/errors');
 
 const { CORE_URL } = process.env;
-
-const parseMessage = (message) => JSON.parse(Buffer.from(message, 'base64').toString());
 
 const getExternalCode = (coreParam) => {
   return coreParam ? coreParam.externalCode : '';
@@ -138,40 +136,42 @@ const status = async (req, res) => {
 };
 
 const save = async (req, res) => {
-  try {
-    await LoansApplication.findOneAndUpdate({ simulationId: req.body.simulationId }, req.body, {
-      useFindAndModify: false,
-    });
-    const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_LOAN_APPLICATION}`, req.body);
-    res.status(response.status).end();
-  } catch (err) {
-    console.log('errr', err.message);
-  }
+  await LoansApplication.findOneAndUpdate({ simulationId: req.body.simulationId }, req.body, {
+    useFindAndModify: false,
+  });
+  const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_LOAN_APPLICATION}`, req.body);
+  res.status(response.status).end();
 };
 
 const saveExternal = async (req, res) => {
-  try {
-    if (!req.body.message.data) throw Error();
-    const incomeData = parseMessage(req.body.message.data);
-    const { loanSimulationData } = incomeData;
-    console.log(`>>>>>> simulationSave incoming message for (${loanSimulationData.id}) simulation <<<<<<`);
-    let simulationObject = await LoansApplication.findOne({
-      simulationId: +loanSimulationData.id,
-    });
-    if (simulationObject) {
-      if (simulationObject.externalIds.includes(loanSimulationData.externalId)) return res.status(200).end();
-      simulationObject.externalIds.push(loanSimulationData.externalId);
-      simulationObject.update(formatLoanApplication(incomeData, simulationObject.externalIds));
-    } else {
-      const loanApplication = formatLoanApplication(incomeData, [incomeData.loanSimulationData.externalId]);
-      simulationObject = new LoansApplication(loanApplication);
-    }
-    await simulationObject.save();
-    res.status(200).end();
-  } catch (err) {
-    rollbar.log(`${__dirname}/${__filename} auctionResponses::ERROR: ${err.message}`);
-    res.status(500).end();
+  if (!req.body.message.data) return errors.badRequest(res);
+  const incomingData = req.body.message.data;
+  const { loanSimulationData } = incomingData;
+  let simulationObject = await LoansApplication.findOne({
+    simulationId: +loanSimulationData.id,
+  });
+  if (simulationObject) {
+    // if (simulationObject.externalIds.includes(loanSimulationData.externalId)) return res.status(200).end();
+    // simulationObject.externalIds.push(loanSimulationData.externalId);
+    simulationObject.update(formatLoanApplication(incomingData, simulationObject.externalIds));
+  } else {
+    const loanApplication = formatLoanApplication(incomingData, [incomingData.loanSimulationData.externalId]);
+    simulationObject = new LoansApplication(loanApplication);
   }
+  await simulationObject.save();
+  res.status(200).end();
 };
 
-module.exports = { all, create, save, saveExternal, status };
+const finish = async (req, res) => {
+  if (!req.body.message.data) return errors.badRequest(res);
+  const { loanApplicationId, status } = req.body.message.data;
+
+  const loanApplication = await LoansApplication.findOne({ loanApplicationId });
+  if (!loanApplication) return errors.badRequest(`Loan application ${loanApplicationId} not found`);
+
+  loanApplication.status = status;
+  await loanApplication.save();
+  return res.status(200).json();
+};
+
+module.exports = { all, create, save, saveExternal, finish, status };
