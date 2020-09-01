@@ -68,6 +68,7 @@ typings/
 
 # Application Specific
 command-files/
+app
 
 .idea/
 

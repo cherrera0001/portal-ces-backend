@@ -1,0 +1,67 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Amices Backend - Staging - Node.js CI
+
+on:
+  push:
+    branches:
+      - 'staging'
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v2
+
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.3.0
+        with:
+          mongodb-version: 4.0
+
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+
+      - run: npm install
+      - run: npm run fixtures
+      - run: npm run test
+    env:
+      CI: true
+      NODE_ENV: test
+      PORT: 8085
+      SERVER_HOST: 127.0.0.1
+      MONGO_URI_AMICES: mongodb://localhost:27017/amices_test?authSource=admin&retryWrites=true&w=majority
+      MONGO_URI_EFICAR: mongodb://localhost:27017/eficar_test?authSource=admin&retryWrites=true&w=majority
+      ACTIONS_RUNNER_DEBUG: true
+      TERM: xterm
+  deploy_staging:
+    needs: build_and_test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          export_default_credentials: true
+      - run: sudo apt-get install -qq -y gettext
+      - run: echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+        env:
+          GCLOUD_SERVICE_KEY: ${{ secrets.GCLOUD_SERVICE_KEY_PRODUCTION }}
+      - run: gcloud --quiet config set run/region us-east1
+      - run: gcloud --quiet config set project ${{ secrets.GCP_PROJECT_STAGING }}
+      - run: gcloud info
+      - run: gcloud builds submit --config=.github/cloudbuild.yaml --substitutions=_GCP_PROJECT=$GCP_PROJECT_STAGING,_DEPLOY_IMG=$NODE_ENV
+      - run: gcloud run deploy amices-backend-staging --image gcr.io/${{ secrets.GCP_PROJECT_STAGING }}/amices-backend-staging --platform managed --set-env-vars NODE_ENV=$NODE_ENV,MONGO_URI_AMICES=$MONGO_URI_AMICES,MONGO_URI_EFICAR=$MONGO_URI_EFICAR,ROLLBAR_TOKEN=$ROLLBAR_TOKEN,CORE_URL=$CORE_URL,API_KEY_PORTAL=$API_KEY_PORTAL,SECRET=$SECRET
+    env:
+      CI: true
+      NODE_ENV: staging
+      MONGO_URI_AMICES: ${{ secrets.MONGO_URI_AMICES_STAGING }}
+      MONGO_URI_EFICAR: ${{ secrets.MONGO_URI_EFICAR_STAGING }}
+      ROLLBAR_TOKEN: ${{ secrets.ROLLBAR_TOKEN_STAGING }}
+      CORE_URL: ${{ secrets.CORE_URL_STAGING }}
+      API_KEY_PORTAL: ${{ secrets.API_KEY_PORTAL_STAGING }}
+      GCP_PROJECT_STAGING: ${{ secrets.GCP_PROJECT_STAGING }}
+      SECRET: ${{ secrets.SECRET_STAGING }}

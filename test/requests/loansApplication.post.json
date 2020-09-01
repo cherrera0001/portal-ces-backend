@@ -1,0 +1,122 @@
+{
+  "customer": {
+    "identificationTypeId": 1,
+    "identificationValue": "247426507",
+    "documentSerialNumber": "123456",
+    "name": "Vicente",
+    "lastName": "Zamorano",
+    "motherLastName": "Zaldivia",
+    "email": "email@domain.com.co",
+    "phone": "94857645",
+    "address": "Calle 12345",
+    "geographicDataId": "461",
+    "dob": "2015-12-26",
+    "nationality": "CHILEAN",
+    "gender": "MALE"
+  },
+  "customerRequestData": {
+    "maritalStatus": "",
+    "maritalRegime": "",
+    "academicLevel": "",
+    "livingHousehold": "",
+    "profession": " ",
+    "generalComments": ""
+  },
+  "customerActivity": {
+    "workType": "",
+    "activityTypeId": "",
+    "workPosition": "",
+    "workEntryDate": "",
+    "employerName": "",
+    "employerIdentificationTypeId": 2,
+    "employerIdentificationValue": "",
+    "businessSectorId": "",
+    "workAddress": "",
+    "workGeographicDataId": "",
+    "workPhone": "",
+    "employmentContractType": "",
+    "salaryType": "",
+    "salaryPayday": 0
+  },
+  "income": {
+    "salary": 0,
+    "honorarium": 0,
+    "retirementSalary": 0,
+    "pensionSalary": 0,
+    "rentalIncome": 0,
+    "otherIncome": 0,
+    "descriptionForOtherIncome": ""
+  },
+  "otherIncome": {
+    "year": 0,
+    "folioNumber": 0,
+    "code18": 0,
+    "code25": 0,
+    "code36": 0,
+    "code158": 0,
+    "code170": 0,
+    "code305": 0,
+    "code461": 0,
+    "code545": 0,
+    "code611": 0,
+    "code628": 0,
+    "code636": 0
+  },
+  "expenses": {
+    "mortgageCost": 0,
+    "otherFixedExpenses": 0
+  },
+  "spouseData": {
+    "identificationType": 1,
+    "identificationValue": "",
+    "name": "",
+    "lastName": "",
+    "motherLastName": "",
+    "address": "",
+    "spouseGeographicDataId": "",
+    "workType": "",
+    "activityTypeId": "",
+    "employerName": "",
+    "workPhone": "",
+    "combinedIncome": false,
+    "salary": 0
+  },
+  "buyForAnother": {
+    "identificationTypeId": 1,
+    "identificationValue": "",
+    "name": "",
+    "lastName": "",
+    "motherLastName": "",
+    "address": "",
+    "geographicDataId": "",
+    "dob": "",
+    "nationalityId": "",
+    "maritalStatus": "",
+    "maritalRegime": ""
+  },
+  "vehicleData": {
+    "brandName": "KIA",
+    "modelName": "MORNING",
+    "version": "EX 1.2 5MT FULL",
+    "year": 2017
+  },
+  "loan": {
+    "loanType": "CONVENTIONAL",
+    "rateType": "NORMAL",
+    "cae": 49.9,
+    "customerRate": 2.19,
+    "monthlyPayment": 299948,
+    "term": 24,
+    "totalLoanCost": 7198758
+  },
+  "stage": 0,
+  "sellerIdentificationValue": "",
+  "amicarExecutiveIdentificationValue": "",
+  "externalIds": [],
+  "taxReturn": [],
+  "guarantor": [],
+  "bankInformation": [],
+  "personalReferences": [],
+  "heritage": [],
+  "simulationId": 10000056
+}

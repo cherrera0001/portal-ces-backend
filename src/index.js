@@ -1,18 +1,22 @@
-import { createServer } from 'http';
-import { ApolloServer, PubSub } from 'apollo-server-express';
-import { applyMiddleware } from 'graphql-middleware';
-import 'app-module-path/register';
-import app from 'config/app';
-import { debugApp } from 'config/debug';
-import schemaDef from 'helpers/gqlSchemasExport';
-import rollbar from 'config/rollbarConfig';
-import { permissions, getUser } from './auth';
-import './config/mgConnect';
+#!/usr/bin/env node
+const { createServer } = require('http');
+const { ApolloServer } = require('apollo-server-express');
+const { applyMiddleware } = require('graphql-middleware');
+const createError = require('http-errors');
+const socketIo = require('socket.io');
+require('app-module-path/register');
+
+const app = require('app');
+const { debugApp } = require('debugger');
+const schemaDef = require('amices/helpers/gqlSchemasExport');
+const rollbar = require('rollbar');
+
+require('mongoAmices')();
+require('mongoEficar')();
 
 const { PORT, NODE_ENV } = process.env;
 const apiPort = PORT || 8085;
-const pubsub = new PubSub();
-const schema = applyMiddleware(schemaDef, permissions);
+const schema = applyMiddleware(schemaDef);
 
 const server = new ApolloServer({
   schema,
@@ -24,22 +28,24 @@ const server = new ApolloServer({
     return err;
   },
   context: async ({ req, res }) => {
-    const accessToken = req && req.headers ? req.headers['x-access-token'] : '';
-    const refreshToken = req && req.headers ? req.headers['x-refresh-token'] : '';
-    const { user, claims } = await getUser(accessToken, refreshToken, res);
-    return { req, res, rollbar, pubsub, user, claims };
+    return { req, res, rollbar };
   },
 });
 
 server.applyMiddleware({ app, path: '/graphql' });
+
+app.use((req, res, next) => {
+  next(createError(404));
+});
+
 const httpServer = createServer(app);
-server.installSubscriptionHandlers(httpServer);
+
+app.socketIo = socketIo(httpServer);
 
 httpServer.listen(apiPort, () => {
   debugApp("Let's rock!! 🤘🏻🚀");
   debugApp(`Server running at http://127.0.0.1:${apiPort}/`);
   debugApp(`graphQL server running at http://127.0.0.1:${apiPort}${server.graphqlPath}/`);
-  debugApp(`🚀 Subscriptions ready at ws://127.0.0.1:${apiPort}${server.subscriptionsPath}`);
 });
 
 module.exports = app;

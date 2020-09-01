@@ -1,9 +1,0 @@
-type PortalConfig {
-  _id: String
-  key: Int
-  description: String
-}
-
-extend type Query {
-  getConfig(type: String!): [PortalConfig]
-}
