@@ -12,7 +12,7 @@ exports.create = Joi.object().keys({
   taxReturn: Joi.array(),
   spouseData: Joi.object().optional(),
   buyForAnother: Joi.object().optional(),
-  guarantor: Joi.array().optional(),
+  guarantor: Joi.array(),
   bankInformation: Joi.array(),
   heritage: Joi.array(),
   personalReferences: Joi.array(),
