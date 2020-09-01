@@ -28,6 +28,15 @@ const responses = async (req, res) => {
   const auction = await AuctionParticipants.findOne({ loanApplicationId });
   if (!auction) return errors.badRequest(`Auction ${loanApplicationId} not found to be updated`);
 
+  const winnerAlreadyPresent = auction.auctionParticipants.find((participant) => participant.status === 'WINNER');
+  if (winnerAlreadyPresent) {
+    const incomingStatusForWinner = auctionParticipants.find((el) => el.id === winnerAlreadyPresent.id);
+    if (incomingStatusForWinner.status !== 'WINNER') {
+      const incomingWinner = auctionParticipants.find((participant) => participant.status === 'WINNER');
+      if (!incomingWinner) return res.status(200).json();
+    }
+  }
+
   auction.auctionParticipants = auctionParticipants;
   await auction.save();
   req.app.socketIo.emit(`RELOAD_AUCTION_${loanApplicationId}`);
