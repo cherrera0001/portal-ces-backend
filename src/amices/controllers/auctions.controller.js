@@ -52,6 +52,7 @@ const finish = async (req, res) => {
   auction.status = status;
   await auction.save();
   req.app.socketIo.emit(`RELOAD_AUCTION_${loanApplicationId}`);
+  req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
   return res.status(200).json();
 };
 

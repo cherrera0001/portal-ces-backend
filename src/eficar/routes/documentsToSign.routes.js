@@ -5,6 +5,6 @@ const authenticate = require('middlewares/authenticate.middleware');
 router.route('/update').post(authenticate, controller.update);
 router.route('/upload').post(authenticate, controller.upload);
 router.route('/download').post(authenticate, controller.download);
-router.route('/delete').post(authenticate, controller.download);
+router.route('/delete').post(authenticate, controller.deleteDocuments);
 
 module.exports = router;
