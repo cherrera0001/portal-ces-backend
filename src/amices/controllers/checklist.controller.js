@@ -5,7 +5,7 @@ const errors = require('amices/errors');
 const update = async (req, res) => {
   // This function is called when a checklist item changes its status by being approved, rejected or downloaded.
   if (!req.body.message.data) return errors.badRequest(res);
-  const { loanApplicationId, feIdentificationValue, checkList, comment } = req.body.message.data;
+  const { loanApplicationId, feIdentificationValue, checkList } = req.body.message.data;
 
   const auction = await AuctionParticipants.findOne({ loanApplicationId });
   if (!auction) return errors.badRequest(`Auction ${loanApplicationId} not found for checklist items info update`);
@@ -24,7 +24,7 @@ const update = async (req, res) => {
         });
       }
       participant.Checklists[0].ChecklistItems = newCheckListItems;
-      if (comment) participant.Checklists[0].comment = comment;
+      if (checkList.comment) participant.Checklists[0].comment = checkList.comment;
       break;
     }
   }

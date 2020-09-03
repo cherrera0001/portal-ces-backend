@@ -176,6 +176,7 @@ const schema = new mongoose.Schema({
     },
   },
   externalIds: [{ type: String, required: true }],
+  status: { type: String },
 });
 
 const db = mongoose.connection.useDb(`amices_${process.env.NODE_ENV}`);

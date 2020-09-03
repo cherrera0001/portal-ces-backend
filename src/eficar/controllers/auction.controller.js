@@ -124,13 +124,13 @@ const update = async (req, res) => {
 
 const granted = async (req, res) => {
   // defines the final status for this FE
-  const { status, loanSimulationDataId } = req.body;
-  const auction = await Auction.findOne({ simulationId: loanSimulationDataId, financingEntityId: req.params.rut });
+  const { status, loanSimulationDataId: loanApplicationId } = req.body;
+  const auction = await Auction.findOne({ simulationId: loanApplicationId, financingEntityId: req.params.rut });
   if (!auction) return errors.notFound(res);
 
-  const statusToSet = status === 'WINNER' ? status : 'LOSER';
-  auction.finalLoanStatus = await findLoanStatus(statusToSet);
+  auction.finalLoanStatus = await findLoanStatus(status);
   await auction.save();
+  req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
   res.status(200).end();
 };
 
