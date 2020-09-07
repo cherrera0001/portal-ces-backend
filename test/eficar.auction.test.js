@@ -18,7 +18,8 @@ describe('EFICAR AUCTIONS', () => {
     });
   });
   describe('POST -> /eficar/chl/v1/auctions', () => {
-    it('Should get a 201 Response', (done) => {
+    it('Should get a 404 Response', (done) => {
+      // add coreToken param
       chai
         .request(server)
         .post('/eficar/chl/v1/auctions/1323432343')
@@ -96,7 +97,7 @@ describe('EFICAR AUCTIONS', () => {
           },
         })
         .end((err, res) => {
-          res.should.have.status(401);
+          res.should.have.status(404);
           done();
         });
     });

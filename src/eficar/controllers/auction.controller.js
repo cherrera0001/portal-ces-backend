@@ -128,7 +128,9 @@ const granted = async (req, res) => {
   const auction = await Auction.findOne({ simulationId: loanApplicationId, financingEntityId: req.params.rut });
   if (!auction) return errors.notFound(res);
 
-  auction.finalLoanStatus = await findLoanStatus(status);
+  const finalLoanStatus = status === 'APPROVED' ? 'LOSER' : status;
+
+  auction.finalLoanStatus = await findLoanStatus(finalLoanStatus);
   await auction.save();
   req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
   res.status(200).end();

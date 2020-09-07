@@ -144,6 +144,7 @@ const schema = new mongoose.Schema(
           },
         ],
         proposedBaseRate: { type: Number, required: false },
+        comment: { type: String, required: false },
       },
       default: null,
     },
