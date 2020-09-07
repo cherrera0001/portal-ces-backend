@@ -6,6 +6,7 @@ const coreAuth = require('eficar/middlewares/coreAuth.middleware');
 router.route('/upload').post(authenticate, controller.upload);
 router.route('/download').post(authenticate, controller.download);
 router.route('/delete').post(authenticate, controller.deleteDocuments);
+router.route('/list').get(authenticate, controller.list);
 
 // CORE URLS
 router.route('/update').post(coreAuth, controller.update);
