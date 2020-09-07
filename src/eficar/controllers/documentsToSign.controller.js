@@ -56,9 +56,26 @@ const deleteDocuments = async (req, res) => {
 
 };
 
+const list = async (req, res) => {
+  const { loanApplicationId } = req.body;
+  const uploadDocuments = await DocumentsToSign.findOne({ loanApplicationId: loanApplicationId});
+  const documentsWithoutContent = uploadDocuments.files.map(
+    (item)=>{
+      return {
+        documentTypeId: item.documentTypeId,
+        filesContent:
+          item.filesContent.map(
+            file=>{return {fileName:file.fileName}}
+          )
+      }}
+    )
+  res.json(documentsWithoutContent);
+};
+
 module.exports = {
   update,
   upload,
   download,
   deleteDocuments,
+  list
 };
