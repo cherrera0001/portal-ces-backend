@@ -7,6 +7,7 @@ const schema = new mongoose.Schema(
     coreToken: { type: mongoose.Schema.Types.String },
     allowedMimeTypes: [{ type: mongoose.Schema.Types.String }],
     maxFileSizeInKB: { type: mongoose.Schema.Types.Number },
+    coreUrls: { type: Object },
   },
   {
     collection: 'config',

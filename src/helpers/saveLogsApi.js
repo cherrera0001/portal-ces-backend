@@ -3,6 +3,9 @@ const rollbar = require('../rollbar');
 
 module.exports = async (req) => {
   const { url, requestBody, responseBody, method, headers, requestId } = req;
+
+  if (String(method).toUpperCase() === 'OPTIONS') return;
+
   const newLogData = {
     action: `${method}: ${url}`,
     headers,

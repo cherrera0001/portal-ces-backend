@@ -1,4 +1,3 @@
-/* eslint-disable import/first */
 const dotenv = require('dotenv');
 const express = require('express');
 const methodOverride = require('method-override');

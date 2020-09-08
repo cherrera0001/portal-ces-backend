@@ -12,6 +12,7 @@ const ConfigSchema = new mongoose.Schema(
         configType: { type: mongoose.Schema.Types.String },
       },
     ],
+    coreUrls: { type: Object },
   },
   {
     collection: 'config',
