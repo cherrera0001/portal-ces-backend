@@ -1,6 +1,7 @@
 const aqp = require('api-query-params');
 const Params = require('eficar/controllers/params.controller');
 const Auction = require('eficar/models/auctions.model');
+const DocumentsToSign = require('eficar/models/documentsToSign.model');
 const findLoanStatus = require('eficar/helpers/findLoanStatus');
 const errors = require('eficar/errors');
 const HTTP = require('requests');
@@ -144,6 +145,10 @@ const confirmation = async (req, res) => {
 
   auction.finalLoanStatus = await findLoanStatus(status);
   await auction.save();
+
+  const documentsToSign = new DocumentsToSign({ loanApplicationId });
+  await documentsToSign.save();
+
   req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
   res.status(200).end();
 };
