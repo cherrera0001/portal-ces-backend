@@ -12,7 +12,7 @@ const {
 const { CORE_URL } = process.env;
 
 const upload = async (req, res) => {
-  const { loanApplicationId, documentTypeId, files } = req.body;
+  const { loanApplicationId, files } = req.body;
 
   const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_CORE_UPLOAD_DOCUMENT_TO_SIGN}`, {
     loanApplicationId,
@@ -21,15 +21,24 @@ const upload = async (req, res) => {
   });
 
   if (response.status !== 200) return errors.badRequest(res);
-  const { filesContent } = response.data[0];
 
-  let document = await DocumentsToSign.findOne({ loanApplicationId, 'documentType.id': documentTypeId });
+  let { filesContent } = response.data[0];
+
+  filesContent = filesContent.filter((file) => file.fileName && file.uuid);
+
+  let document = await DocumentsToSign.findOne({
+    loanApplicationId,
+    'documentType.externalCode': files[0].documentTypeId,
+  });
 
   if (document) {
     document.files = filesContent;
     document.markModified('files');
   } else {
-    const documentType = await Params.findOne({ id: documentTypeId }).select('id name externalCode parentId type');
+    const documentType = await Params.findOne({ type: 'DOCUMENT_TYPE', externalCode: files[0].documentTypeId }).select(
+      'id name externalCode parentId type',
+    );
+
     const documentClassification = await Params.findOne({ id: documentType.parentId }).select(
       'id name externalCode parentId type',
     );
@@ -55,6 +64,7 @@ const download = async (req, res) => {
       loanApplicationId,
       documentType,
       uuid,
+      requestFromAmices: true,
     });
 
     if (response.status !== 200) return errors.badRequest(res);
@@ -72,7 +82,7 @@ const deleteDocuments = async (req, res) => {
   if (!documents) return errors.notFound(res);
   try {
     for (const file of files) {
-      await HTTP.deleteMethod(`${CORE_URL}${PATH_ENDPOINT_CORE_DELETE_DOCUMENT_TO_SIGN}`, {
+      await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_CORE_DELETE_DOCUMENT_TO_SIGN}`, {
         loanApplicationId,
         feIdentificationValue: req.user.companyIdentificationValue,
         documentTypeId,
