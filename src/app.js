@@ -4,7 +4,6 @@ const methodOverride = require('method-override');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const mongoose = require('mongoose');
 const parseSubscriptions = require('middlewares/parseSubscriptions.middleware');
 const saveLogsApi = require('helpers/saveLogsApi');
 
@@ -26,30 +25,26 @@ app.use(
     extended: true,
   }),
 );
-app.use(function(req, res, next) {
-  const oldJson = res.json;
-  req.requestId = mongoose.Types.ObjectId().toHexString();
-  saveLogsApi({
-    url: req.url,
-    method: req.method,
-    requestBody: { ...req.body, ...req.headers },
-    requestId: req.requestId,
-  });
-  res.json = function(data) {
+app.use(parseSubscriptions);
+
+app.use((req, res, next) => {
+  const oldSend = res.send;
+
+  res.send = function(data) {
     saveLogsApi({
-      url: req.url,
-      method: req.method,
-      responseBody: data,
-      requestId: req.requestId,
+      request: req,
+      response: data,
     });
-    oldJson.apply(res, arguments);
+
+    res.send = oldSend;
+    return res.send(data);
   };
   next();
 });
+
 app.use(helmet());
 app.use(cors());
 app.use(morgan('tiny'));
-app.use(parseSubscriptions);
 
 app.get('', (req, res) => {
   res.json({

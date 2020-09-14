@@ -3,14 +3,12 @@ const mongoose = require('mongoose');
 const schema = new mongoose.Schema(
   {
     loanApplicationId: { type: Number, required: true },
-    document: {
-      type: Object,
-      default: null,
-    },
+    documentClassification: { type: Object, required: false },
+    documentType: { type: Object, required: false },
     files: [
       {
-        uuid: { type: String, required: false },
         fileName: { type: String, required: false },
+        uuid: { type: String, required: false },
       },
     ],
   },

@@ -5,11 +5,11 @@ dotenv.config();
 
 const schema = new mongoose.Schema(
   {
-    action: { type: String, required: false },
-    requestId: { type: String, required: false },
     url: { type: String, required: false },
-    requestBody: { type: Object, required: false },
-    responseBody: { type: Object, required: false },
+    method: { type: String, required: false },
+    headers: { type: Object, required: false },
+    request: { type: Object, required: false },
+    response: { type: Object, required: false },
   },
   {
     collection: 'logRequestAPI',

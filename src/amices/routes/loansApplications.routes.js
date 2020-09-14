@@ -10,7 +10,6 @@ router.route('/:id/status').get(authenticate, controller.status);
 router.route('/save').post(authenticate, controller.save);
 router.route('').post(authenticate, validate(schema.create), controller.create);
 
-// GCP ENDPOINTS
 router.route('/save-external').post(pubSubAuth, controller.saveExternal);
 router.route('/finish').post(pubSubAuth, controller.finish);
 
