@@ -1,6 +1,6 @@
 const DocumentsToSign = require('amices/models/documentsToSign.model');
 const Params = require('amices/models/coreParams.model');
-const Auction = require('amices/models/auctionParticipants.model');
+const Loans = require('amices/models/loanApplications.model');
 const errors = require('amices/errors');
 const HTTP = require('requests');
 const { PATH_ENDPOINT_CORE_DOWNLOAD_DOCUMENT_TO_SIGN } = require('eficar/core.services');
@@ -29,11 +29,12 @@ const list = async (req, res) => {
     };
   });
 
-  const auction = await Auction.findOne({ loanApplicationId });
+  const loan = await Loans.findOne({ simulationId: loanApplicationId });
 
   res.json({
     financingEntityId: documents[0].financingEntityId,
-    awarded: auction.status === 'AWARDED',
+    awarded: loan.status === 'AWARDED',
+    awardedAt: loan.updatedAt,
     documentsToSign: documentsToSign.filter((classification) => classification.documents.length > 0),
   });
 };
@@ -73,7 +74,7 @@ const deleteDocuments = async (req, res) => {
     await DocumentsToSign.deleteOne({ loanApplicationId, 'documentType.externalCode': documentTypeId });
   }
 
-  req.app.socketIo.emit(`RELOAD_AMICES_DOCUMENTS_TO_SIGN_${loanApplicationId}`);
+  req.app.socketIo.emit(`RELOAD_DOCUMENTS_TO_SIGN_AMICES_${loanApplicationId}`);
   return res.status(200).json();
 };
 
@@ -81,32 +82,39 @@ const update = async (req, res) => {
   // This function is called when documents to sign files are sent by eficar
   if (!req.body.message.data) return errors.badRequest(res);
   const { loanApplicationId, files, financingEntityId = 1 } = req.body.message.data;
-  let { coreParamId, filesContent } = files[0]; // this is a temporary map and could be fixed by sending this parameter on the request's body.
 
-  filesContent = filesContent.filter((file) => file.fileName && file.uuid);
+  for (const { documentTypeId, filesContent } of files) {
+    const filesToSave = filesContent.filter((file) => file.fileName && file.uuid);
 
-  let document = await DocumentsToSign.findOne({ loanApplicationId, 'documentType.id': coreParamId });
-
-  if (document) {
-    document.files = filesContent;
-    document.markModified('files');
-  } else {
-    const documentType = await Params.findOne({ id: coreParamId }).select('id name externalCode parentId type');
-    const documentClassification = await Params.findOne({ id: documentType.parentId }).select(
-      'id name externalCode parentId type',
-    );
-
-    document = new DocumentsToSign({
+    let document = await DocumentsToSign.findOne({
       loanApplicationId,
-      financingEntityId,
-      documentType,
-      documentClassification,
-      files: filesContent,
+      'documentType.externalCode': documentTypeId,
     });
-  }
 
-  await document.save();
-  req.app.socketIo.emit(`RELOAD_AMICES_DOCUMENTS_TO_SIGN_${loanApplicationId}`);
+    if (document) {
+      document.files = filesToSave;
+      document.markModified('files');
+    } else {
+      const documentType = await Params.findOne({ type: 'DOCUMENT_TYPE', externalCode: documentTypeId }).select(
+        'id name externalCode parentId type',
+      );
+
+      const documentClassification = await Params.findOne({ id: documentType.parentId }).select(
+        'id name externalCode parentId type',
+      );
+
+      document = new DocumentsToSign({
+        loanApplicationId,
+        documentType,
+        financingEntityId,
+        documentClassification,
+        files: filesToSave,
+      });
+    }
+
+    await document.save();
+  }
+  req.app.socketIo.emit(`RELOAD_DOCUMENTS_TO_SIGN_AMICES_${loanApplicationId}`);
   return res.status(200).json();
 };
 

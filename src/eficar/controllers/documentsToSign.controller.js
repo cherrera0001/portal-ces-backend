@@ -13,7 +13,6 @@ const { CORE_URL } = process.env;
 
 const upload = async (req, res) => {
   const { loanApplicationId, files } = req.body;
-
   const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_CORE_UPLOAD_DOCUMENT_TO_SIGN}`, {
     loanApplicationId,
     feIdentificationValue: req.user.companyIdentificationValue,
@@ -22,36 +21,37 @@ const upload = async (req, res) => {
 
   if (response.status !== 200) return errors.badRequest(res);
 
-  let { filesContent } = response.data[0];
+  for (const { documentTypeId, filesContent } of response.data) {
+    const filesToSave = filesContent.filter((file) => file.fileName && file.uuid);
 
-  filesContent = filesContent.filter((file) => file.fileName && file.uuid);
-
-  let document = await DocumentsToSign.findOne({
-    loanApplicationId,
-    'documentType.externalCode': files[0].documentTypeId,
-  });
-
-  if (document) {
-    document.files = filesContent;
-    document.markModified('files');
-  } else {
-    const documentType = await Params.findOne({ type: 'DOCUMENT_TYPE', externalCode: files[0].documentTypeId }).select(
-      'id name externalCode parentId type',
-    );
-
-    const documentClassification = await Params.findOne({ id: documentType.parentId }).select(
-      'id name externalCode parentId type',
-    );
-
-    document = new DocumentsToSign({
+    let document = await DocumentsToSign.findOne({
       loanApplicationId,
-      documentType,
-      documentClassification,
-      files: filesContent,
+      'documentType.externalCode': documentTypeId,
     });
+
+    if (document) {
+      document.files = filesToSave;
+      document.markModified('files');
+    } else {
+      const documentType = await Params.findOne({ type: 'DOCUMENT_TYPE', externalCode: documentTypeId }).select(
+        'id name externalCode parentId type',
+      );
+
+      const documentClassification = await Params.findOne({ id: documentType.parentId }).select(
+        'id name externalCode parentId type',
+      );
+
+      document = new DocumentsToSign({
+        loanApplicationId,
+        documentType,
+        documentClassification,
+        files: filesToSave,
+      });
+    }
+
+    await document.save();
   }
 
-  await document.save();
   req.app.socketIo.emit(`RELOAD_EFICAR_DOCUMENTS_TO_SIGN_${loanApplicationId}`);
   return res.status(200).json();
 };
