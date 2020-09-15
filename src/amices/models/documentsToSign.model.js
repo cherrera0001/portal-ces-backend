@@ -5,6 +5,7 @@ const schema = new mongoose.Schema(
     loanApplicationId: { type: Number, required: true },
     documentClassification: { type: Object, required: false },
     documentType: { type: Object, required: false },
+    financingEntityId: { type: String, required: true },
     files: [
       {
         fileName: { type: String, required: false },
@@ -20,5 +21,5 @@ const schema = new mongoose.Schema(
   },
 );
 
-const db = mongoose.connection.useDb(`eficar_${process.env.NODE_ENV}`);
+const db = mongoose.connection.useDb(`amices_${process.env.NODE_ENV}`);
 module.exports = db.model('DocumentsToSign', schema);
