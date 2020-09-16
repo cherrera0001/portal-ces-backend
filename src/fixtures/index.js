@@ -54,6 +54,7 @@ require('mongoEficar')();
       { code: 'CHECKLIST_CONFIRMED', status: 'Checklist Confirmado', color: '#3DAC00' },
       { code: 'EXPIRED', status: 'No se entregó Respuesta a Tiempo', color: 'black' },
       { code: 'EVALUATION_IN_PROCESS', status: 'Pendiente o en Proceso', color: '#007BDC' },
+      { code: 'AWARDED', status: 'Crédito Adjudicado', color: '#3DAC00' },
     ],
     coreUrls: {
       UPLOAD_DOCUMENT_TO_SIGN: `${CORE_URL}/chl/v1/files/documents-to-sign/upload`,

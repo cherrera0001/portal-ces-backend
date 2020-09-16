@@ -1,18 +1,19 @@
 const DocumentsToSign = require('eficar/models/documentsToSign.model');
-const Configs = require('eficar/models/configs.model');
+const Params = require('eficar/models/params.model');
 const errors = require('eficar/errors');
 const HTTP = require('requests');
-const _ = require('lodash');
+
+const {
+  PATH_ENDPOINT_CORE_UPLOAD_DOCUMENT_TO_SIGN,
+  PATH_ENDPOINT_CORE_DOWNLOAD_DOCUMENT_TO_SIGN,
+  PATH_ENDPOINT_CORE_DELETE_DOCUMENT_TO_SIGN,
+} = require('eficar/core.services');
+
+const { CORE_URL } = process.env;
 
 const upload = async (req, res) => {
   const { loanApplicationId, files } = req.body;
-  const uploadDocuments = await DocumentsToSign.findOne({ loanApplicationId });
-  if (!uploadDocuments) return errors.notFound(res);
-
-  const config = await Configs.findOne();
-  const url = config.coreUrls.CORE_UPLOAD_DOCUMENTO_TO_SIGN;
-
-  const response = await HTTP.post(url, {
+  const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_CORE_UPLOAD_DOCUMENT_TO_SIGN}`, {
     loanApplicationId,
     feIdentificationValue: req.user.companyIdentificationValue,
     files,
@@ -20,71 +21,91 @@ const upload = async (req, res) => {
 
   if (response.status !== 200) return errors.badRequest(res);
 
-  const origin = _.keyBy(uploadDocuments.files, 'documentTypeId');
-  const toMerge = _.keyBy(files, 'documentTypeId');
+  for (const { documentTypeId, filesContent } of response.data) {
+    const filesToSave = filesContent.filter((file) => file.fileName && file.uuid);
 
-  const mergedFiles = _.mergeWith(origin, toMerge, function(objValue, srcValue, propertyName) {
-    if (propertyName === 'filesContent') {
-      return _.union(srcValue, objValue);
+    let document = await DocumentsToSign.findOne({
+      loanApplicationId,
+      'documentType.externalCode': documentTypeId,
+    });
+
+    if (document) {
+      document.files = filesToSave;
+      document.markModified('files');
+    } else {
+      const documentType = await Params.findOne({ type: 'DOCUMENT_TYPE', externalCode: documentTypeId }).select(
+        'id name externalCode parentId type',
+      );
+
+      const documentClassification = await Params.findOne({ id: documentType.parentId }).select(
+        'id name externalCode parentId type',
+      );
+
+      document = new DocumentsToSign({
+        loanApplicationId,
+        documentType,
+        documentClassification,
+        files: filesToSave,
+      });
     }
-  });
 
-  uploadDocuments.files = _.values(mergedFiles);
-  await uploadDocuments.update(uploadDocuments);
+    await document.save();
+  }
 
-  res.status(200).end();
+  req.app.socketIo.emit(`RELOAD_EFICAR_DOCUMENTS_TO_SIGN_${loanApplicationId}`);
+  return res.status(200).json();
 };
 
 const download = async (req, res) => {
   const { loanApplicationId, documentType, uuid } = req.body;
 
-  const config = await Configs.findOne();
-  const url = config.coreUrls.DOWNLOAD_DOCUMENTO_TO_SIGN;
+  try {
+    const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_CORE_DOWNLOAD_DOCUMENT_TO_SIGN}`, {
+      loanApplicationId,
+      documentType,
+      uuid,
+      requestFromAmices: true,
+    });
 
-  const response = await HTTP.post(url, {
-    loanApplicationId,
-    documentType,
-    uuid,
-  });
+    if (response.status !== 200) return errors.badRequest(res);
 
-  if (response.status !== 200) return errors.badRequest(res);
-
-  res.json({
-    ...response.data,
-  });
+    res.json({
+      ...response.data,
+    });
+  } catch (err) {}
 };
 
 const deleteDocuments = async (req, res) => {
-  const { loanApplicationId } = req.params;
-  const { uuid, documentTypeId } = req.body;
+  const { loanApplicationId, files, documentTypeId } = req.body;
 
-  const documents = await DocumentsToSign.findOne({ loanApplicationId });
+  const documents = await DocumentsToSign.findOne({ loanApplicationId, 'documentType.externalCode': documentTypeId });
   if (!documents) return errors.notFound(res);
+  try {
+    for (const file of files) {
+      await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_CORE_DELETE_DOCUMENT_TO_SIGN}`, {
+        loanApplicationId,
+        feIdentificationValue: req.user.companyIdentificationValue,
+        documentTypeId,
+        uuid: file.uuid,
+      });
+    }
 
-  const config = await Configs.findOne();
-  const url = config.coreUrls.DELETE_DOCUMENT_TO_SIGN;
-
-  const response = await HTTP.post(url, {
-    loanApplicationId,
-    feIdentificationValue: req.user.companyIdentificationValue,
-    documentTypeId,
-    uuid,
-  });
-
-  if (response.status !== 200) return errors.badRequest(res);
-
-  res.json({
-    ...response.data,
-  });
+    await DocumentsToSign.deleteOne({ loanApplicationId, 'documentType.externalCode': documentTypeId });
+    req.app.socketIo.emit(`RELOAD_EFICAR_DOCUMENTS_TO_SIGN_${loanApplicationId}`);
+    res.json();
+  } catch (err) {
+    req.app.socketIo.emit(`RELOAD_EFICAR_DOCUMENTS_TO_SIGN_${loanApplicationId}`);
+    res.status(500);
+  }
 };
 
 const list = async (req, res) => {
   const { loanApplicationId } = req.params;
-  const documents = await DocumentsToSign.findOne({ loanApplicationId });
+  const documents = await DocumentsToSign.find({ loanApplicationId });
 
   if (!documents) return errors.notFound(res);
 
-  res.json(documents.files);
+  res.json(documents);
 };
 
 module.exports = {
