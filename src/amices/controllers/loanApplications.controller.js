@@ -27,6 +27,25 @@ const formatLoanApplication = (incomeData, externalIds) => {
   } = incomeData;
   const loanType = loanSimulationData.LoanType.cod;
   const vfg = loanType === 'SMART' ? amortizationSchedule.find((schedule) => schedule.quotaType === 'SMART') : null;
+  const spouseDataFormated =
+    Object.keys(customerRequestData).length > 6
+      ? {
+          ...spouseData,
+          spouseGeographicDataId: spouseData.spouseGeographicData.COMMUNE.externalCode,
+          workType: spouseData.workType.externalCode,
+          activityType: spouseData.activityType.externalCode,
+        }
+      : {};
+  const buyForAnotherFormated =
+    Object.keys(buyForAnother).length > 0
+      ? {
+          ...buyForAnother,
+          geographicDataId: buyForAnother.geographicData.COMMUNE.externalCode,
+          nationalityId: buyForAnother.nationalityData.externalCode,
+          maritalStatus: buyForAnother.maritalStatusData.externalCode,
+          maritalRegime: buyForAnother.maritalRegimeData.externalCode,
+        }
+      : {};
   const loanApplicationFormated = !Object.keys(customerRequestData).length
     ? { ...incomeData, simulationId: loanSimulationData.id }
     : {
@@ -53,19 +72,8 @@ const formatLoanApplication = (incomeData, externalIds) => {
           employmentContractType: customerActivity.employmentContractType.externalCode,
           salaryType: customerActivity.salaryType.externalCode,
         },
-        spouseData: {
-          ...spouseData,
-          spouseGeographicDataId: spouseData.spouseGeographicData.COMMUNE.externalCode,
-          workType: spouseData.workType.externalCode,
-          activityType: spouseData.activityType.externalCode,
-        },
-        buyForAnother: {
-          ...buyForAnother,
-          geographicDataId: buyForAnother.geographicData.COMMUNE.externalCode,
-          nationalityId: buyForAnother.nationalityData.externalCode,
-          maritalStatus: buyForAnother.maritalStatusData.externalCode,
-          maritalRegime: buyForAnother.maritalRegimeData.externalCode,
-        },
+        spouseData: spouseDataFormated,
+        buyForAnother: buyForAnotherFormated,
         guarantor: guarantor.length
           ? guarantor.map((el) => ({
               ...el,
