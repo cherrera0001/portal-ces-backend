@@ -12,7 +12,7 @@ describe('AMICES LOANS APPLICATIONS', () => {
         .request(server)
         .get('/amices/chl/v1/loans-applications')
         .end((err, res) => {
-          res.should.have.status(200);
+          res.should.have.status(401);
           res.body.should.be.a('object');
           done();
         });

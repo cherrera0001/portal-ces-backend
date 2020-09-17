@@ -124,13 +124,23 @@ const update = async (req, res) => {
 
 const granted = async (req, res) => {
   // defines the final status for this FE
-  const { status, loanSimulationDataId } = req.body;
-  const auction = await Auction.findOne({ simulationId: loanSimulationDataId, financingEntityId: req.params.rut });
+  const { status, loanSimulationDataId: loanApplicationId } = req.body;
+  const auction = await Auction.findOne({ simulationId: loanApplicationId, financingEntityId: req.params.rut });
   if (!auction) return errors.notFound(res);
 
-  const statusToSet = status === 'WINNER' ? status : 'LOSER';
-  auction.finalLoanStatus = await findLoanStatus(statusToSet);
+  const finalLoanStatus = status === 'APPROVED' ? 'LOSER' : status;
+
+  auction.finalLoanStatus = await findLoanStatus(finalLoanStatus);
+
+  if (status === 'CHECKLIST_REJECTED') {
+    // makes sure the checklist items are shown as rejected even if they were approved before the complete checklist rejection
+    const items = auction.checkListSent.checklistItems;
+    auction.checkListSent = { ...auction.checkListSent, checklistItems: items.map((item) => ({ ...item, status: 5 })) };
+    auction.markModified('checkListSent');
+  }
+
   await auction.save();
+  req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
   res.status(200).end();
 };
 

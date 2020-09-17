@@ -5,17 +5,14 @@ dotenv.config();
 
 const schema = new mongoose.Schema(
   {
+    url: { type: String, required: false },
     method: { type: String, required: false },
     headers: { type: Object, required: false },
-    url: { type: String, required: false },
-    body: { type: Object, required: false },
-    type: { type: String, required: false },
-    error: { type: String, required: false },
-    errorStatus: { type: String, required: false },
-    requestId: { type: String, required: false },
+    request: { type: Object, required: false },
+    response: { type: Object, required: false },
   },
   {
-    collection: 'apiErrorsLogs',
+    collection: 'logRequestAPI',
     autoIndex: true,
     minimize: false,
     timestamps: true,
@@ -23,4 +20,4 @@ const schema = new mongoose.Schema(
 );
 
 const db = mongoose.connection.useDb(`amices_${process.env.NODE_ENV}`);
-module.exports = db.model('APIErrorsLogs', schema);
+module.exports = db.model('LogRequestAPI', schema);

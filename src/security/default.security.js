@@ -8,9 +8,14 @@ const login = async (req, res) => {
   if (!user) return errors.badRequest(res, 'USER_NOT_FOUND');
 
   if (bcrypt.compareSync(req.body.password, user.password)) {
-    delete user.password;
+    const { name, amicarExecutiveIdentificationValue, sellerIdentificationValue, forApp } = user;
     return res.json({
-      user,
+      user: {
+        name,
+        forApp,
+        amicarExecutiveIdentificationValue,
+        sellerIdentificationValue,
+      },
       token: jwt.makeToken(user),
     });
   }

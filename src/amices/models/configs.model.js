@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const ConfigSchema = new mongoose.Schema(
   {
     allowedMimeTypes: [{ type: mongoose.Schema.Types.String }],
+    coreToken: { type: mongoose.Schema.Types.String },
     maxFileSizeInKB: { type: mongoose.Schema.Types.Number },
     terms: [
       {
@@ -11,6 +12,7 @@ const ConfigSchema = new mongoose.Schema(
         configType: { type: mongoose.Schema.Types.String },
       },
     ],
+    coreUrls: { type: Object },
   },
   {
     collection: 'config',

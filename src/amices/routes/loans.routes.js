@@ -1,7 +1,7 @@
 const router = require('express-promise-router')();
-const controller = require('amices/controllers/checklist.controller');
+const controller = require('amices/controllers/loans.controller');
 const pubSubAuth = require('amices/middlewares/pubSubAuth.middleware');
 
-router.route('/update').post(pubSubAuth, controller.update);
+router.route('/update-status').post(pubSubAuth, controller.updateStatus);
 
 module.exports = router;

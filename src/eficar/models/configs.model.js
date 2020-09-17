@@ -4,8 +4,10 @@ const schema = new mongoose.Schema(
   {
     loanStatus: [{ code: String, status: String, color: String }],
     minimumRate: { type: mongoose.Schema.Types.Number },
+    coreToken: { type: mongoose.Schema.Types.String },
     allowedMimeTypes: [{ type: mongoose.Schema.Types.String }],
     maxFileSizeInKB: { type: mongoose.Schema.Types.Number },
+    coreUrls: { type: Object },
   },
   {
     collection: 'config',

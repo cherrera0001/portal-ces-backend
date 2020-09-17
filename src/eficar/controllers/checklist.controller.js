@@ -1,7 +1,6 @@
 const aqp = require('api-query-params');
 const Params = require('eficar/controllers/params.controller');
 const Auction = require('eficar/models/auctions.model');
-const Config = require('eficar/models/configs.model');
 const findLoanStatus = require('eficar/helpers/findLoanStatus');
 const errors = require('eficar/errors');
 const HTTP = require('requests');
@@ -110,21 +109,20 @@ const reception = async (req, res) => {
   res.status(200).end();
 };
 
-const confirmation = async (req, res) => {
-  // explain eficar confirmation
-  const { loanApplicationId, checklistItems } = req.body;
-
+const documentStatusUpdate = async (req, res) => {
+  // updates documents status after clicking approve/reject (or cancel) in eficar
+  const { loanApplicationId, checklistItems, comment } = req.body;
   const auction = await Auction.findOne({ simulationId: loanApplicationId, financingEntityId: req.params.rut });
   if (!auction) return errors.notFound(res);
 
-  auction.checkListSent = { ...auction.checkListSent, checklistItems: await getCompleteItems(checklistItems) };
+  auction.checkListSent = { ...auction.checkListSent, checklistItems: await getCompleteItems(checklistItems), comment };
   auction.markModified('checkListSent');
   await auction.save();
   req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
   res.status(200).end();
 };
 
-const documentStatus = async (req, res) => {
+const documentStatusChange = async (req, res) => {
   const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_CORE_DOCUMENT_STATUS}`, {
     ...req.body,
     feIdentificationValue: req.user.companyIdentificationValue,
@@ -135,6 +133,20 @@ const documentStatus = async (req, res) => {
   res.json({
     ...response.data,
   });
+};
+
+const confirmation = async (req, res) => {
+  // this function is called when the checklist is approved or rejected in eficar and its status changes to CHECKLIST_CONFIRMED or CHECKLIST_REJECTED
+  const { loanApplicationId, status } = req.body;
+
+  const auction = await Auction.findOne({ simulationId: loanApplicationId, financingEntityId: req.params.rut });
+  if (!auction) return errors.notFound(res);
+
+  auction.finalLoanStatus = await findLoanStatus(status);
+  await auction.save();
+
+  req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
+  res.status(200).end();
 };
 
 const downloadDocument = async (req, res) => {
@@ -155,7 +167,8 @@ const downloadDocument = async (req, res) => {
 module.exports = {
   downloadDocument,
   checklist,
-  documentStatus,
+  documentStatusChange,
   reception,
+  documentStatusUpdate,
   confirmation,
 };
