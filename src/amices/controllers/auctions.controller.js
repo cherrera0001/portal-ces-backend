@@ -10,7 +10,7 @@ const start = async (req, res) => {
     loanApplicationId: incomingData.loanApplicationId,
   });
 
-  if (auction) return errors.badRequest(`Auction ${incomingData.loanApplicationId} already exist in the database`);
+  if (auction) return errors.badRequest(res, `Auction ${incomingData.loanApplicationId} already exist in the database`);
 
   const newAuction = new AuctionParticipants(incomingData);
   await newAuction.save();
@@ -26,7 +26,7 @@ const responses = async (req, res) => {
   const { loanApplicationId, auctionParticipants } = req.body.message.data;
 
   const auction = await AuctionParticipants.findOne({ loanApplicationId });
-  if (!auction) return errors.badRequest(`Auction ${loanApplicationId} not found to be updated`);
+  if (!auction) return errors.badRequest(res, `Auction ${loanApplicationId} not found to be updated`);
 
   const winnerAlreadyPresent = auction.auctionParticipants.find((participant) => participant.status === 'WINNER');
   if (winnerAlreadyPresent) {
