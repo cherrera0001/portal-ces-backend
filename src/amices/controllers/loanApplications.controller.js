@@ -196,7 +196,7 @@ const finish = async (req, res) => {
   const { loanApplicationId, status } = req.body.message.data;
 
   const loanApplication = await LoansApplication.findOne({ loanApplicationId });
-  if (!loanApplication) return errors.badRequest(`Loan application ${loanApplicationId} not found`);
+  if (!loanApplication) return errors.badRequest(res, `Loan application ${loanApplicationId} not found`);
 
   loanApplication.status = status;
   await loanApplication.save();
