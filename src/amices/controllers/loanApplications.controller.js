@@ -1,7 +1,7 @@
 const aqp = require('api-query-params');
 const HTTP = require('requests');
 const LoansApplication = require('amices/models/loanApplications.model');
-const { PATH_ENDPOINT_LOAN_APPLICATION } = require('amices/core.services');
+const { PATH_ENDPOINT_LOAN_APPLICATION, PATH_CORE_LOAN_SUBMISSIONS } = require('amices/core.services');
 const errors = require('amices/errors');
 
 const { CORE_URL } = process.env;
@@ -27,6 +27,25 @@ const formatLoanApplication = (incomeData, externalIds) => {
   } = incomeData;
   const loanType = loanSimulationData.LoanType.cod;
   const vfg = loanType === 'SMART' ? amortizationSchedule.find((schedule) => schedule.quotaType === 'SMART') : null;
+  const spouseDataFormated =
+    Object.keys(customerRequestData).length > 6
+      ? {
+          ...spouseData,
+          spouseGeographicDataId: spouseData.spouseGeographicData.COMMUNE.externalCode,
+          workType: spouseData.workType.externalCode,
+          activityType: spouseData.activityType.externalCode,
+        }
+      : {};
+  const buyForAnotherFormated =
+    Object.keys(buyForAnother).length > 0
+      ? {
+          ...buyForAnother,
+          geographicDataId: buyForAnother.geographicData.COMMUNE.externalCode,
+          nationalityId: buyForAnother.nationalityData.externalCode,
+          maritalStatus: buyForAnother.maritalStatusData.externalCode,
+          maritalRegime: buyForAnother.maritalRegimeData.externalCode,
+        }
+      : {};
   const loanApplicationFormated = !Object.keys(customerRequestData).length
     ? { ...incomeData, simulationId: loanSimulationData.id }
     : {
@@ -53,19 +72,8 @@ const formatLoanApplication = (incomeData, externalIds) => {
           employmentContractType: customerActivity.employmentContractType.externalCode,
           salaryType: customerActivity.salaryType.externalCode,
         },
-        spouseData: {
-          ...spouseData,
-          spouseGeographicDataId: spouseData.spouseGeographicData.COMMUNE.externalCode,
-          workType: spouseData.workType.externalCode,
-          activityType: spouseData.activityType.externalCode,
-        },
-        buyForAnother: {
-          ...buyForAnother,
-          geographicDataId: buyForAnother.geographicData.COMMUNE.externalCode,
-          nationalityId: buyForAnother.nationalityData.externalCode,
-          maritalStatus: buyForAnother.maritalStatusData.externalCode,
-          maritalRegime: buyForAnother.maritalRegimeData.externalCode,
-        },
+        spouseData: spouseDataFormated,
+        buyForAnother: buyForAnotherFormated,
         guarantor: guarantor.length
           ? guarantor.map((el) => ({
               ...el,
@@ -195,4 +203,15 @@ const finish = async (req, res) => {
   return res.status(200).json();
 };
 
-module.exports = { all, create, save, saveExternal, finish, status };
+const submissions = async (req, res) => {
+  try {
+    const response = await HTTP.post(`${CORE_URL}${PATH_CORE_LOAN_SUBMISSIONS}/${req.params.loanId}`, {
+      ...req.body,
+    });
+    if (response.status === 200) return res.status(200).json();
+  } catch (e) {
+    throw Error(e);
+  }
+};
+
+module.exports = { all, create, save, saveExternal, finish, status, submissions };
