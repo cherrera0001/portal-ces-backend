@@ -11,5 +11,6 @@ router.route('/save').post(authenticate, controller.save);
 router.route('').post(authenticate, validate(schema.create), controller.create);
 router.route('/save-external').post(pubSubAuth, controller.saveExternal);
 router.route('/finish').post(pubSubAuth, controller.finish);
+router.route('/submissions/:loanId').post(authenticate, controller.submissions);
 
 module.exports = router;

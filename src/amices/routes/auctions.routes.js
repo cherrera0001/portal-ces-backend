@@ -5,5 +5,6 @@ const pubSubAuth = require('amices/middlewares/pubSubAuth.middleware');
 router.route('/start').post(pubSubAuth, controller.start);
 router.route('/responses').post(pubSubAuth, controller.responses);
 router.route('/finish').post(pubSubAuth, controller.finish);
+router.route('/:loanId').get(controller.get);
 
 module.exports = router;

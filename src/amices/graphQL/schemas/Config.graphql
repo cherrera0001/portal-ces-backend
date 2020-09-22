@@ -6,6 +6,7 @@ type Term {
 
 type Config {
   allowedMimeTypes: [String]
+  allowedFileTypes: String
   maxFileSizeInKB: Int
   terms: [Term]
 }

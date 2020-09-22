@@ -1,7 +1,7 @@
 const aqp = require('api-query-params');
 const HTTP = require('requests');
 const LoansApplication = require('amices/models/loanApplications.model');
-const { PATH_ENDPOINT_LOAN_APPLICATION } = require('amices/core.services');
+const { PATH_ENDPOINT_LOAN_APPLICATION, PATH_CORE_LOAN_SUBMISSIONS } = require('amices/core.services');
 const errors = require('amices/errors');
 
 const { CORE_URL } = process.env;
@@ -203,4 +203,15 @@ const finish = async (req, res) => {
   return res.status(200).json();
 };
 
-module.exports = { all, create, save, saveExternal, finish, status };
+const submissions = async (req, res) => {
+  try {
+    const response = await HTTP.post(`${CORE_URL}${PATH_CORE_LOAN_SUBMISSIONS}/${req.params.loanId}`, {
+      ...req.body,
+    });
+    if (response.status === 200) return res.status(200).json();
+  } catch (e) {
+    throw Error(e);
+  }
+};
+
+module.exports = { all, create, save, saveExternal, finish, status, submissions };
