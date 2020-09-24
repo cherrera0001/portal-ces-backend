@@ -174,12 +174,11 @@ const saveExternal = async (req, res) => {
     if (simulationObject) {
       if (simulationObject.externalIds.includes(loanSimulationData.externalId)) return res.status(200).end();
       simulationObject.externalIds.push(loanSimulationData.externalId);
-      console.log(incomingData.guarantor);
       await LoansApplication.updateOne(
         { _id: simulationObject._id },
         formatLoanApplication(incomingData, simulationObject.externalIds),
       );
-      await simulationObject.update(formatLoanApplication(incomingData, simulationObject.externalIds));
+      await simulationObject.updateOne(formatLoanApplication(incomingData, simulationObject.externalIds));
     } else {
       const loanApplication = formatLoanApplication(incomingData, [incomingData.loanSimulationData.externalId]);
       simulationObject = new LoansApplication(loanApplication);

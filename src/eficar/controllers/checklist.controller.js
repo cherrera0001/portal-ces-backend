@@ -67,10 +67,12 @@ const checklist = async (req, res) => {
     externalCode: loanSimulationData.customerActivity.workType.externalCode,
   });
 
-  const checklist = await Params.get({
+  let checklist = await Params.get({
     type: 'CHECKLIST',
     parentId: checklistWorkingType.id,
   });
+
+  checklist = checklist.sort((a, b) => a.name.localeCompare(b.name));
 
   checklist.push(
     checklist.splice(

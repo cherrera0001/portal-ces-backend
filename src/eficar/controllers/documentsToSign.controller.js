@@ -103,9 +103,27 @@ const list = async (req, res) => {
   const { loanApplicationId } = req.params;
   const documents = await DocumentsToSign.find({ loanApplicationId });
 
-  if (!documents) return errors.notFound(res);
+  if (!documents.length) return errors.notFound(res);
 
-  res.json(documents);
+  const classifications = await Params.find({ type: 'DOCUMENT_CLASSIFICATION' }).select(
+    'id name externalCode parentId type',
+  );
+
+  const documentsToSign = classifications.map((classification) => {
+    const documentTypes = documents.filter((doc) => doc.documentType.parentId === classification.id);
+    return {
+      name: classification.name,
+      documents: documentTypes.map((docType) => ({
+        document: docType.documentType,
+        files: docType.files,
+        updatedAt: docType.updatedAt,
+      })),
+    };
+  });
+
+  res.json({
+    documentsToSign: documentsToSign.filter((classification) => classification.documents.length > 0),
+  });
 };
 
 module.exports = {
