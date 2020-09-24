@@ -14,7 +14,7 @@ const customerTypeMap = {
 };
 
 const getCompleteItems = async (items) => {
-  const checklistItems = [];
+  let checklistItems = [];
 
   for (const item of items) {
     const completeItem = await Params.getOne({
@@ -30,6 +30,7 @@ const getCompleteItems = async (items) => {
     });
   }
 
+  checklistItems = checklistItems.sort((a, b) => a.name.localeCompare(b.name));
   return checklistItems;
 };
 

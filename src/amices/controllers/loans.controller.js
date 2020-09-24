@@ -9,10 +9,10 @@ const updateStatus = async (req, res) => {
   if (!loan) return errors.badRequest(res, `Loan ${loanApplicationId} not found to be updated`);
 
   loan.status = status;
+  loan.awardedTime = new Date();
   await loan.save();
   req.app.socketIo.emit(`RELOAD_DOCUMENTS_TO_SIGN_AMICES_${loanApplicationId}`);
   req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
-  req.app.socketIo.emit(`RELOAD_EFICAR_DOCUMENTS_TO_SIGN_${loanApplicationId}`);
   return res.status(200).json();
 };
 

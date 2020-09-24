@@ -26,8 +26,6 @@ const responses = async (req, res) => {
   if (!req.body.message.data) return errors.badRequest(res);
   const { loanApplicationId, auctionParticipants } = req.body.message.data;
 
-  console.log(JSON.stringify(req.body.message.data));
-
   const auction = await AuctionParticipants.findOne({ loanApplicationId });
   if (!auction) return errors.badRequest(res, `Auction ${loanApplicationId} not found to be updated`);
 

@@ -16,7 +16,12 @@ const loanStatusMap = {
 };
 
 const all = async (req, res) => {
-  const { filter, skip, limit, sort, projection, population } = aqp({ ...req.query });
+  const recordsPerPage = 10;
+  const { filter, skip, limit, sort, projection, population } = aqp({
+    ...req.query,
+    skip: req.params.page * recordsPerPage,
+  });
+
   const auctions = await Auction.find({ ...filter, ...{ financingEntityId: req.user.companyIdentificationValue } })
     .skip(skip)
     .limit(limit)
@@ -138,9 +143,9 @@ const granted = async (req, res) => {
     auction.checkListSent = { ...auction.checkListSent, checklistItems: items.map((item) => ({ ...item, status: 5 })) };
     auction.markModified('checkListSent');
   }
+  if (status === 'AWARDED') auction.awardedTime = new Date();
 
   await auction.save();
-  req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
   res.status(200).end();
 };
 

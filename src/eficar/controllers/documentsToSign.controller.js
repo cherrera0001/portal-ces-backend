@@ -52,7 +52,7 @@ const upload = async (req, res) => {
     await document.save();
   }
 
-  req.app.socketIo.emit(`RELOAD_EFICAR_DOCUMENTS_TO_SIGN_${loanApplicationId}`);
+  req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
   return res.status(200).json();
 };
 
@@ -91,10 +91,10 @@ const deleteDocuments = async (req, res) => {
     }
 
     await DocumentsToSign.deleteOne({ loanApplicationId, 'documentType.externalCode': documentTypeId });
-    req.app.socketIo.emit(`RELOAD_EFICAR_DOCUMENTS_TO_SIGN_${loanApplicationId}`);
+    req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
     res.json();
   } catch (err) {
-    req.app.socketIo.emit(`RELOAD_EFICAR_DOCUMENTS_TO_SIGN_${loanApplicationId}`);
+    req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
     res.status(500);
   }
 };
