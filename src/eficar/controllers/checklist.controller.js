@@ -14,7 +14,7 @@ const customerTypeMap = {
 };
 
 const getCompleteItems = async (items) => {
-  const checklistItems = [];
+  let checklistItems = [];
 
   for (const item of items) {
     const completeItem = await Params.getOne({
@@ -30,6 +30,7 @@ const getCompleteItems = async (items) => {
     });
   }
 
+  checklistItems = checklistItems.sort((a, b) => a.name.localeCompare(b.name));
   return checklistItems;
 };
 
@@ -67,10 +68,12 @@ const checklist = async (req, res) => {
     externalCode: loanSimulationData.customerActivity.workType.externalCode,
   });
 
-  const checklist = await Params.get({
+  let checklist = await Params.get({
     type: 'CHECKLIST',
     parentId: checklistWorkingType.id,
   });
+
+  checklist = checklist.sort((a, b) => a.name.localeCompare(b.name));
 
   checklist.push(
     checklist.splice(
