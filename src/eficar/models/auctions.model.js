@@ -148,6 +148,7 @@ const schema = new mongoose.Schema(
       },
       default: null,
     },
+    awardedTime: { type: Date, required: false },
     sellerIdentificationValue: { type: String, required: false },
     amicarExecutiveIdentificationValue: { type: String, required: false },
   },

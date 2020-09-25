@@ -177,6 +177,7 @@ const schema = new mongoose.Schema(
       },
     },
     externalIds: [{ type: String, required: true }],
+    awardedTime: { type: Date, required: false },
     status: { type: String },
   },
   {

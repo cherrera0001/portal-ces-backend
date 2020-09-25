@@ -274,7 +274,7 @@ extend type Mutation {
     cae: Float!
     loanType: String!
     vfg: Float
-    price: Float!
+    price: String!
     downPayment: Float!
     downPaymentPercentage: Float!
     monthlyPayment: Float!
