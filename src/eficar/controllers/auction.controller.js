@@ -144,6 +144,7 @@ const granted = async (req, res) => {
     auction.markModified('checkListSent');
   }
   if (status === 'AWARDED') auction.awardedTime = new Date();
+  req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
 
   await auction.save();
   res.status(200).end();
