@@ -17,6 +17,7 @@ const upload = async (req, res) => {
     loanApplicationId,
     feIdentificationValue: req.user.companyIdentificationValue,
     files,
+    requestFromAmices: true,
   });
 
   if (response.status !== 200) return errors.badRequest(res);
@@ -72,11 +73,14 @@ const download = async (req, res) => {
     res.json({
       ...response.data,
     });
-  } catch (err) {}
+  } catch (err) {
+    //
+  }
 };
 
 const deleteDocuments = async (req, res) => {
   const { loanApplicationId, files, documentTypeId } = req.body;
+  console.log(JSON.stringify(req.body, null, 2));
 
   const documents = await DocumentsToSign.findOne({ loanApplicationId, 'documentType.externalCode': documentTypeId });
   if (!documents) return errors.notFound(res);
@@ -92,9 +96,12 @@ const deleteDocuments = async (req, res) => {
 
     await DocumentsToSign.deleteOne({ loanApplicationId, 'documentType.externalCode': documentTypeId });
     req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
+    req.app.socketIo.emit(`RELOAD_DOCUMENTS_TO_SIGN_AMICES_${loanApplicationId}`);
     res.json();
   } catch (err) {
+    console.log('ERRORRRRR', err.message);
     req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
+    req.app.socketIo.emit(`RELOAD_DOCUMENTS_TO_SIGN_AMICES_${loanApplicationId}`);
     res.status(500);
   }
 };
@@ -126,9 +133,52 @@ const list = async (req, res) => {
   });
 };
 
+const reception = async (req, res) => {
+  // a financial entity uploaded a documents to sign
+  const { loanApplicationId, files } = req.body;
+  const { rut } = req.params;
+
+  if (!loanApplicationId || !rut) return errors.badRequest(res);
+
+  for (const { documentTypeId, filesContent } of files) {
+    const filesToSave = filesContent.filter((file) => file.fileName && file.uuid);
+
+    let document = await DocumentsToSign.findOne({
+      loanApplicationId,
+      'documentType.externalCode': documentTypeId,
+    });
+
+    if (document) {
+      document.files = filesToSave;
+      document.markModified('files');
+    } else {
+      const documentType = await Params.findOne({ type: 'DOCUMENT_TYPE', externalCode: documentTypeId }).select(
+        'id name externalCode parentId type',
+      );
+
+      const documentClassification = await Params.findOne({ id: documentType.parentId }).select(
+        'id name externalCode parentId type',
+      );
+
+      document = new DocumentsToSign({
+        loanApplicationId,
+        documentType,
+        financingEntityId: rut,
+        documentClassification,
+        files: filesToSave,
+      });
+    }
+
+    await document.save();
+  }
+  req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
+  return res.status(200).json();
+};
+
 module.exports = {
   upload,
   download,
   deleteDocuments,
   list,
+  reception,
 };
