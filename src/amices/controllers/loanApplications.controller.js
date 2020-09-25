@@ -6,10 +6,6 @@ const errors = require('amices/errors');
 
 const { CORE_URL } = process.env;
 
-const getExternalCode = (coreParam) => {
-  return coreParam ? coreParam.externalCode : '';
-};
-
 const formatLoanApplication = (incomeData, externalIds) => {
   const {
     customerRequestData,
@@ -47,7 +43,23 @@ const formatLoanApplication = (incomeData, externalIds) => {
         }
       : {};
   const loanApplicationFormated = !Object.keys(customerRequestData).length
-    ? { ...incomeData, simulationId: loanSimulationData.id }
+    ? {
+        ...incomeData,
+        simulationId: loanSimulationData.id,
+        loan: {
+          ...loanSimulationData,
+          rateType: loanSimulationData.Rate.RateType,
+          cae: loanSimulationData.annualCAE,
+          loanType,
+          vfg,
+        },
+        vehicleData: {
+          brandName: loanSimulationCar.Brand.name,
+          modelName: loanSimulationCar.Model.name,
+          version: loanSimulationCar.VehicleType.name,
+          year: loanSimulationCar.year,
+        },
+      }
     : {
         ...incomeData,
         customer: {
@@ -112,9 +124,9 @@ const formatLoanApplication = (incomeData, externalIds) => {
           vfg,
         },
         vehicleData: {
-          brandName: loanSimulationCar.Brand.externalCode,
-          modelName: loanSimulationCar.Model.externalCode,
-          // version: loanSimulationCar.Version.externalCode,
+          brandName: loanSimulationCar.Brand.name,
+          modelName: loanSimulationCar.Model.name,
+          version: loanSimulationCar.VehicleType.name,
           year: loanSimulationCar.year,
         },
         simulationId: loanSimulationData.id,
