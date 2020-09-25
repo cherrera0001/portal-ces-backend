@@ -34,7 +34,7 @@ const list = async (req, res) => {
   res.json({
     financingEntityId: documents[0].financingEntityId,
     awarded: loan.status === 'AWARDED',
-    awardedAt: loan.updatedAt,
+    awardedTime: loan.awardedTime,
     documentsToSign: documentsToSign.filter((classification) => classification.documents.length > 0),
   });
 };
