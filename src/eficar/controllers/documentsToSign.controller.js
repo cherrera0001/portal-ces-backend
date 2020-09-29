@@ -80,7 +80,6 @@ const download = async (req, res) => {
 
 const deleteDocuments = async (req, res) => {
   const { loanApplicationId, files, documentTypeId } = req.body;
-  console.log(JSON.stringify(req.body, null, 2));
 
   const documents = await DocumentsToSign.findOne({ loanApplicationId, 'documentType.externalCode': documentTypeId });
   if (!documents) return errors.notFound(res);
@@ -96,12 +95,9 @@ const deleteDocuments = async (req, res) => {
 
     await DocumentsToSign.deleteOne({ loanApplicationId, 'documentType.externalCode': documentTypeId });
     req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
-    req.app.socketIo.emit(`RELOAD_DOCUMENTS_TO_SIGN_AMICES_${loanApplicationId}`);
     res.json();
   } catch (err) {
-    console.log('ERRORRRRR', err.message);
     req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
-    req.app.socketIo.emit(`RELOAD_DOCUMENTS_TO_SIGN_AMICES_${loanApplicationId}`);
     res.status(500);
   }
 };
