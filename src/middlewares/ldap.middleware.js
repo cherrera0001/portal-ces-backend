@@ -1,7 +1,7 @@
 const LDAP = require('ldapauth-fork');
 const config = require('security/config.security');
 
-const ldap = new LDAP({ config });
+const ldap = new LDAP(config);
 
 module.exports = (req, res, next) => {
   ldap.authenticate(req.body.username, req.body.password, function(err, user) {
