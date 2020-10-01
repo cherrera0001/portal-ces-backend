@@ -76,7 +76,7 @@ const finish = async (req, res) => {
 const get = async (req, res) => {
   const auction = await AuctionParticipants.find({
     loanApplicationId: req.params.loanId,
-    status: 'GRANTED',
+    $or: [{ status: 'FINISHED_AUCTION' }, { status: 'GRANTED' }],
   });
   return res.status(200).json(auction);
 };
