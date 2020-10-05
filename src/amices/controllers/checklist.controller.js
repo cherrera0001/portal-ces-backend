@@ -7,11 +7,11 @@ const update = async (req, res) => {
   if (!req.body.message.data) return errors.badRequest(res);
   const { loanApplicationId, feIdentificationValue, checkList, comment, status } = req.body.message.data;
   const auction = await AuctionParticipants.findOne({ loanApplicationId });
-  if (!auction) return errors.badRequest(`Auction ${loanApplicationId} not found for checklist items info update`);
+  if (!auction) return errors.badRequest(res, `Auction ${loanApplicationId} not found for checklist items info update`);
 
   for (const participant of auction.auctionParticipants) {
     if (participant.FinancingEntity.identificationValue === feIdentificationValue) {
-      const newCheckListItems = [];
+      let newCheckListItems = [];
 
       for (const item of checkList.checkListItems) {
         newCheckListItems.push({
@@ -22,6 +22,7 @@ const update = async (req, res) => {
           status: item.newStatus,
         });
       }
+      newCheckListItems = newCheckListItems.sort((a, b) => a.CoreParam.name.localeCompare(b.CoreParam.name));
       participant.Checklists[0].ChecklistItems = newCheckListItems;
       participant.Checklists[0].comment = comment;
       break;

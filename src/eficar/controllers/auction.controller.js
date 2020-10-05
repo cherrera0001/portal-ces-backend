@@ -16,18 +16,26 @@ const loanStatusMap = {
 };
 
 const all = async (req, res) => {
-  const { filter, skip, limit, sort, projection, population } = aqp({ ...req.query });
+  const recordsPerPage = 20;
+  const currentPage = req.params.page - 1;
+  const { filter, skip, sort, projection, population } = aqp({
+    ...req.query,
+    skip: currentPage * recordsPerPage,
+  });
+
   const auctions = await Auction.find({ ...filter, ...{ financingEntityId: req.user.companyIdentificationValue } })
     .skip(skip)
-    .limit(limit)
+    .limit(recordsPerPage)
     .sort(sort)
     .select(projection)
     .populate(population);
 
-  const total = await Auction.find(filter).select(projection);
+  const total = await Auction.find({ ...filter, ...{ financingEntityId: req.user.companyIdentificationValue } }).select(
+    projection,
+  );
 
   res.json({
-    total: total.length,
+    total: Math.ceil(total.length / recordsPerPage),
     result: auctions,
   });
 };
@@ -138,9 +146,10 @@ const granted = async (req, res) => {
     auction.checkListSent = { ...auction.checkListSent, checklistItems: items.map((item) => ({ ...item, status: 5 })) };
     auction.markModified('checkListSent');
   }
+  if (status === 'AWARDED') auction.awardedTime = new Date();
+  req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
 
   await auction.save();
-  req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
   res.status(200).end();
 };
 

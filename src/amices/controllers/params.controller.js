@@ -1,6 +1,5 @@
 const aqp = require('api-query-params');
 const Params = require('amices/models/coreParams.model');
-const updateParams = require('amices/methods/chl/v1/updateCoreParams');
 
 const all = async (req, res) => {
   const { filter, skip, limit, sort, projection, population } = aqp({ ...req.query });
@@ -19,11 +18,6 @@ const all = async (req, res) => {
   });
 };
 
-const updateFromCore = async (req, res) => {
-  await updateParams();
-  res.status(201).end();
-};
-
 const getOne = async (filter) => {
   const response = await Params.findOne(filter);
   return response;
@@ -34,4 +28,4 @@ const get = async (filter) => {
   return response;
 };
 
-module.exports = { all, updateFromCore, getOne, get };
+module.exports = { all, getOne, get };

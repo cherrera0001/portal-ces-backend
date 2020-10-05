@@ -17,6 +17,7 @@ const upload = async (req, res) => {
     loanApplicationId,
     feIdentificationValue: req.user.companyIdentificationValue,
     files,
+    requestFromAmices: true,
   });
 
   if (response.status !== 200) return errors.badRequest(res);
@@ -52,7 +53,7 @@ const upload = async (req, res) => {
     await document.save();
   }
 
-  req.app.socketIo.emit(`RELOAD_EFICAR_DOCUMENTS_TO_SIGN_${loanApplicationId}`);
+  req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
   return res.status(200).json();
 };
 
@@ -72,7 +73,9 @@ const download = async (req, res) => {
     res.json({
       ...response.data,
     });
-  } catch (err) {}
+  } catch (err) {
+    //
+  }
 };
 
 const deleteDocuments = async (req, res) => {
@@ -91,10 +94,10 @@ const deleteDocuments = async (req, res) => {
     }
 
     await DocumentsToSign.deleteOne({ loanApplicationId, 'documentType.externalCode': documentTypeId });
-    req.app.socketIo.emit(`RELOAD_EFICAR_DOCUMENTS_TO_SIGN_${loanApplicationId}`);
+    req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
     res.json();
   } catch (err) {
-    req.app.socketIo.emit(`RELOAD_EFICAR_DOCUMENTS_TO_SIGN_${loanApplicationId}`);
+    req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
     res.status(500);
   }
 };
@@ -103,9 +106,69 @@ const list = async (req, res) => {
   const { loanApplicationId } = req.params;
   const documents = await DocumentsToSign.find({ loanApplicationId });
 
-  if (!documents) return errors.notFound(res);
+  if (!documents.length) return errors.notFound(res);
 
-  res.json(documents);
+  const classifications = await Params.find({ type: 'DOCUMENT_CLASSIFICATION' }).select(
+    'id name externalCode parentId type',
+  );
+
+  const documentsToSign = classifications.map((classification) => {
+    const documentTypes = documents.filter((doc) => doc.documentType.parentId === classification.id);
+    return {
+      name: classification.name,
+      documents: documentTypes.map((docType) => ({
+        document: docType.documentType,
+        files: docType.files,
+        updatedAt: docType.updatedAt,
+      })),
+    };
+  });
+
+  res.json({
+    documentsToSign: documentsToSign.filter((classification) => classification.documents.length > 0),
+  });
+};
+
+const reception = async (req, res) => {
+  // a financial entity uploaded a documents to sign
+  const { loanApplicationId, files } = req.body;
+  const { rut } = req.params;
+
+  if (!loanApplicationId || !rut) return errors.badRequest(res);
+
+  for (const { documentTypeId, filesContent } of files) {
+    const filesToSave = filesContent.filter((file) => file.fileName && file.uuid);
+
+    let document = await DocumentsToSign.findOne({
+      loanApplicationId,
+      'documentType.externalCode': documentTypeId,
+    });
+
+    if (document) {
+      document.files = filesToSave;
+      document.markModified('files');
+    } else {
+      const documentType = await Params.findOne({ type: 'DOCUMENT_TYPE', externalCode: documentTypeId }).select(
+        'id name externalCode parentId type',
+      );
+
+      const documentClassification = await Params.findOne({ id: documentType.parentId }).select(
+        'id name externalCode parentId type',
+      );
+
+      document = new DocumentsToSign({
+        loanApplicationId,
+        documentType,
+        financingEntityId: rut,
+        documentClassification,
+        files: filesToSave,
+      });
+    }
+
+    await document.save();
+  }
+  req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
+  return res.status(200).json();
 };
 
 module.exports = {
@@ -113,4 +176,5 @@ module.exports = {
   download,
   deleteDocuments,
   list,
+  reception,
 };

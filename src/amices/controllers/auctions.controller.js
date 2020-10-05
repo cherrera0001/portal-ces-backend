@@ -1,4 +1,5 @@
 const AuctionParticipants = require('amices/models/auctionParticipants.model');
+const Params = require('amices/controllers/params.controller');
 const errors = require('amices/errors');
 
 const start = async (req, res) => {
@@ -10,7 +11,7 @@ const start = async (req, res) => {
     loanApplicationId: incomingData.loanApplicationId,
   });
 
-  if (auction) return errors.badRequest(`Auction ${incomingData.loanApplicationId} already exist in the database`);
+  if (auction) return errors.badRequest(res, `Auction ${incomingData.loanApplicationId} already exist in the database`);
 
   const newAuction = new AuctionParticipants(incomingData);
   await newAuction.save();
@@ -26,14 +27,30 @@ const responses = async (req, res) => {
   const { loanApplicationId, auctionParticipants } = req.body.message.data;
 
   const auction = await AuctionParticipants.findOne({ loanApplicationId });
-  if (!auction) return errors.badRequest(`Auction ${loanApplicationId} not found to be updated`);
+  if (!auction) return errors.badRequest(res, `Auction ${loanApplicationId} not found to be updated`);
 
   const winnerAlreadyPresent = auction.auctionParticipants.find((participant) => participant.status === 'WINNER');
   if (winnerAlreadyPresent) {
     const incomingStatusForWinner = auctionParticipants.find((el) => el.id === winnerAlreadyPresent.id);
-    if (incomingStatusForWinner.status !== 'WINNER') {
+    if (incomingStatusForWinner && incomingStatusForWinner.status !== 'WINNER') {
       const incomingWinner = auctionParticipants.find((participant) => participant.status === 'WINNER');
       if (!incomingWinner) return res.status(200).json();
+    }
+  }
+
+  for (const participant of auctionParticipants) {
+    let newCheckListItems = [];
+
+    if (participant.Checklists[0]) {
+      for (const item of participant.Checklists[0].ChecklistItems) {
+        newCheckListItems.push({
+          ...item,
+          CoreParam: await Params.getOne({ type: 'CHECKLIST', id: item.coreParamId }),
+        });
+      }
+
+      newCheckListItems = newCheckListItems.sort((a, b) => a.CoreParam.name.localeCompare(b.CoreParam.name));
+      participant.Checklists[0].ChecklistItems = newCheckListItems;
     }
   }
 
@@ -56,4 +73,12 @@ const finish = async (req, res) => {
   return res.status(200).json();
 };
 
-module.exports = { start, responses, finish };
+const get = async (req, res) => {
+  const auction = await AuctionParticipants.find({
+    loanApplicationId: req.params.loanId,
+    $or: [{ status: 'FINISHED_AUCTION' }, { status: 'GRANTED' }],
+  });
+  return res.status(200).json(auction);
+};
+
+module.exports = { start, responses, finish, get };

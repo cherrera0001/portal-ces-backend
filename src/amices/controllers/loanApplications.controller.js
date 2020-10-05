@@ -1,14 +1,10 @@
 const aqp = require('api-query-params');
 const HTTP = require('requests');
 const LoansApplication = require('amices/models/loanApplications.model');
-const { PATH_ENDPOINT_LOAN_APPLICATION } = require('amices/core.services');
+const { PATH_ENDPOINT_LOAN_APPLICATION, PATH_CORE_LOAN_SUBMISSIONS } = require('amices/core.services');
 const errors = require('amices/errors');
 
 const { CORE_URL } = process.env;
-
-const getExternalCode = (coreParam) => {
-  return coreParam ? coreParam.externalCode : '';
-};
 
 const formatLoanApplication = (incomeData, externalIds) => {
   const {
@@ -47,7 +43,23 @@ const formatLoanApplication = (incomeData, externalIds) => {
         }
       : {};
   const loanApplicationFormated = !Object.keys(customerRequestData).length
-    ? { ...incomeData, simulationId: loanSimulationData.id }
+    ? {
+        ...incomeData,
+        simulationId: loanSimulationData.id,
+        loan: {
+          ...loanSimulationData,
+          rateType: loanSimulationData.Rate.RateType,
+          cae: loanSimulationData.annualCAE,
+          loanType,
+          vfg,
+        },
+        vehicleData: {
+          brandName: loanSimulationCar.Brand.name,
+          modelName: loanSimulationCar.Model.name,
+          version: loanSimulationCar.VehicleType.name,
+          year: loanSimulationCar.year,
+        },
+      }
     : {
         ...incomeData,
         customer: {
@@ -112,9 +124,9 @@ const formatLoanApplication = (incomeData, externalIds) => {
           vfg,
         },
         vehicleData: {
-          brandName: loanSimulationCar.Brand.externalCode,
-          modelName: loanSimulationCar.Model.externalCode,
-          // version: loanSimulationCar.Version.externalCode,
+          brandName: loanSimulationCar.Brand.name,
+          modelName: loanSimulationCar.Model.name,
+          version: loanSimulationCar.VehicleType.name,
           year: loanSimulationCar.year,
         },
         simulationId: loanSimulationData.id,
@@ -174,12 +186,11 @@ const saveExternal = async (req, res) => {
     if (simulationObject) {
       if (simulationObject.externalIds.includes(loanSimulationData.externalId)) return res.status(200).end();
       simulationObject.externalIds.push(loanSimulationData.externalId);
-      console.log(incomingData.guarantor);
       await LoansApplication.updateOne(
         { _id: simulationObject._id },
         formatLoanApplication(incomingData, simulationObject.externalIds),
       );
-      await simulationObject.update(formatLoanApplication(incomingData, simulationObject.externalIds));
+      await simulationObject.updateOne(formatLoanApplication(incomingData, simulationObject.externalIds));
     } else {
       const loanApplication = formatLoanApplication(incomingData, [incomingData.loanSimulationData.externalId]);
       simulationObject = new LoansApplication(loanApplication);
@@ -196,11 +207,22 @@ const finish = async (req, res) => {
   const { loanApplicationId, status } = req.body.message.data;
 
   const loanApplication = await LoansApplication.findOne({ loanApplicationId });
-  if (!loanApplication) return errors.badRequest(`Loan application ${loanApplicationId} not found`);
+  if (!loanApplication) return errors.badRequest(res, `Loan application ${loanApplicationId} not found`);
 
   loanApplication.status = status;
   await loanApplication.save();
   return res.status(200).json();
 };
 
-module.exports = { all, create, save, saveExternal, finish, status };
+const submissions = async (req, res) => {
+  try {
+    const response = await HTTP.post(`${CORE_URL}${PATH_CORE_LOAN_SUBMISSIONS}/${req.params.loanId}`, {
+      ...req.body,
+    });
+    if (response.status === 200) return res.status(200).json();
+  } catch (e) {
+    throw Error(e);
+  }
+};
+
+module.exports = { all, create, save, saveExternal, finish, status, submissions };
