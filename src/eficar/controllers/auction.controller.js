@@ -1,24 +1,41 @@
 const aqp = require('api-query-params');
-const Auction = require('eficar/models/auction.model');
-const { query } = require('express');
-const { flatMap } = require('lodash');
-const status = {
-  DRAFT_SIMULATION: 'No Accesada',
+const Params = require('eficar/controllers/params.controller');
+const Auction = require('eficar/models/auctions.model');
+const Config = require('eficar/models/configs.model');
+const findLoanStatus = require('eficar/helpers/findLoanStatus');
+const errors = require('eficar/errors');
+const HTTP = require('requests');
+const { PATH_ENDPOINT_CORE_SEND_FE_RESPONSE } = require('eficar/core.services');
+
+const { CORE_URL } = process.env;
+
+const loanStatusMap = {
+  AP: 'APPROVED',
+  CA: 'CONDITIONED',
+  RA: 'REJECTED',
 };
+
 const all = async (req, res) => {
-  const { filter, skip, limit, sort, projection, population } = aqp({ ...req.query });
-  console.log(filter);
-  const auctions = await Auction.find(filter)
+  const recordsPerPage = 20;
+  const currentPage = req.params.page - 1;
+  const { filter, skip, sort, projection, population } = aqp({
+    ...req.query,
+    skip: currentPage * recordsPerPage,
+  });
+
+  const auctions = await Auction.find({ ...filter, ...{ financingEntityId: req.user.companyIdentificationValue } })
     .skip(skip)
-    .limit(limit)
+    .limit(recordsPerPage)
     .sort(sort)
     .select(projection)
     .populate(population);
 
-  const total = await Auction.find(filter).select(projection);
+  const total = await Auction.find({ ...filter, ...{ financingEntityId: req.user.companyIdentificationValue } }).select(
+    projection,
+  );
 
   res.json({
-    total: total.length,
+    total: Math.ceil(total.length / recordsPerPage),
     result: auctions,
   });
 };
@@ -41,32 +58,122 @@ const getCustomerHistory = async (req, res) => {
   });
 };
 
+const getCompleteItems = async (items) => {
+  const checklistItems = [];
+
+  for (const item of items) {
+    const completeItem = await Params.getOne({
+      type: 'CHECKLIST',
+      id: item.coreParamId,
+    });
+
+    checklistItems.push({
+      ...item,
+      name: completeItem.name,
+      status: item.status,
+      externalCode: completeItem.externalCode,
+    });
+  }
+
+  return checklistItems;
+};
+
 const get = async (req, res) => {
-  const { filter, skip, limit, sort, projection, population } = aqp({ ...req.query });
+  let auction = await Auction.findOne({
+    simulationId: req.params.id,
+    financingEntityId: req.user.companyIdentificationValue,
+  });
 
-  const auctions = await Auction.find({ simulationId: req.params.id })
-    .skip(skip)
-    .limit(limit)
-    .sort(sort)
-    .select(projection)
-    .populate(population);
+  if (!auction) return errors.notFound(res);
 
-  const total = await Auction.find(filter).select(projection);
+  if (auction.loanStatus.code === 'SIMULATION_SENT') {
+    auction.loanStatus = await findLoanStatus('EVALUATION_IN_PROCESS');
+  }
+
+  const config = await Config.findOne({});
+  auction.riskAnalyst = req.user;
+  await auction.save();
+
+  auction = auction.toObject();
+  auction.minimumRate = config.minimumRate;
 
   res.json({
-    total: total.length,
-    result: auctions,
+    result: auction,
   });
 };
 
-const create = async (req, res) => {
-  //Se mapea estado hay que buscar una mejor forma de hacerlo
-  req.body.status = status[req.body.status];
-  req.body.loanSimulationData.status = status[req.body.loanSimulationData.status];
+const sendResponse = async (req, res) => {
+  const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_CORE_SEND_FE_RESPONSE}`, {
+    ...req.body,
+    feIdentificationValue: req.user.companyIdentificationValue,
+  });
 
-  const auction = new Auction({ ...req.body, simulationId: req.body.loanSimulationData.id });
-  auction.save();
+  if (response.status !== 200) return errors.badRequest(res);
   res.status(201).end();
 };
 
-module.exports = { all, get, create, getCustomerHistory };
+const update = async (req, res) => {
+  const { loanApplicationId, feResponseStatus, proposeBaseRate, checklistItems } = req.body;
+  const auction = await Auction.findOne({ simulationId: loanApplicationId, financingEntityId: req.params.rut });
+  if (!auction) return errors.notFound(res);
+
+  const lockedStatus = ['APPROVED', 'REJECTED', 'CONDITIONED'];
+  if (!lockedStatus.includes(auction.loanStatus.code) && feResponseStatus) {
+    auction.loanStatus = await findLoanStatus(loanStatusMap[feResponseStatus]);
+  }
+
+  const completeChecklistItems = await getCompleteItems(checklistItems);
+  auction.checkListSent = { checklistItems: completeChecklistItems, proposeBaseRate, sentAt: new Date() };
+  auction.markModified('checkListSent');
+  await auction.save();
+  req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
+  res.status(200).end();
+};
+
+const granted = async (req, res) => {
+  // defines the final status for this FE
+  const { status, loanSimulationDataId: loanApplicationId } = req.body;
+  const auction = await Auction.findOne({ simulationId: loanApplicationId, financingEntityId: req.params.rut });
+  if (!auction) return errors.notFound(res);
+
+  const finalLoanStatus = status === 'APPROVED' ? 'LOSER' : status;
+
+  auction.finalLoanStatus = await findLoanStatus(finalLoanStatus);
+
+  if (status === 'CHECKLIST_REJECTED') {
+    // makes sure the checklist items are shown as rejected even if they were approved before the complete checklist rejection
+    const items = auction.checkListSent.checklistItems;
+    auction.checkListSent = { ...auction.checkListSent, checklistItems: items.map((item) => ({ ...item, status: 5 })) };
+    auction.markModified('checkListSent');
+  }
+  if (status === 'AWARDED') auction.awardedTime = new Date();
+  req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
+
+  await auction.save();
+  res.status(200).end();
+};
+
+const create = async (req, res) => {
+  const {
+    loanSimulationData: { id: simulationId, status },
+  } = req.body;
+
+  const auction = new Auction({
+    ...req.body,
+    financingEntityId: req.params.rut,
+    simulationId,
+    loanStatus: await findLoanStatus(status),
+  });
+  await auction.save();
+  res.status(201).end();
+};
+
+module.exports = {
+  all,
+  get,
+  create,
+  getCustomerHistory,
+  sendResponse,
+  update,
+  granted,
+};

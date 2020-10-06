@@ -13,4 +13,8 @@ const post = async (url, body) => {
   return axios.post(url, body, { headers });
 };
 
-module.exports = { get, post };
+const deleteMethod = async (url, body) => {
+  return axios.delete(url, body, { headers });
+};
+
+module.exports = { get, post, deleteMethod };

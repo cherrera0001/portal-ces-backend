@@ -1,7 +1,7 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Portal Backend - Master - Node.js CI
+name: Amices Backend - Master - Node.js CI
 
 on:
   push:
@@ -53,14 +53,14 @@ jobs:
       - run: gcloud --quiet config set project ${{ secrets.GCP_PROJECT_PRODUCTION }}
       - run: gcloud info
       - run: gcloud builds submit --config=.github/cloudbuild.yaml --substitutions=_GCP_PROJECT=$GCP_PROJECT_PRODUCTION,_DEPLOY_IMG=$NODE_ENV
-      - run: gcloud run deploy amices-backend-production --image gcr.io/${{ secrets.GCP_PROJECT_PRODUCTION }}/amices-backend-production --platform managed --set-env-vars NODE_ENV=$NODE_ENV,MONGO_URI_AMICES=$MONGO_URI_AMICES,MONGO_URI_EFICAR=$MONGO_URI_EFICAR,ROLLBAR_TOKEN=$ROLLBAR_TOKEN,JWT_SECRET=$JWT_SECRET,CORE_URL=$CORE_URL,API_KEY_PORTAL=$API_KEY_PORTAL
+      - run: gcloud run deploy amices-backend-production --image gcr.io/${{ secrets.GCP_PROJECT_PRODUCTION }}/amices-backend-production --platform managed --set-env-vars NODE_ENV=$NODE_ENV,MONGO_URI_AMICES=$MONGO_URI_AMICES,MONGO_URI_EFICAR=$MONGO_URI_EFICAR,ROLLBAR_TOKEN=$ROLLBAR_TOKEN,CORE_URL=$CORE_URL,API_KEY_PORTAL=$API_KEY_PORTAL,SECRET=$SECRET
     env:
       CI: true
       NODE_ENV: production
       MONGO_URI_AMICES: ${{ secrets.MONGO_URI_AMICES_PRODUCTION }}
       MONGO_URI_EFICAR: ${{ secrets.MONGO_URI_EFICAR_PRODUCTION }}
       ROLLBAR_TOKEN: ${{ secrets.ROLLBAR_TOKEN_PRODUCTION }}
-      JWT_SECRET: ${{ secrets.JWT_SECRET_PRODUCTION }}
       CORE_URL: ${{ secrets.CORE_URL_PRODUCTION }}
       API_KEY_PORTAL: ${{ secrets.API_KEY_PORTAL_PRODUCTION }}
       GCP_PROJECT_PRODUCTION: ${{ secrets.GCP_PROJECT_PRODUCTION }}
+      SECRET: ${{ secrets.SECRET_PRODUCTION }}

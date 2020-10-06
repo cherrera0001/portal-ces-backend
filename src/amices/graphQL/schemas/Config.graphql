@@ -1,0 +1,16 @@
+type Term {
+  _id: String
+  key: Int
+  description: String
+}
+
+type Config {
+  allowedMimeTypes: [String]
+  allowedFileTypes: String
+  maxFileSizeInKB: Int
+  terms: [Term]
+}
+
+extend type Query {
+  getConfig: Config
+}

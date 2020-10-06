@@ -1,16 +1,30 @@
 require('dotenv').config();
-const User = require('portal/models/user.model');
-const Config = require('portal/models/config.model');
-const AuctionParticipant = require('portal/models/auctionParticipant.model');
+const Users = require('models/users.model');
+const AmicesConfigs = require('amices/models/configs.model');
+const EficarConfigs = require('eficar/models/configs.model');
+const AuctionParticipant = require('amices/models/auctionParticipants.model');
+
+const { CORE_URL } = process.env;
+
 require('mongoAmices')();
 require('mongoEficar')();
 
 (async () => {
-  // CONFIG
-  await Config.deleteOne();
-  const config = new Config({
-    allowedMimeTypes: ['application/pdf', 'image/jpeg', 'image/png'],
+  await AmicesConfigs.deleteMany({});
+  const config = new AmicesConfigs({
+    allowedMimeTypes: [
+      'application/pdf',
+      'image/jpeg',
+      'image/png',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ],
+    allowedFileTypes: '.jpeg, .png, .jpg, .pdf, .xls, .xlsx, .doc, .docx',
     maxFileSizeInKB: 40000000,
+    coreToken:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoibmFtZTEiLCJydXQiOiI5NjY2NzU2MDgiLCJ1c2VybmFtZSI6IkV2YWx1YWRvciBXZWIgQW1pY2FyIiwiY29tcGFueUlkZW50aWZpY2F0aW9uVmFsdWUiOiI5NjY2NzU2MDgiLCJpYXQiOjE1OTkxNzQ3Mzd9.Lt9yq43sGEukxYFMbDF13POb_h-l4rTkF5OyLwjHSkA',
     terms: [
       { description: '12', key: '12', configType: 'term' },
       { description: '24', key: '24', configType: 'term' },
@@ -18,22 +32,82 @@ require('mongoEficar')();
       { description: '48', key: '48', configType: 'term' },
       { description: '60', key: '60', configType: 'term' },
     ],
+    coreUrls: {
+      CHECKLIST_DOWNLOAD: `${CORE_URL}/chl/v1/files/checklist/download`,
+      GET_SIMULATION: `${CORE_URL}/chl/v1/simulation`,
+      SAVE_SIMULATION: `${CORE_URL}/chl/v1/simulation/save`,
+      GET_CORE_PARAMS: `${CORE_URL}/chl/v1/core-params`,
+      LOAN_APPLICATION: `${CORE_URL}/chl/v1/loan-application`,
+      CHECKLIST_UPLOAD_FILES: `${CORE_URL}/chl/v1/files/checklist/upload`,
+      SEND_EMAIL: `${CORE_URL}/chl/v1/email`,
+    },
   });
   await config.save();
-  // USERS
-  await User.findOneAndUpdate(
-    { email: 'mail1@mail.com' },
-    {
-      name: 'name1',
-      email: 'mail1@mail.com',
-      password: '$2a$10$0ZXz5YX.2sHGxLMjbT50xuYUBr3./cyUSTXgix6YQ3TkS9rhjBG4S',
-      type: 'user',
-      claims: ['read-metrics'],
-      sellerIdentificationValue: '112223339',
-      amicarExecutiveIdentificationValue: '156681911',
+
+  await EficarConfigs.deleteMany({});
+  const eficarConfig = new EficarConfigs({
+    allowedMimeTypes: [
+      'application/pdf',
+      'image/jpeg',
+      'image/png',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ],
+    allowedFileTypes: '.jpeg, .png, .jpg, .pdf, .xls, .xlsx, .doc, .docx',
+    maxFileSizeInKB: 40000000,
+    coreToken:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoibmFtZTEiLCJydXQiOiI5NjY2NzU2MDgiLCJ1c2VybmFtZSI6IkV2YWx1YWRvciBXZWIgQW1pY2FyIiwiY29tcGFueUlkZW50aWZpY2F0aW9uVmFsdWUiOiI5NjY2NzU2MDgiLCJpYXQiOjE1OTkxNzQ3Mzd9.Lt9yq43sGEukxYFMbDF13POb_h-l4rTkF5OyLwjHSkA',
+    minimumRate: 0.5,
+    loanStatus: [
+      { code: 'SAVED_SIMULATION', status: 'No accesada', color: 'black' },
+      { code: 'SIMULATION_SENT', status: 'No accesada', color: 'black' },
+      { code: 'WINNER', status: 'Otorgado', color: '#3DAC00' },
+      { code: 'LOSER', status: 'Asignada a Otra EF', color: 'red' },
+      { code: 'REJECTED', status: 'Crédito Rechazado', color: 'black' },
+      { code: 'APPROVED', status: 'Crédito Aprobado', color: '#007BDC' },
+      { code: 'CONDITIONED', status: 'Crédito Condicionado', color: '#007BDC' },
+      { code: 'CHECKLIST_REJECTED', status: 'Rechazado por Checklist', color: 'black' },
+      { code: 'CHECKLIST_CONFIRMED', status: 'Checklist Confirmado', color: '#3DAC00' },
+      { code: 'EXPIRED', status: 'No se entregó Respuesta a Tiempo', color: 'black' },
+      { code: 'EVALUATION_IN_PROCESS', status: 'Pendiente o en Proceso', color: '#007BDC' },
+      { code: 'AWARDED', status: 'Crédito Adjudicado', color: '#3DAC00' },
+    ],
+    coreUrls: {
+      UPLOAD_DOCUMENT_TO_SIGN: `${CORE_URL}/chl/v1/files/documents-to-sign/upload`,
+      DELETE_DOCUMENT_TO_SIGN: `${CORE_URL}/chl/v1/files/documents-to-sign/delete`,
+      DOWNLOAD_DOCUMENTO_TO_SIGN: `${CORE_URL}/chl/v1/files/documents-to-sign/download`,
+      CHECKLIST_CONFIRMATION: `${CORE_URL}/chl/v1/financing-entity/checklist-confirmation`,
+      CHECKLIST_DOWNLOAD: `${CORE_URL}/chl/v1/files/checklist/download`,
+      SEND_FE_RESPONSE: `${CORE_URL}/chl/v1/financing-entity/save-response`,
+      GET_CORE_PARAMS: `${CORE_URL}/chl/v1/core-params`,
+      CHECKLIST_UPLOAD_FILES: `${CORE_URL}/chl/v1/files/checklist/upload`,
+      SEND_EMAIL: `${CORE_URL}/chl/v1/email`,
     },
-    { upsert: true, useFindAndModify: false },
-  );
+  });
+  await eficarConfig.save();
+
+  const financialEntities = [
+    {
+      name: 'Santander',
+      mail: 'mail_santander@mail.com',
+    },
+  ];
+
+  await Users.deleteOne({ email: 'mail1@mail.com' });
+  const testUser = new Users({
+    name: 'Evaluador Web Amicar',
+    username: 'Evaluador Web Amicar',
+    rut: '966675608',
+    email: 'mail1@mail.com',
+    password: '$2a$10$0ZXz5YX.2sHGxLMjbT50xuYUBr3./cyUSTXgix6YQ3TkS9rhjBG4S',
+    companyIdentificationValue: '966675608',
+    sellerIdentificationValue: '112223339',
+    amicarExecutiveIdentificationValue: '156681911',
+  });
+  await testUser.save();
+
   // AUCTIONS PARTICIPANTS
   await AuctionParticipant.findOneAndUpdate(
     { loanApplicationId: 10000042 },
