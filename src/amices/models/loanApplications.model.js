@@ -96,7 +96,7 @@ const schema = new mongoose.Schema(
       salary: { type: Number },
     },
     buyForAnother: {
-      identificationTypeId: { type: Number, default: 1 },
+      identificationTypeId: { type: Number },
       identificationValue: { type: String },
       name: { type: String },
       lastName: { type: String },
