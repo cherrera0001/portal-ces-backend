@@ -3,6 +3,7 @@ const Users = require('models/users.model');
 const AmicesConfigs = require('amices/models/configs.model');
 const EficarConfigs = require('eficar/models/configs.model');
 const AuctionParticipant = require('amices/models/auctionParticipants.model');
+const Assistances = require('amices/models/assistances.model');
 
 const { CORE_URL } = process.env;
 
@@ -43,6 +44,30 @@ require('mongoEficar')();
     },
   });
   await config.save();
+
+  await Assistances.deleteMany({});
+  await Assistances.insertMany([
+    {
+      id: 1,
+      description: 'FAMILIA PROTEGIDA',
+    },
+    {
+      id: 2,
+      description: 'GARANTIA MECANICA >5 AÑOS',
+    },
+    {
+      id: 3,
+      description: 'GARANTIA MECANICA',
+    },
+    {
+      id: 4,
+      description: 'NEUMATICOS',
+    },
+    {
+      id: 5,
+      description: 'PROTECAR',
+    },
+  ]);
 
   await EficarConfigs.deleteMany({});
   const eficarConfig = new EficarConfigs({
@@ -87,13 +112,6 @@ require('mongoEficar')();
     },
   });
   await eficarConfig.save();
-
-  const financialEntities = [
-    {
-      name: 'Santander',
-      mail: 'mail_santander@mail.com',
-    },
-  ];
 
   await Users.deleteOne({ email: 'mail1@mail.com' });
   const testUser = new Users({
