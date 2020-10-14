@@ -12,6 +12,7 @@ const schema = new mongoose.Schema({
   memberOf: { type: String, required: false },
   createdAt: { type: Date, default: Date.now },
   forApp: { type: String, required: false },
+  permissions: [{ type: String }],
 });
 
 const db = mongoose.connection.useDb(`amices_${process.env.NODE_ENV}`);

@@ -6,6 +6,7 @@ const makeToken = (user) => {
       name: user.name,
       rut: user.rut,
       username: user.username,
+      permissions: user.permissions,
       companyIdentificationValue: user.companyIdentificationValue,
     },
     process.env.SECRET,
