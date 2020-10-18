@@ -178,10 +178,23 @@ const create = async (req, res) => {
         }
       : {};
 
+  const guarantor = req.body.guarantor.length
+    ? req.body.guarantor.map((el) => ({
+        ...el,
+        geographicDataId: el.geographicData.COMMUNE.externalCode,
+        nationalityId: el.nationalityData.externalCode,
+        maritalStatus: el.maritalStatusData.externalCode,
+        maritalRegime: el.maritalRegimeData.externalCode,
+        workType: el.workTypeData.externalCode,
+        activityTypeId: el.activityTypeData.externalCode,
+      }))
+    : [];
+
   const auction = new Auction({
     ...req.body,
     spouseData,
     buyForAnother,
+    guarantor,
     financingEntityId: req.params.rut,
     simulationId,
     loanStatus: await findLoanStatus(status),
