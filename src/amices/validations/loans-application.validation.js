@@ -21,4 +21,5 @@ exports.create = Joi.object().keys({
   vehicleData: Joi.object().required(),
   loan: Joi.object().required(),
   externalIds: Joi.array().required(),
+  manualAssignmentLogs: Joi.array().optional(),
 });
