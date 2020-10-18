@@ -158,8 +158,30 @@ const create = async (req, res) => {
     loanSimulationData: { id: simulationId, status },
   } = req.body;
 
+  const spouseData =
+    Object.keys(req.body.spouseData).length > 6
+      ? {
+          ...req.body.spouseData,
+          spouseGeographicDataId: req.body.spouseData.spouseGeographicData.COMMUNE.externalCode,
+          workType: req.body.spouseData.workType.externalCode,
+          activityType: req.body.spouseData.activityType.externalCode,
+        }
+      : {};
+  const buyForAnother =
+    Object.keys(req.body.buyForAnother).length > 0
+      ? {
+          ...req.body.buyForAnother,
+          geographicDataId: req.body.buyForAnother.geographicData.COMMUNE.externalCode,
+          nationalityId: req.body.buyForAnother.nationalityData.externalCode,
+          maritalStatus: req.body.buyForAnother.maritalStatusData.externalCode,
+          maritalRegime: req.body.buyForAnother.maritalRegimeData.externalCode,
+        }
+      : {};
+
   const auction = new Auction({
     ...req.body,
+    spouseData,
+    buyForAnother,
     financingEntityId: req.params.rut,
     simulationId,
     loanStatus: await findLoanStatus(status),
