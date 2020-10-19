@@ -4,6 +4,11 @@ const { PATH_ENDPOINT_EMAIL } = require('amices/core.services');
 const { CORE_URL } = process.env;
 
 module.exports = async ({ data, rollbar }) => {
+  data = {
+    ...data,
+    downPaymentPercentage: Number(data.downPaymentPercentage).toFixed(2),
+  };
+
   try {
     const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_EMAIL}`, data);
     return response.data;

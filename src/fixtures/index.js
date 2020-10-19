@@ -23,6 +23,16 @@ require('mongoEficar')();
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     ],
     allowedFileTypes: '.jpeg, .png, .jpg, .pdf, .xls, .xlsx, .doc, .docx',
+    loanStatus: [
+      { code: 'DRAFT_SIMULATION', status: 'Simulación guardada', color: 'black' },
+      { code: 'SAVED_SIMULATION', status: 'Solicitud guardada', color: 'black' },
+      { code: 'FORMALIZED_REQUEST', status: 'En evaluación', color: 'black' },
+      { code: 'SIMULATION_SENT', status: 'No accesada', color: 'black' },
+      { code: 'CHECKLIST_REJECTED', status: 'Rechazado por checklist', color: 'black' },
+      { code: 'CHECKLIST_CONFIRMED', status: 'Checklist confirmado', color: '#3DAC00' },
+      { code: 'SIGNING', status: 'Firma de documentación', color: '#3DAC00' },
+      { code: 'AWARDED', status: 'Crédito Adjudicado', color: '#3DAC00' },
+    ],
     maxFileSizeInKB: 40000000,
     coreToken:
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoibmFtZTEiLCJydXQiOiI5NjY2NzU2MDgiLCJ1c2VybmFtZSI6IkV2YWx1YWRvciBXZWIgQW1pY2FyIiwiY29tcGFueUlkZW50aWZpY2F0aW9uVmFsdWUiOiI5NjY2NzU2MDgiLCJpYXQiOjE1OTkxNzQ3Mzd9.Lt9yq43sGEukxYFMbDF13POb_h-l4rTkF5OyLwjHSkA',
@@ -123,6 +133,9 @@ require('mongoEficar')();
     companyIdentificationValue: '966675608',
     sellerIdentificationValue: '112223339',
     amicarExecutiveIdentificationValue: '156681911',
+    saleChannel: '829957000',
+    saleChannelType: 'IMPORTADOR',
+    salesRoomId: 1,
   });
   await testUser.save();
 
