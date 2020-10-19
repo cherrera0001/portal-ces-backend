@@ -75,7 +75,7 @@ const finish = async (req, res) => {
 
   const auction = await AuctionParticipants.findOne({ loanApplicationId });
   if (!auction) return errors.badRequest(res, `Auction ${loanApplicationId} not found to be finished`);
-  auction.status = status;
+  auction.status = await findLoanStatus(status);
   await auction.save();
   req.app.socketIo.emit(`RELOAD_AUCTION_${loanApplicationId}`);
   req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
@@ -85,7 +85,14 @@ const finish = async (req, res) => {
 const get = async (req, res) => {
   const auction = await AuctionParticipants.find({
     loanApplicationId: req.params.loanId,
-    $or: [{ status: 'FINISHED_AUCTION' }, { status: 'GRANTED' }],
+    $or: [
+      { status: 'FINISHED_AUCTION' },
+      { status: 'GRANTED' },
+      { status: 'CHECKLIST_CONFIRMED' },
+      { status: 'CHECKLIST_VALIDATION' },
+      { status: 'SIGNING' },
+      { status: 'AWARDED' },
+    ],
   });
   return res.status(200).json(auction);
 };

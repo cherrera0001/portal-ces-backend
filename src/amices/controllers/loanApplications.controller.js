@@ -225,7 +225,7 @@ const finish = async (req, res) => {
   const loanApplication = await LoansApplication.findOne({ loanApplicationId });
   if (!loanApplication) return errors.badRequest(res, `Loan application ${loanApplicationId} not found`);
 
-  loanApplication.status = status;
+  loanApplication.status = await findLoanStatus(status);
   await loanApplication.save();
   return res.status(200).json();
 };
