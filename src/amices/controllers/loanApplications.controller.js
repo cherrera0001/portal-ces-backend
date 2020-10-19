@@ -3,6 +3,7 @@ const HTTP = require('requests');
 const LoansApplication = require('amices/models/loanApplications.model');
 const { PATH_ENDPOINT_LOAN_APPLICATION, PATH_CORE_LOAN_SUBMISSIONS } = require('amices/core.services');
 const errors = require('amices/errors');
+const findLoanStatus = require('amices/helpers/findLoanStatus');
 
 const { CORE_URL } = process.env;
 
@@ -24,7 +25,7 @@ const formatLoanApplication = (incomeData, externalIds) => {
   const loanType = loanSimulationData.LoanType.cod;
   const vfg = loanType === 'SMART' ? amortizationSchedule.find((schedule) => schedule.quotaType === 'SMART') : null;
   const spouseDataFormated =
-    Object.keys(customerRequestData).length > 6
+    Object.keys(spouseData).length > 6
       ? {
           ...spouseData,
           spouseGeographicDataId: spouseData.spouseGeographicData.COMMUNE.externalCode,
@@ -46,6 +47,9 @@ const formatLoanApplication = (incomeData, externalIds) => {
     ? {
         ...incomeData,
         simulationId: loanSimulationData.id,
+        salesRoomId: loanSimulationData.SalesRoom.id,
+        sellerIdentificationValue: loanSimulationData.salesRepresentative.rut,
+        amicarExecutiveIdentificationValue: loanSimulationData.amicarExecutive.rut,
         loan: {
           ...loanSimulationData,
           rateType: loanSimulationData.Rate.RateType,
@@ -130,6 +134,9 @@ const formatLoanApplication = (incomeData, externalIds) => {
           year: loanSimulationCar.year,
         },
         simulationId: loanSimulationData.id,
+        salesRoomId: loanSimulationData.SalesRoom.id,
+        sellerIdentificationValue: loanSimulationData.salesRepresentative.rut,
+        amicarExecutiveIdentificationValue: loanSimulationData.amicarExecutive.rut,
         externalIds,
       };
   return loanApplicationFormated;
@@ -143,11 +150,11 @@ const create = async (req, res) => {
 
 const all = async (req, res) => {
   const recordsPerPage = 20;
-  const hasPagination = !!req.params.page
+  const hasPagination = !!req.params.page;
   const currentPage = req.params.page - 1;
   const { filter, skip, limit, sort, projection, population } = aqp({
     ...req.query,
-    ...(hasPagination && {skip: currentPage * recordsPerPage}),
+    ...(hasPagination && { skip: currentPage * recordsPerPage }),
   });
   const loansApplications = await LoansApplication.find(filter)
     .skip(skip)
@@ -197,9 +204,12 @@ const saveExternal = async (req, res) => {
         formatLoanApplication(incomingData, simulationObject.externalIds),
       );
       await simulationObject.updateOne(formatLoanApplication(incomingData, simulationObject.externalIds));
+      simulationObject.status = await findLoanStatus(loanSimulationData.status);
+      await simulationObject.save();
     } else {
       const loanApplication = formatLoanApplication(incomingData, [incomingData.loanSimulationData.externalId]);
       simulationObject = new LoansApplication(loanApplication);
+      simulationObject.status = await findLoanStatus();
       await simulationObject.save();
     }
     res.status(200).end();
@@ -215,7 +225,7 @@ const finish = async (req, res) => {
   const loanApplication = await LoansApplication.findOne({ loanApplicationId });
   if (!loanApplication) return errors.badRequest(res, `Loan application ${loanApplicationId} not found`);
 
-  loanApplication.status = status;
+  loanApplication.status = await findLoanStatus(status);
   await loanApplication.save();
   return res.status(200).json();
 };
