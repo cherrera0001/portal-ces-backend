@@ -1,6 +1,8 @@
 const AuctionParticipants = require('amices/models/auctionParticipants.model');
+const LoansApplication = require('amices/models/loanApplications.model');
 const Params = require('amices/controllers/params.controller');
 const errors = require('amices/errors');
+const findLoanStatus = require('amices/helpers/findLoanStatus');
 
 const start = async (req, res) => {
   // This function is called when a loanApplication is submited to auction.
@@ -15,6 +17,13 @@ const start = async (req, res) => {
 
   const newAuction = new AuctionParticipants(incomingData);
   await newAuction.save();
+
+  const loan = await LoansApplication.findOne({
+    simulationId: incomingData.loanApplicationId,
+  });
+
+  loan.status = await findLoanStatus('FORMALIZED_REQUEST');
+  await loan.save();
   return res.status(201).json();
 };
 
