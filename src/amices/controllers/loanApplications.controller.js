@@ -142,10 +142,16 @@ const create = async (req, res) => {
 };
 
 const all = async (req, res) => {
-  const { filter, skip, limit, sort, projection, population } = aqp({ ...req.query });
+  const recordsPerPage = 20;
+  const hasPagination = !!req.params.page
+  const currentPage = req.params.page - 1;
+  const { filter, skip, limit, sort, projection, population } = aqp({
+    ...req.query,
+    ...(hasPagination && {skip: currentPage * recordsPerPage}),
+  });
   const loansApplications = await LoansApplication.find(filter)
     .skip(skip)
-    .limit(limit)
+    .limit(hasPagination ? recordsPerPage : limit)
     .sort(sort)
     .select(projection)
     .populate(population);
@@ -153,7 +159,7 @@ const all = async (req, res) => {
   const total = await LoansApplication.find(filter).select(projection);
 
   res.json({
-    total: total.length,
+    total: hasPagination ? Math.ceil(total.length / recordsPerPage) : total.length,
     result: loansApplications,
   });
 };
