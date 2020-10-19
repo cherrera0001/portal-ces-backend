@@ -2,6 +2,7 @@ const { ApolloError } = require('apollo-server-express');
 const HTTP = require('requests');
 const { PATH_ENDPOINT_SAVE_SIMULATION } = require('amices/core.services');
 const LoansApplication = require('amices/models/loanApplications.model');
+const findLoanStatus = require('amices/helpers/findLoanStatus');
 
 const { CORE_URL } = process.env;
 
@@ -33,6 +34,10 @@ module.exports = async ({ data, rollbar }) => {
           cod: simulation.selectedScenario.rateType.externalCode,
         },
       },
+      sellerIdentificationValue: simulation.sellerIdentificationValue,
+      amicarExecutiveIdentificationValue: simulation.amicarExecutiveIdentificationValue,
+      status: await findLoanStatus(),
+      salesRoomId: simulation.loan.salesRoomId,
       vehicleData: simulation.vehicle,
       externalIds: [simulation.transactionId],
     });

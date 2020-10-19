@@ -3,6 +3,7 @@ const Users = require('models/users.model');
 const AmicesConfigs = require('amices/models/configs.model');
 const EficarConfigs = require('eficar/models/configs.model');
 const AuctionParticipant = require('amices/models/auctionParticipants.model');
+const Assistances = require('amices/models/assistances.model');
 
 const { CORE_URL } = process.env;
 
@@ -22,6 +23,16 @@ require('mongoEficar')();
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     ],
     allowedFileTypes: '.jpeg, .png, .jpg, .pdf, .xls, .xlsx, .doc, .docx',
+    loanStatus: [
+      { code: 'DRAFT_SIMULATION', status: 'Simulación guardada', color: 'black' },
+      { code: 'SAVED_SIMULATION', status: 'Solicitud guardada', color: 'black' },
+      { code: 'FORMALIZED_REQUEST', status: 'En evaluación', color: 'black' },
+      { code: 'SIMULATION_SENT', status: 'No accesada', color: 'black' },
+      { code: 'CHECKLIST_REJECTED', status: 'Rechazado por checklist', color: 'black' },
+      { code: 'CHECKLIST_CONFIRMED', status: 'Checklist confirmado', color: '#3DAC00' },
+      { code: 'SIGNING', status: 'Firma de documentación', color: '#3DAC00' },
+      { code: 'AWARDED', status: 'Crédito Adjudicado', color: '#3DAC00' },
+    ],
     maxFileSizeInKB: 40000000,
     coreToken:
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoibmFtZTEiLCJydXQiOiI5NjY2NzU2MDgiLCJ1c2VybmFtZSI6IkV2YWx1YWRvciBXZWIgQW1pY2FyIiwiY29tcGFueUlkZW50aWZpY2F0aW9uVmFsdWUiOiI5NjY2NzU2MDgiLCJpYXQiOjE1OTkxNzQ3Mzd9.Lt9yq43sGEukxYFMbDF13POb_h-l4rTkF5OyLwjHSkA',
@@ -43,6 +54,30 @@ require('mongoEficar')();
     },
   });
   await config.save();
+
+  await Assistances.deleteMany({});
+  await Assistances.insertMany([
+    {
+      id: 1,
+      description: 'FAMILIA PROTEGIDA',
+    },
+    {
+      id: 2,
+      description: 'GARANTIA MECANICA >5 AÑOS',
+    },
+    {
+      id: 3,
+      description: 'GARANTIA MECANICA',
+    },
+    {
+      id: 4,
+      description: 'NEUMATICOS',
+    },
+    {
+      id: 5,
+      description: 'PROTECAR',
+    },
+  ]);
 
   await EficarConfigs.deleteMany({});
   const eficarConfig = new EficarConfigs({
@@ -88,13 +123,6 @@ require('mongoEficar')();
   });
   await eficarConfig.save();
 
-  const financialEntities = [
-    {
-      name: 'Santander',
-      mail: 'mail_santander@mail.com',
-    },
-  ];
-
   await Users.deleteOne({ email: 'mail1@mail.com' });
   const testUser = new Users({
     name: 'Evaluador Web Amicar',
@@ -105,6 +133,9 @@ require('mongoEficar')();
     companyIdentificationValue: '966675608',
     sellerIdentificationValue: '112223339',
     amicarExecutiveIdentificationValue: '156681911',
+    saleChannel: '829957000',
+    saleChannelType: 'IMPORTADOR',
+    salesRoomId: 1,
   });
   await testUser.save();
 
