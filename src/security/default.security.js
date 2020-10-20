@@ -4,7 +4,9 @@ const bcrypt = require('bcryptjs');
 const errors = require('amices/errors');
 
 const login = async (req, res) => {
-  const user = await Users.findOne({ $or: [{ email: req.body.username }, { rut: req.body.username }] });
+  const user = await Users.findOne({
+    $or: [{ email: new RegExp(`^${req.body.username}$`, 'i') }, { rut: new RegExp(`^${req.body.username}$`, 'i') }],
+  });
   if (!user) return errors.badRequest(res, 'USER_NOT_FOUND');
 
   if (bcrypt.compareSync(req.body.password, user.password)) {
