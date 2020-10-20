@@ -5,6 +5,7 @@ const ConfigSchema = new mongoose.Schema(
     allowedMimeTypes: [{ type: mongoose.Schema.Types.String }],
     allowedFileTypes: { type: mongoose.Schema.Types.String },
     coreToken: { type: mongoose.Schema.Types.String },
+    loanStatus: [{ code: String, status: String, color: String }],
     maxFileSizeInKB: { type: mongoose.Schema.Types.Number },
     terms: [
       {
