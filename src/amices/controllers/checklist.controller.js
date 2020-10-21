@@ -7,6 +7,7 @@ const {
   PATH_ENDPOINT_CORE_GET_ASSISTANCES_FOR_LOAN,
   PATH_ENDPOINT_CORE_UPLOAD_DOCUMENT_TO_SIGN,
 } = require('amices/core.services');
+const findLoanStatus = require('amices/helpers/findLoanStatus');
 
 const {
   generateProtecar,
@@ -82,7 +83,8 @@ const update = async (req, res) => {
       break;
     }
   }
-  if (status) auction.status = status;
+
+  if (status) auction.status = await findLoanStatus(status);
   if (status === 'CHECKLIST_CONFIRMED') generateAssistanceDocuments({ loanApplicationId, feIdentificationValue });
 
   auction.markModified('auctionParticipants');

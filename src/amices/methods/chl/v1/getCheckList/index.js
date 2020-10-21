@@ -15,7 +15,7 @@ module.exports = async ({ data, rollbar }) => {
       financingEntityId: winner.FinancingEntity.id,
       checklistId: winner.Checklists[0].id,
       checklistError: winner.Checklists[0].comment,
-      status: loan.status,
+      status: loan.status.code,
       checklist: winner.Checklists[0].ChecklistItems.map((item) => ({
         id: item.id,
         name: item.CoreParam.name,

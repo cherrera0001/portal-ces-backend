@@ -64,6 +64,7 @@ const responses = async (req, res) => {
   }
 
   auction.auctionParticipants = auctionParticipants;
+
   await auction.save();
   req.app.socketIo.emit(`RELOAD_AUCTION_${loanApplicationId}`);
   return res.status(200).json();
@@ -75,8 +76,22 @@ const finish = async (req, res) => {
 
   const auction = await AuctionParticipants.findOne({ loanApplicationId });
   if (!auction) return errors.badRequest(res, `Auction ${loanApplicationId} not found to be finished`);
+  if (
+    (status === 'GRANTED' && !auction.status) ||
+    (status === 'GRANTED' && auction.status.code === 'FORMALIZED_REQUEST')
+  )
+    return res.status(400).json();
+
   auction.status = await findLoanStatus(status);
   await auction.save();
+
+  const loan = await LoansApplication.findOne({
+    simulationId: loanApplicationId,
+  });
+
+  loan.status = await findLoanStatus(status);
+  await loan.save();
+
   req.app.socketIo.emit(`RELOAD_AUCTION_${loanApplicationId}`);
   req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
   return res.status(200).json();
@@ -86,12 +101,12 @@ const get = async (req, res) => {
   const auction = await AuctionParticipants.find({
     loanApplicationId: req.params.loanId,
     $or: [
-      { status: 'FINISHED_AUCTION' },
-      { status: 'GRANTED' },
-      { status: 'CHECKLIST_CONFIRMED' },
-      { status: 'CHECKLIST_VALIDATION' },
-      { status: 'SIGNING' },
-      { status: 'AWARDED' },
+      { 'status.code': 'FINISHED_AUCTION' },
+      { 'status.code': 'GRANTED' },
+      { 'status.code': 'CHECKLIST_CONFIRMED' },
+      { 'status.code': 'CHECKLIST_VALIDATION' },
+      { 'status.code': 'SIGNING' },
+      { 'status.code': 'AWARDED' },
     ],
   });
   return res.status(200).json(auction);
