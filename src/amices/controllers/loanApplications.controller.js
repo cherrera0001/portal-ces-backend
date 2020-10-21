@@ -43,9 +43,12 @@ const formatLoanApplication = (incomeData, externalIds) => {
           maritalRegime: buyForAnother.maritalRegimeData.externalCode,
         }
       : {};
+
   const loanApplicationFormated = !Object.keys(customerRequestData).length
     ? {
         ...incomeData,
+        loanSimulationCar:{...loanSimulationCar, vehicleType: loanSimulationCar.VehicleType.externalCode},
+        customerActivity: customerActivity || {},
         simulationId: loanSimulationData.id,
         salesRoomId: loanSimulationData.SalesRoom.id,
         sellerIdentificationValue: loanSimulationData.salesRepresentative.rut,
@@ -66,6 +69,7 @@ const formatLoanApplication = (incomeData, externalIds) => {
       }
     : {
         ...incomeData,
+        loanSimulationCar: { ...loanSimulationCar, vehicleType: loanSimulationCar.VehicleType.externalCode },
         customer: {
           ...customer,
           gender: customer.genderData.externalCode,
