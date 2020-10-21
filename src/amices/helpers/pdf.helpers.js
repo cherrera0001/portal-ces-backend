@@ -297,4 +297,5 @@ module.exports = {
   drawMultilineText,
   drawSignatureLine,
   generatePages,
+  AMICAR_LOGO_URL,
 };

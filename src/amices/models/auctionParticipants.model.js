@@ -5,7 +5,7 @@ const AuctionParticipantsSchema = new mongoose.Schema(
     loanApplicationId: { type: mongoose.Schema.Types.Number, index: true, unique: true },
     auctionParticipants: [],
     auctionStartDate: { type: mongoose.Schema.Types.Date },
-    status: { type: mongoose.Schema.Types.String },
+    status: { type: mongoose.Schema.Types.Object },
   },
   {
     collection: 'auctionParticipants',

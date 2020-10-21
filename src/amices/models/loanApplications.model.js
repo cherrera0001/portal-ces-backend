@@ -186,7 +186,7 @@ const schema = new mongoose.Schema(
     },
     externalIds: [{ type: String, required: true }],
     awardedTime: { type: Date, required: false },
-    status: { type: Object, required: true },
+    status: { type: Object, required: false },
     salesRoomId: { type: Number, required: false },
   },
   {
