@@ -163,8 +163,8 @@ require('mongoEficar')();
     {
       loanApplicationId: 10000042,
       status: {
-        code: 'AWARDED',
-        status: 'Crédito Adjudicado',
+        code: 'WINNER',
+        status: 'Otorgado',
         color: '#3DAC00',
       },
       auctionParticipants: [
