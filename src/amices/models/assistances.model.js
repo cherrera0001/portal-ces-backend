@@ -4,6 +4,8 @@ const schema = new mongoose.Schema(
   {
     id: { type: Number, required: true },
     description: { type: String, required: true },
+    documentTypeId: { type: String, required: false },
+    value: { type: String, required: false },
   },
   {
     collection: 'assistances',

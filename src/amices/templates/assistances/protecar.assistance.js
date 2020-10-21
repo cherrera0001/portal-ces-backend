@@ -448,12 +448,10 @@ module.exports = async () => {
     font: helveticaBoldFont,
   });
 
-  //
-
-  const containerWidth = 150;
+  const containerWidth = 170;
 
   page4.drawRectangle({
-    x: PAGE_BORDER + 142.64,
+    x: PAGE_BORDER + 135,
     y: PAGE_HEIGHT - 145,
     width: containerWidth,
     height: 40,
@@ -464,18 +462,104 @@ module.exports = async () => {
   page4.drawRectangle({
     x: PAGE_BORDER + 292.64,
     y: PAGE_HEIGHT - 145,
-    width: 90,
+    width: 100,
     height: 40,
     borderWidth: 0.5,
     color: rgb(0.5, 0.5, 0.5),
   });
 
-  const text = 'OBJETOS';
-  const textWidth = helveticaBoldFont.widthOfTextAtSize(text, FONT_SIZE);
-  const textX = PAGE_BORDER + 142.64 + containerWidth / 2 - textWidth / 2;
+  page4.drawRectangle({
+    x: PAGE_BORDER + 135,
+    y: PAGE_HEIGHT - 165,
+    width: containerWidth,
+    height: 20,
+    borderWidth: 0.5,
+    color: rgb(1, 1, 1),
+  });
 
-  page4.drawText(text, {
-    x: textX,
+  page4.drawRectangle({
+    x: PAGE_BORDER + 292.64,
+    y: PAGE_HEIGHT - 165,
+    width: 100,
+    height: 20,
+    borderWidth: 0.5,
+    color: rgb(1, 1, 1),
+  });
+
+  page4.drawRectangle({
+    x: PAGE_BORDER + 135,
+    y: PAGE_HEIGHT - 185,
+    width: containerWidth,
+    height: 20,
+    borderWidth: 0.5,
+    color: rgb(1, 1, 1),
+  });
+
+  page4.drawRectangle({
+    x: PAGE_BORDER + 292.64,
+    y: PAGE_HEIGHT - 185,
+    width: 100,
+    height: 20,
+    borderWidth: 0.5,
+    color: rgb(1, 1, 1),
+  });
+
+  page4.drawRectangle({
+    x: PAGE_BORDER + 135,
+    y: PAGE_HEIGHT - 205,
+    width: containerWidth,
+    height: 20,
+    borderWidth: 0.5,
+    color: rgb(1, 1, 1),
+  });
+
+  page4.drawRectangle({
+    x: PAGE_BORDER + 292.64,
+    y: PAGE_HEIGHT - 205,
+    width: 100,
+    height: 20,
+    borderWidth: 0.5,
+    color: rgb(1, 1, 1),
+  });
+
+  page4.drawRectangle({
+    x: PAGE_BORDER + 135,
+    y: PAGE_HEIGHT - 225,
+    width: containerWidth,
+    height: 20,
+    borderWidth: 0.5,
+    color: rgb(1, 1, 1),
+  });
+
+  page4.drawRectangle({
+    x: PAGE_BORDER + 292.64,
+    y: PAGE_HEIGHT - 225,
+    width: 100,
+    height: 20,
+    borderWidth: 0.5,
+    color: rgb(1, 1, 1),
+  });
+
+  page4.drawRectangle({
+    x: PAGE_BORDER + 135,
+    y: PAGE_HEIGHT - 245,
+    width: containerWidth,
+    height: 20,
+    borderWidth: 0.5,
+    color: rgb(1, 1, 1),
+  });
+
+  page4.drawRectangle({
+    x: PAGE_BORDER + 292.64,
+    y: PAGE_HEIGHT - 245,
+    width: 100,
+    height: 20,
+    borderWidth: 0.5,
+    color: rgb(1, 1, 1),
+  });
+
+  page4.drawText('OBJETOS', {
+    x: PAGE_BORDER + 200,
     y: PAGE_HEIGHT - 130,
     color: rgb(1, 1, 1, 1),
     size: FONT_SIZE,
@@ -485,53 +569,96 @@ module.exports = async () => {
   drawMultilineText({
     page: page4,
     lines: ['MONTO', 'ASEGURADO (UF)'],
-    font: helveticaFont,
-    alignment: 'left',
+    font: helveticaBoldFont,
     color: rgb(1, 1, 1, 1),
     x: PAGE_BORDER + 300,
     y: PAGE_HEIGHT - 125,
     containerWidth: 90,
   });
 
-  page4.drawRectangle({
-    x: PAGE_BORDER + 142.64,
-    y: PAGE_HEIGHT - 145,
-    width: containerWidth,
-    height: 40,
-    borderWidth: 0.5,
-    color: rgb(0.5, 0.5, 0.5),
+  page4.drawText('Cartera, Bolso, Mochila y Billetera', {
+    x: PAGE_BORDER + 160,
+    y: PAGE_HEIGHT - 160,
+    color: rgb(0, 0, 0, 0),
+    size: FONT_SIZE,
+    font: helveticaFont,
   });
 
-  page4.drawRectangle({
-    x: PAGE_BORDER + 292.64,
-    y: PAGE_HEIGHT - 145,
-    width: containerWidth,
-    height: 40,
-    borderWidth: 0.5,
-    color: rgb(0.5, 0.5, 0.5),
+  page4.drawText('Silla de autos para bebés', {
+    x: PAGE_BORDER + 170,
+    y: PAGE_HEIGHT - 180,
+    color: rgb(0, 0, 0, 0),
+    size: FONT_SIZE,
+    font: helveticaFont,
   });
 
-  page4.drawRectangle({
-    x: PAGE_BORDER + 142.64,
-    y: PAGE_HEIGHT - 165,
-    width: containerWidth,
-    height: 20,
-    borderWidth: 0.5,
-    color: rgb(1, 1, 1),
+  page4.drawText('Artículos deportivos', {
+    x: PAGE_BORDER + 180,
+    y: PAGE_HEIGHT - 200,
+    color: rgb(0, 0, 0, 0),
+    size: FONT_SIZE,
+    font: helveticaFont,
   });
 
-  page4.drawRectangle({
-    x: PAGE_BORDER + 292.64,
-    y: PAGE_HEIGHT - 165,
-    width: containerWidth,
-    height: 20,
-    borderWidth: 0.5,
-    color: rgb(1, 1, 1),
+  page4.drawText('Artículos Electrónicos', {
+    x: PAGE_BORDER + 176,
+    y: PAGE_HEIGHT - 220,
+    color: rgb(0, 0, 0, 0),
+    size: FONT_SIZE,
+    font: helveticaFont,
+  });
+
+  page4.drawText('Daños de Vidrios y Chapas de automóvil', {
+    x: PAGE_BORDER + 144,
+    y: PAGE_HEIGHT - 240,
+    color: rgb(0, 0, 0, 0),
+    size: FONT_SIZE,
+    font: helveticaFont,
+  });
+
+  page4.drawText('2', {
+    x: PAGE_BORDER + 340,
+    y: PAGE_HEIGHT - 160,
+    color: rgb(0, 0, 0, 0),
+    size: FONT_SIZE,
+    font: helveticaFont,
+  });
+
+  page4.drawText('2', {
+    x: PAGE_BORDER + 340,
+    y: PAGE_HEIGHT - 180,
+    color: rgb(0, 0, 0, 0),
+    size: FONT_SIZE,
+    font: helveticaFont,
+  });
+
+  page4.drawText('2', {
+    x: PAGE_BORDER + 340,
+    y: PAGE_HEIGHT - 200,
+    color: rgb(0, 0, 0, 0),
+    size: FONT_SIZE,
+    font: helveticaFont,
+  });
+
+  page4.drawText('2', {
+    x: PAGE_BORDER + 340,
+    y: PAGE_HEIGHT - 220,
+    color: rgb(0, 0, 0, 0),
+    size: FONT_SIZE,
+    font: helveticaFont,
+  });
+
+  page4.drawText('4', {
+    x: PAGE_BORDER + 340,
+    y: PAGE_HEIGHT - 240,
+    color: rgb(0, 0, 0, 0),
+    size: FONT_SIZE,
+    font: helveticaFont,
   });
 
   page4.drawText('Exclusiones del Seguro Robo Contenido:', {
     x: PAGE_BORDER,
-    y: PAGE_HEIGHT - 200,
+    y: PAGE_HEIGHT - 270,
     size: FONT_SIZE,
     font: helveticaBoldFont,
   });
@@ -557,12 +684,12 @@ module.exports = async () => {
     ],
     font: helveticaFont,
     alignment: 'left',
-    y: PAGE_HEIGHT - 210,
+    y: PAGE_HEIGHT - 280,
   });
 
   page4.drawText('Procedimiento de Denuncia de Siniestro', {
     x: PAGE_BORDER,
-    y: PAGE_HEIGHT - 370,
+    y: PAGE_HEIGHT - 440,
     size: FONT_SIZE,
     font: helveticaBoldFont,
   });
@@ -599,7 +726,7 @@ module.exports = async () => {
     ],
     font: helveticaFont,
     alignment: 'left',
-    y: PAGE_HEIGHT - 380,
+    y: PAGE_HEIGHT - 450,
   });
 
   drawMultilineText({
