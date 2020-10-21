@@ -15,7 +15,7 @@ const start = async (req, res) => {
 
   if (auction) return errors.badRequest(res, `Auction ${incomingData.loanApplicationId} already exist in the database`);
 
-  const newAuction = new AuctionParticipants(incomingData);
+  const newAuction = new AuctionParticipants({ ...incomingData, status: await findLoanStatus('FORMALIZED_REQUEST') });
   await newAuction.save();
 
   const loan = await LoansApplication.findOne({
