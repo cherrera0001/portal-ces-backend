@@ -8,6 +8,13 @@ const {
   PATH_ENDPOINT_CORE_UPLOAD_DOCUMENT_TO_SIGN,
 } = require('amices/core.services');
 
+const {
+  generateProtecar,
+  generateTireProtection,
+  generateMandate,
+  generateProtectedFamily,
+} = require('amices/templates/assistances');
+
 const { CORE_URL } = process.env;
 
 const generateAssistanceDocuments = async ({ loanApplicationId, feIdentificationValue }) => {
@@ -15,13 +22,10 @@ const generateAssistanceDocuments = async ({ loanApplicationId, feIdentification
     const response = await HTTP.get(`${CORE_URL}${PATH_ENDPOINT_CORE_GET_ASSISTANCES_FOR_LOAN}/${loanApplicationId}`);
     const { amicarAssistance } = response.data;
     const amicesAssistances = await Assistances.find({});
-
     const assistancesToGenerate = amicesAssistances.filter((assistance) =>
       amicarAssistance.some((coreAssistance) => coreAssistance.id === assistance.id && coreAssistance.selected),
     );
-
     assistancesToGenerate.push(amicesAssistances[4]);
-
     await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_CORE_UPLOAD_DOCUMENT_TO_SIGN}`, {
       loanApplicationId,
       feIdentificationValue,

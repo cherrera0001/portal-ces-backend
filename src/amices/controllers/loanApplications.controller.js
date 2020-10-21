@@ -203,12 +203,15 @@ const saveExternal = async (req, res) => {
         { _id: simulationObject._id },
         formatLoanApplication(incomingData, simulationObject.externalIds),
       );
-      await simulationObject.updateOne(formatLoanApplication(incomingData, simulationObject.externalIds));
-      simulationObject.status = await findLoanStatus(loanSimulationData.status);
-      await simulationObject.save();
+
+      await simulationObject.updateOne({
+        ...formatLoanApplication(incomingData, simulationObject.externalIds),
+        status: await findLoanStatus(loanSimulationData.status),
+      });
     } else {
       const loanApplication = formatLoanApplication(incomingData, [incomingData.loanSimulationData.externalId]);
       simulationObject = new LoansApplication(loanApplication);
+      await simulationObject.save();
       simulationObject.status = await findLoanStatus();
       await simulationObject.save();
     }
