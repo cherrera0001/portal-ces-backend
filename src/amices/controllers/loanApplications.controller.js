@@ -43,9 +43,12 @@ const formatLoanApplication = (incomeData, externalIds) => {
           maritalRegime: buyForAnother.maritalRegimeData.externalCode,
         }
       : {};
+
   const loanApplicationFormated = !Object.keys(customerRequestData).length
     ? {
         ...incomeData,
+        loanSimulationCar: { ...loanSimulationCar, vehicleType: loanSimulationCar.VehicleType.externalCode },
+        customerActivity: customerActivity || {},
         simulationId: loanSimulationData.id,
         salesRoomId: loanSimulationData.SalesRoom.id,
         sellerIdentificationValue: loanSimulationData.salesRepresentative.rut,
@@ -66,6 +69,7 @@ const formatLoanApplication = (incomeData, externalIds) => {
       }
     : {
         ...incomeData,
+        loanSimulationCar: { ...loanSimulationCar, vehicleType: loanSimulationCar.VehicleType.externalCode },
         customer: {
           ...customer,
           gender: customer.genderData.externalCode,
@@ -130,7 +134,7 @@ const formatLoanApplication = (incomeData, externalIds) => {
         vehicleData: {
           brandName: loanSimulationCar.Brand.name,
           modelName: loanSimulationCar.Model.name,
-          version: loanSimulationCar.VehicleType.name,
+          version: loanSimulationCar.carVersion,
           year: loanSimulationCar.year,
         },
         simulationId: loanSimulationData.id,
@@ -139,6 +143,7 @@ const formatLoanApplication = (incomeData, externalIds) => {
         amicarExecutiveIdentificationValue: loanSimulationData.amicarExecutive.rut,
         externalIds,
       };
+  console.log(loanSimulationCar, '-.-.-.');
   return loanApplicationFormated;
 };
 
@@ -203,7 +208,6 @@ const saveExternal = async (req, res) => {
         { _id: simulationObject._id },
         formatLoanApplication(incomingData, simulationObject.externalIds),
       );
-
       await simulationObject.updateOne({
         ...formatLoanApplication(incomingData, simulationObject.externalIds),
         status: await findLoanStatus(loanSimulationData.status),
