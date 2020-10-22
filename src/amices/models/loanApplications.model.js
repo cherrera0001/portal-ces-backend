@@ -168,17 +168,7 @@ const schema = new mongoose.Schema(
       version: { type: String, default: '' },
       year: { type: Number, default: 0 },
     },
-    loanSimulationCar: {
-      vehicleType: { type: String },
-      vehicleTypeId: { type: Number },
-      carBrandId: { type: Number },
-      carBrandDescription: { type: String },
-      carModelId: { type: Number },
-      carModelDescription: { type: String },
-      carVersion: { type: String },
-      year: { type: Number },
-      price: { type: Number },
-    },
+    loanSimulationCar: { type: Object, defatult: {} },
     loan: {
       tradeInCarValue: { type: Number, default: 0 },
       loanType: { type: String, default: '' },
