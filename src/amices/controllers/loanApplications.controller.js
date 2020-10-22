@@ -143,6 +143,7 @@ const formatLoanApplication = (incomeData, externalIds) => {
         amicarExecutiveIdentificationValue: loanSimulationData.amicarExecutive.rut,
         externalIds,
       };
+  console.log(loanSimulationCar, '-.-.-.');
   return loanApplicationFormated;
 };
 
