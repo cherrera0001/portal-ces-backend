@@ -47,7 +47,7 @@ const formatLoanApplication = (incomeData, externalIds) => {
   const loanApplicationFormated = !Object.keys(customerRequestData).length
     ? {
         ...incomeData,
-        loanSimulationCar:{...loanSimulationCar, vehicleType: loanSimulationCar.VehicleType.externalCode},
+        loanSimulationCar: { ...loanSimulationCar, vehicleType: loanSimulationCar.VehicleType.externalCode },
         customerActivity: customerActivity || {},
         simulationId: loanSimulationData.id,
         salesRoomId: loanSimulationData.SalesRoom.id,
@@ -134,7 +134,7 @@ const formatLoanApplication = (incomeData, externalIds) => {
         vehicleData: {
           brandName: loanSimulationCar.Brand.name,
           modelName: loanSimulationCar.Model.name,
-          version: loanSimulationCar.VehicleType.name,
+          version: loanSimulationCar.carVersion,
           year: loanSimulationCar.year,
         },
         simulationId: loanSimulationData.id,
