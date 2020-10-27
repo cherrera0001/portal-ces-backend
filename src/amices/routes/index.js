@@ -8,5 +8,6 @@ router.use('/loans-applications', require('amices/routes/loansApplications.route
 router.use('/auctions', require('amices/routes/auctions.routes'));
 router.use('/checklist', require('amices/routes/checklist.routes'));
 router.use('/documents-to-sign', require('amices/routes/documentsToSign.routes'));
+router.use('/simulation', require('amices/routes/simulation.routes'));
 
 module.exports = router;
