@@ -42,8 +42,7 @@ const all = async (req, res) => {
 
 const getCustomerHistory = async (req, res) => {
   const { filter, skip, limit, sort, projection, population } = aqp({ ...req.query });
-
-  const auctions = await Auction.find({ 'customer.identificationValue': req.params.rut })
+  const auctions = await Auction.find({...filter,...{'customer.identificationValue': req.params.rut }})
     .skip(skip)
     .limit(limit)
     .sort(sort)
