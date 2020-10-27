@@ -5,6 +5,7 @@ const Config = require('eficar/models/configs.model');
 const findLoanStatus = require('eficar/helpers/findLoanStatus');
 const errors = require('eficar/errors');
 const HTTP = require('requests');
+
 const { PATH_ENDPOINT_CORE_SEND_FE_RESPONSE } = require('eficar/core.services');
 
 const { CORE_URL } = process.env;
@@ -42,7 +43,7 @@ const all = async (req, res) => {
 
 const getCustomerHistory = async (req, res) => {
   const { filter, skip, limit, sort, projection, population } = aqp({ ...req.query });
-  const auctions = await Auction.find({...filter,...{'customer.identificationValue': req.params.rut }})
+  const auctions = await Auction.find({ ...filter, ...{ 'customer.identificationValue': req.params.rut } })
     .skip(skip)
     .limit(limit)
     .sort(sort)
@@ -202,6 +203,11 @@ const create = async (req, res) => {
   res.status(201).end();
 };
 
+const findAllLoanStatus = async (req, res) => {
+  const config = await Config.findOne();
+  return res.status(200).json(config.loanStatus);
+};
+
 module.exports = {
   all,
   get,
@@ -210,4 +216,5 @@ module.exports = {
   sendResponse,
   update,
   granted,
+  findAllLoanStatus,
 };
