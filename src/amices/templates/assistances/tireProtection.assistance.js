@@ -15,7 +15,19 @@ const PAGE_HEIGHT = 841.89;
 const PAGE_BORDER = 35;
 const CELL_WIDTH = 125;
 
-module.exports = async () => {
+module.exports = async (args) => {
+  const {
+    startDate,
+    endDate,
+    contractNumber,
+    plateNumber,
+    chasisNumber,
+    carBrand,
+    carModel,
+    carYear,
+    carMileage,
+    customer,
+  } = args || {};
   const pdfDoc = await PDFDocument.create();
   const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const helveticaBoldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
@@ -115,7 +127,6 @@ module.exports = async () => {
     x: PAGE_BORDER + 3 * vehicleCellWidth,
     y: 600,
     contentFont: helveticaFont,
-    content: 'NN',
   });
 
   addSeparatorRectangle({
@@ -245,6 +256,164 @@ module.exports = async () => {
     y: 60,
   });
 
+  if (startDate) {
+    page.drawText(String(startDate), {
+      x: PAGE_BORDER + 3,
+      y: 669,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE,
+      font: helveticaFont,
+    });
+  }
+
+  if (contractNumber) {
+    page.drawText(String(contractNumber), {
+      x: PAGE_BORDER + (CELL_WIDTH + headerCellSpace) + 3,
+      y: 669,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE,
+      font: helveticaFont,
+    });
+  }
+
+  if (endDate) {
+    page.drawText(String(endDate), {
+      x: PAGE_BORDER + 2 * (CELL_WIDTH + headerCellSpace) + 3,
+      y: 669,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE,
+      font: helveticaFont,
+    });
+  }
+
+  if (plateNumber) {
+    page.drawText(String(plateNumber), {
+      x: 138,
+      y: 630,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE,
+      font: helveticaFont,
+    });
+  }
+
+  if (chasisNumber) {
+    page.drawText(String(chasisNumber), {
+      x: 338,
+      y: 630,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE,
+      font: helveticaFont,
+    });
+  }
+
+  if (carBrand) {
+    page.drawText(String(carBrand), {
+      x: PAGE_BORDER + 3,
+      y: 590,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE,
+      font: helveticaFont,
+    });
+  }
+
+  if (carModel) {
+    page.drawText(String(carModel), {
+      x: PAGE_BORDER + vehicleCellWidth + 3,
+      y: 590,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE,
+      font: helveticaFont,
+    });
+  }
+
+  if (carYear) {
+    page.drawText(String(carYear), {
+      x: PAGE_BORDER + 2 * vehicleCellWidth + 3,
+      y: 590,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE,
+      font: helveticaFont,
+    });
+  }
+
+  if (carMileage) {
+    page.drawText(String(carMileage), {
+      x: PAGE_BORDER + 3 * vehicleCellWidth + 3,
+      y: 590,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE,
+      font: helveticaFont,
+    });
+  } else {
+    page.drawText('NN', {
+      x: PAGE_BORDER + 3 * vehicleCellWidth + 3,
+      y: 590,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE,
+      font: helveticaFont,
+    });
+  }
+
+  if (customer && customer.name) {
+    page.drawText(String(customer.name), {
+      x: PAGE_BORDER + 3,
+      y: 504,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE,
+      font: helveticaFont,
+    });
+  }
+
+  if (customer && customer.identificationValue) {
+    page.drawText(String(customer.identificationValue), {
+      x: PAGE_BORDER + 3,
+      y: 470,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE,
+      font: helveticaFont,
+    });
+  }
+
+  if (customer && customer.address) {
+    page.drawText(String(customer.address), {
+      x: PAGE_BORDER + 3,
+      y: 436,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE,
+      font: helveticaFont,
+    });
+  }
+
+  if (customer && customer.city) {
+    page.drawText(String(customer.city), {
+      x: PAGE_BORDER + 3,
+      y: 402,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE,
+      font: helveticaFont,
+    });
+  }
+
+  if (customer && customer.phone) {
+    page.drawText(String(customer.phone), {
+      x: PAGE_BORDER + clientDataWidth + 3,
+      y: 402,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE,
+      font: helveticaFont,
+    });
+  }
+
+  if (customer && customer.cellPhone) {
+    page.drawText(String(customer.cellPhone), {
+      x: PAGE_BORDER + 2 * clientDataWidth + 3,
+      y: 402,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE,
+      font: helveticaFont,
+    });
+  }
+
   // -------------------------- Page 2 --------------------------
 
   drawMultilineText({
@@ -304,7 +473,7 @@ module.exports = async () => {
     lines: [
       'El derecho a las prestaciones contempladas en la cobertura se refiere a contingencias que afecten al vehículo cubierto que ocurran a una',
       'distancia superior a 0Km desde el domicilio del cliente que figura como titular.',
-      'El ámbito territorial de las coberturas es en todo Chile continental más la Isla Grande de Chiloé, excluyendo los demás territorios insul  ares.',
+      'El ámbito territorial de las coberturas es en todo Chile continental más la Isla Grande de Chiloé, excluyendo los demás territorios insulares.',
     ],
     font: helveticaFont,
     alignment: 'left',

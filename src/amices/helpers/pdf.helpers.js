@@ -90,6 +90,7 @@ const addSeparatorRectangle = ({
   y,
   height = CELL_HEIGHT,
   backgroundColor = rgb(1, 1, 1),
+  color = rgb(0, 0, 0),
   font,
   fontSize = FONT_SIZE,
   text = '',
@@ -120,6 +121,7 @@ const addSeparatorRectangle = ({
     y: textY,
     size: fontSize,
     font,
+    color,
   });
 };
 
@@ -267,7 +269,7 @@ const drawFooter = ({ page, helveticaFont, helveticaBoldFont, pageNumber }) => {
   });
 };
 
-const generatePages = async ({ pdfDoc, amount, helveticaFont, helveticaBoldFont }) => {
+const generatePages = async ({ pdfDoc, amount, helveticaFont, helveticaBoldFont, shouldDrawFooter = true }) => {
   const response = await axios.get(MAPFRE_LOGO_URL, { responseType: 'arraybuffer' });
   const amicarLogo = await pdfDoc.embedPng(response.data);
   const logoDims = amicarLogo.scale(0.6);
@@ -283,7 +285,7 @@ const generatePages = async ({ pdfDoc, amount, helveticaFont, helveticaBoldFont 
       height: logoDims.height,
     });
 
-    drawFooter({ page, helveticaFont, helveticaBoldFont, pageNumber: String(i + 1) });
+    if (shouldDrawFooter) drawFooter({ page, helveticaFont, helveticaBoldFont, pageNumber: String(i + 1) });
     pages.push(page);
   }
 
