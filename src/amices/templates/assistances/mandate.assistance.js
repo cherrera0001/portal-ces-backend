@@ -8,7 +8,9 @@ const PAGE_WIDTH = 595.28;
 const PAGE_HEIGHT = 841.89;
 const PAGE_BORDER = 90;
 
-module.exports = async () => {
+module.exports = async (args) => {
+  const { protectedFamily, tireProtection, mechanicGuaranty, protecar, financialEntity, total, date, customer } =
+    args || {};
   const pdfDoc = await PDFDocument.create();
   const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const helveticaCursiveFont = await pdfDoc.embedFont(StandardFonts.HelveticaOblique);
@@ -59,11 +61,11 @@ module.exports = async () => {
   page.drawLine({
     start: {
       x: PAGE_BORDER + 195,
-      y: 740,
+      y: 739,
     },
     end: {
       x: PAGE_BORDER + 350,
-      y: 740,
+      y: 739,
     },
     thickness: 0.5,
     color: rgb(0, 0, 0),
@@ -268,6 +270,33 @@ module.exports = async () => {
     font: helveticaFont,
   });
 
+  if (financialEntity) {
+    page.drawText(financialEntity, {
+      x: PAGE_BORDER + 195,
+      y: 741,
+      size: FONT_SIZE,
+      font: helveticaBoldFont,
+    });
+  }
+
+  if (protectedFamily) {
+    page.drawText('X', {
+      x: PAGE_BORDER + 58,
+      y: PAGE_HEIGHT - 190,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE + 4,
+      font: helveticaFont,
+    });
+
+    page.drawText(String(protectedFamily), {
+      x: PAGE_BORDER + 272,
+      y: PAGE_HEIGHT - 188,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE,
+      font: helveticaFont,
+    });
+  }
+
   page.drawText('Protección de Neumáticos', {
     x: PAGE_BORDER + 80,
     y: PAGE_HEIGHT - 208,
@@ -276,6 +305,24 @@ module.exports = async () => {
     font: helveticaFont,
   });
 
+  if (tireProtection) {
+    page.drawText('X', {
+      x: PAGE_BORDER + 58,
+      y: PAGE_HEIGHT - 210,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE + 4,
+      font: helveticaFont,
+    });
+
+    page.drawText(String(tireProtection), {
+      x: PAGE_BORDER + 272,
+      y: PAGE_HEIGHT - 208,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE,
+      font: helveticaFont,
+    });
+  }
+
   page.drawText('Garantía Mecánica Vehículos Usados', {
     x: PAGE_BORDER + 80,
     y: PAGE_HEIGHT - 228,
@@ -283,6 +330,52 @@ module.exports = async () => {
     size: FONT_SIZE,
     font: helveticaFont,
   });
+
+  if (mechanicGuaranty) {
+    page.drawText('X', {
+      x: PAGE_BORDER + 58,
+      y: PAGE_HEIGHT - 230,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE + 4,
+      font: helveticaFont,
+    });
+
+    page.drawText(String(mechanicGuaranty), {
+      x: PAGE_BORDER + 272,
+      y: PAGE_HEIGHT - 228,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE,
+      font: helveticaFont,
+    });
+  }
+
+  if (protecar) {
+    page.drawText('X', {
+      x: PAGE_BORDER + 58,
+      y: PAGE_HEIGHT - 250,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE + 4,
+      font: helveticaFont,
+    });
+
+    page.drawText(String(protecar), {
+      x: PAGE_BORDER + 272,
+      y: PAGE_HEIGHT - 248,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE,
+      font: helveticaFont,
+    });
+  }
+
+  if (total) {
+    page.drawText(String(total), {
+      x: PAGE_BORDER + 272,
+      y: PAGE_HEIGHT - 268,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE,
+      font: helveticaFont,
+    });
+  }
 
   page.drawText('Robo Contenido y Reparaciones menores', {
     x: PAGE_BORDER + 80,
@@ -464,7 +557,7 @@ module.exports = async () => {
     font: helveticaFont,
   });
 
-  page.drawText('Fecha', {
+  page.drawText('Fecha:', {
     x: PAGE_BORDER + 5,
     y: PAGE_HEIGHT - 693,
     size: FONT_SIZE,
@@ -499,6 +592,56 @@ module.exports = async () => {
     size: FONT_SIZE,
     font: helveticaFont,
   });
+
+  if (customer && customer.name) {
+    page.drawText(String(customer.name), {
+      x: PAGE_BORDER + 40,
+      y: PAGE_HEIGHT - 573,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE,
+      font: helveticaFont,
+    });
+  }
+
+  if (customer && customer.identificationValue) {
+    page.drawText(String(customer.identificationValue), {
+      x: PAGE_BORDER + 125,
+      y: PAGE_HEIGHT - 603,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE,
+      font: helveticaFont,
+    });
+  }
+
+  if (customer && customer.address) {
+    page.drawText(String(customer.address), {
+      x: PAGE_BORDER + 45,
+      y: PAGE_HEIGHT - 633,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE,
+      font: helveticaFont,
+    });
+  }
+
+  if (customer && customer.email) {
+    page.drawText(String(customer.email), {
+      x: PAGE_BORDER + 125,
+      y: PAGE_HEIGHT - 663,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE,
+      font: helveticaFont,
+    });
+  }
+
+  if (date) {
+    page.drawText(String(date), {
+      x: PAGE_BORDER + 33,
+      y: PAGE_HEIGHT - 693,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE,
+      font: helveticaFont,
+    });
+  }
 
   const pdfBytes = await pdfDoc.save();
   return Buffer.from(pdfBytes);

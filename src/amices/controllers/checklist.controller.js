@@ -14,6 +14,7 @@ const {
   generateTireProtection,
   generateMandate,
   generateProtectedFamily,
+  generateMecanicalGuaranty,
 } = require('amices/templates/assistances');
 
 const { CORE_URL } = process.env;

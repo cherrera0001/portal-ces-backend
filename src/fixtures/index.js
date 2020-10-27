@@ -141,7 +141,7 @@ require('mongoEficar')();
   });
   await eficarConfig.save();
 
-  await Users.deleteOne({ email: 'mail1@mail.com' });
+  await Users.deleteMany({ email: 'mail1@mail.com' });
   const testUser = new Users({
     name: 'Evaluador Web Amicar',
     username: 'Evaluador Web Amicar',
@@ -154,10 +154,10 @@ require('mongoEficar')();
     saleChannel: '829957000',
     saleChannelType: 'IMPORTADOR',
     salesRoomId: 1,
+    forApp: 'amices',
   });
   await testUser.save();
 
-  // AUCTIONS PARTICIPANTS
   await AuctionParticipant.findOneAndUpdate(
     { loanApplicationId: 10000042 },
     {
