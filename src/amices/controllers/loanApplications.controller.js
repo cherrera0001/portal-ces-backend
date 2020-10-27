@@ -156,6 +156,7 @@ const all = async (req, res) => {
     ...req.query,
     ...(hasPagination && { skip: currentPage * recordsPerPage }),
   });
+  console.log(filter);
   const loansApplications = await LoansApplication.find(filter)
     .skip(skip)
     .limit(hasPagination ? recordsPerPage : limit)
