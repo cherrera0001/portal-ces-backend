@@ -1,4 +1,5 @@
 const AuctionParticipants = require('amices/models/auctionParticipants.model');
+const LoansApplication = require('amices/models/loanApplications.model');
 const Assistances = require('amices/models/assistances.model');
 const Params = require('amices/controllers/params.controller');
 const errors = require('amices/errors');
@@ -85,7 +86,17 @@ const update = async (req, res) => {
     }
   }
 
-  if (status) auction.status = await findLoanStatus(status);
+  if (status) {
+    const newLoanStatus = await findLoanStatus(status);
+    auction.status = newLoanStatus;
+
+    const loanApplication = await LoansApplication.findOne({ simulationId: loanApplicationId });
+    if (loanApplication) {
+      loanApplication.status = newLoanStatus;
+      await loanApplication.save();
+    }
+  }
+
   if (status === 'CHECKLIST_CONFIRMED') generateAssistanceDocuments({ loanApplicationId, feIdentificationValue });
 
   auction.markModified('auctionParticipants');

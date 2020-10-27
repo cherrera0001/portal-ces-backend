@@ -16,6 +16,8 @@ const loanStatusMap = {
   RA: 'REJECTED',
 };
 
+const INTERMEDIATE_STATUS = ['SAVED_SIMULATION'];
+
 const all = async (req, res) => {
   const recordsPerPage = 20;
   const currentPage = req.params.page - 1;
@@ -43,7 +45,10 @@ const all = async (req, res) => {
 
 const getCustomerHistory = async (req, res) => {
   const { filter, skip, limit, sort, projection, population } = aqp({ ...req.query });
-  const auctions = await Auction.find({ ...filter, ...{ 'customer.identificationValue': req.params.rut } })
+  const auctions = await Auction.find({
+    ...filter,
+    ...{ 'customer.identificationValue': req.params.rut, financingEntityId: req.user.companyIdentificationValue },
+  })
     .skip(skip)
     .limit(limit)
     .sort(sort)
@@ -87,7 +92,9 @@ const get = async (req, res) => {
   if (!auction) return errors.notFound(res);
 
   if (auction.loanStatus.code === 'SIMULATION_SENT') {
-    auction.loanStatus = await findLoanStatus('EVALUATION_IN_PROCESS');
+    const evaluationInProcessStatus = await findLoanStatus('EVALUATION_IN_PROCESS');
+    auction.loanStatus = evaluationInProcessStatus;
+    auction.finalLoanStatus = evaluationInProcessStatus;
   }
 
   const config = await Config.findOne({});
@@ -190,6 +197,8 @@ const create = async (req, res) => {
       }))
     : [];
 
+  const loanStatus = await findLoanStatus(status);
+
   const auction = new Auction({
     ...req.body,
     spouseData,
@@ -197,7 +206,8 @@ const create = async (req, res) => {
     guarantor,
     financingEntityId: req.params.rut,
     simulationId,
-    loanStatus: await findLoanStatus(status),
+    loanStatus,
+    finalLoanStatus: loanStatus,
   });
   await auction.save();
   res.status(201).end();
@@ -205,7 +215,8 @@ const create = async (req, res) => {
 
 const findAllLoanStatus = async (req, res) => {
   const config = await Config.findOne();
-  return res.status(200).json(config.loanStatus);
+  const loanStatus = config.loanStatus.filter((status) => !INTERMEDIATE_STATUS.includes(status.code));
+  return res.status(200).json(loanStatus);
 };
 
 module.exports = {
