@@ -24,7 +24,7 @@ require('mongoEficar')();
     ],
     allowedFileTypes: '.jpeg, .png, .jpg, .pdf, .xls, .xlsx, .doc, .docx',
     loanStatus: [
-      { code: 'DRAFT_SIMULATION', status: 'Simulación guardada', color: 'black' },
+      { code: 'DRAFT_SIMULATION', status: 'Simulación formal', color: 'black' },
       { code: 'SAVED_SIMULATION', status: 'Solicitud guardada', color: 'black' },
       { code: 'FORMALIZED_REQUEST', status: 'En evaluación', color: 'black' },
       { code: 'FINISHED_AUCTION', status: 'Crédito formalizado', color: '#3DAC00' },
