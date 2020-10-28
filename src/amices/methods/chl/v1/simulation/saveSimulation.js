@@ -19,7 +19,6 @@ module.exports = async ({ data, rollbar }) => {
     if (response.status !== 200) {
       throw new ApolloError(response.statusText, 'ERROR_SAVING_SIMULATION');
     }
-
     const newLoan = await new LoansApplication({
       customer: {
         ...simulation.customer,
@@ -29,10 +28,19 @@ module.exports = async ({ data, rollbar }) => {
       loan: {
         ...simulation.loan,
         ...simulation.selectedScenario,
+        dateOfFirstDue: simulation.loan.firstDueDate,
         rateType: {
           description: simulation.selectedScenario.rateType.name,
           cod: simulation.selectedScenario.rateType.externalCode,
         },
+      },
+      loanSimulationCar: {
+        vehicleType: simulation.vehicle.type,
+        price: simulation.vehicle.price,
+        carBrandDescription: simulation.vehicle.brandName,
+        carModelDescription: simulation.vehicle.modelName,
+        carVersion: simulation.vehicle.version,
+        year: simulation.vehicle.year,
       },
       sellerIdentificationValue: simulation.sellerIdentificationValue,
       amicarExecutiveIdentificationValue: simulation.amicarExecutiveIdentificationValue,

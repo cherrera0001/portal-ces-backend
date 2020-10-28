@@ -168,8 +168,14 @@ const schema = new mongoose.Schema(
       version: { type: String, default: '' },
       year: { type: Number, default: 0 },
     },
+    loanSimulationCar: { type: Object, defatult: {} },
     loan: {
+      tradeInCarValue: { type: Number, default: 0 },
       loanType: { type: String, default: '' },
+      downPayment: { type: Number, default: 0 },
+      dateOfFirstDue: { type: String, default: '' },
+      balance: { type: Number, default: 0 },
+      totalToFinance: { type: Number, default: 0 },
       rateType: {
         description: { type: String, default: '' },
         cod: { type: String, default: '' },
