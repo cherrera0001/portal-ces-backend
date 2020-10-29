@@ -1,6 +1,15 @@
 const LoansApplication = require('amices/models/loanApplications.model');
 const errors = require('amices/errors');
 const findLoanStatus = require('eficar/helpers/findLoanStatus');
+const Configs = require('amices/models/configs.model');
+
+const INTERMEDIATE_STATUS = ['CHECKLIST_VALIDATION'];
+
+const findAllLoanStatus = async (req, res) => {
+  const config = await Configs.findOne();
+  const loanStatus = config.loanStatus.filter((status) => !INTERMEDIATE_STATUS.includes(status.code));
+  return res.status(200).json(loanStatus);
+};
 
 const updateStatus = async (req, res) => {
   if (!req.body.message.data) return errors.badRequest(res);
@@ -17,4 +26,4 @@ const updateStatus = async (req, res) => {
   return res.status(200).json();
 };
 
-module.exports = { updateStatus };
+module.exports = { updateStatus, findAllLoanStatus };

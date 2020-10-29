@@ -5,6 +5,7 @@ const Config = require('eficar/models/configs.model');
 const findLoanStatus = require('eficar/helpers/findLoanStatus');
 const errors = require('eficar/errors');
 const HTTP = require('requests');
+
 const { PATH_ENDPOINT_CORE_SEND_FE_RESPONSE } = require('eficar/core.services');
 
 const { CORE_URL } = process.env;
@@ -14,6 +15,8 @@ const loanStatusMap = {
   CA: 'CONDITIONED',
   RA: 'REJECTED',
 };
+
+const INTERMEDIATE_STATUS = ['SAVED_SIMULATION'];
 
 const all = async (req, res) => {
   const recordsPerPage = 20;
@@ -42,7 +45,10 @@ const all = async (req, res) => {
 
 const getCustomerHistory = async (req, res) => {
   const { filter, skip, limit, sort, projection, population } = aqp({ ...req.query });
-  const auctions = await Auction.find({...filter,...{'customer.identificationValue': req.params.rut }})
+  const auctions = await Auction.find({
+    ...filter,
+    ...{ 'customer.identificationValue': req.params.rut, financingEntityId: req.user.companyIdentificationValue },
+  })
     .skip(skip)
     .limit(limit)
     .sort(sort)
@@ -86,8 +92,12 @@ const get = async (req, res) => {
   if (!auction) return errors.notFound(res);
 
   if (auction.loanStatus.code === 'SIMULATION_SENT') {
-    auction.loanStatus = await findLoanStatus('EVALUATION_IN_PROCESS');
+    const evaluationInProcessStatus = await findLoanStatus('EVALUATION_IN_PROCESS');
+    auction.loanStatus = evaluationInProcessStatus;
+    auction.finalLoanStatus = evaluationInProcessStatus;
   }
+
+  if (auction.checkListSent && auction.hasUnseenDocumentsUploaded) auction.hasUnseenDocumentsUploaded = false;
 
   const config = await Config.findOne({});
   auction.riskAnalyst = req.user;
@@ -123,9 +133,11 @@ const update = async (req, res) => {
 
   const completeChecklistItems = await getCompleteItems(checklistItems);
   auction.checkListSent = { checklistItems: completeChecklistItems, proposeBaseRate, sentAt: new Date() };
+  auction.hasUnseenDocumentsUploaded = true;
   auction.markModified('checkListSent');
   await auction.save();
   req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
+  req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_LIST_${req.params.rut}`);
   res.status(200).end();
 };
 
@@ -147,6 +159,7 @@ const granted = async (req, res) => {
   }
   if (status === 'AWARDED') auction.awardedTime = new Date();
   req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
+  req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_LIST_${req.params.rut}`);
 
   await auction.save();
   res.status(200).end();
@@ -189,6 +202,8 @@ const create = async (req, res) => {
       }))
     : [];
 
+  const loanStatus = await findLoanStatus(status);
+
   const auction = new Auction({
     ...req.body,
     spouseData,
@@ -196,10 +211,18 @@ const create = async (req, res) => {
     guarantor,
     financingEntityId: req.params.rut,
     simulationId,
-    loanStatus: await findLoanStatus(status),
+    loanStatus,
+    finalLoanStatus: loanStatus,
   });
   await auction.save();
+  req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_LIST_${req.params.rut}`);
   res.status(201).end();
+};
+
+const findAllLoanStatus = async (req, res) => {
+  const config = await Config.findOne();
+  const loanStatus = config.loanStatus.filter((status) => !INTERMEDIATE_STATUS.includes(status.code));
+  return res.status(200).json(loanStatus);
 };
 
 module.exports = {
@@ -210,4 +233,5 @@ module.exports = {
   sendResponse,
   update,
   granted,
+  findAllLoanStatus,
 };

@@ -24,7 +24,7 @@ require('mongoEficar')();
     ],
     allowedFileTypes: '.jpeg, .png, .jpg, .pdf, .xls, .xlsx, .doc, .docx',
     loanStatus: [
-      { code: 'DRAFT_SIMULATION', status: 'Simulación guardada', color: 'black' },
+      { code: 'DRAFT_SIMULATION', status: 'Simulación formal', color: 'black' },
       { code: 'SAVED_SIMULATION', status: 'Solicitud guardada', color: 'black' },
       { code: 'FORMALIZED_REQUEST', status: 'En evaluación', color: 'black' },
       { code: 'FINISHED_AUCTION', status: 'Crédito formalizado', color: '#3DAC00' },
@@ -141,11 +141,11 @@ require('mongoEficar')();
   });
   await eficarConfig.save();
 
-  await Users.deleteOne({ email: 'mail1@mail.com' });
+  await Users.deleteMany({ email: 'mail1@mail.com' });
   const testUser = new Users({
     name: 'Evaluador Web Amicar',
     username: 'Evaluador Web Amicar',
-    rut: '966675608',
+    rut: '112223339',
     email: 'mail1@mail.com',
     password: '$2a$10$0ZXz5YX.2sHGxLMjbT50xuYUBr3./cyUSTXgix6YQ3TkS9rhjBG4S',
     companyIdentificationValue: '966675608',
@@ -154,10 +154,11 @@ require('mongoEficar')();
     saleChannel: '829957000',
     saleChannelType: 'IMPORTADOR',
     salesRoomId: 1,
+    forApp: 'amices',
+    profile: 'SALES_MANAGER',
   });
   await testUser.save();
 
-  // AUCTIONS PARTICIPANTS
   await AuctionParticipant.findOneAndUpdate(
     { loanApplicationId: 10000042 },
     {
