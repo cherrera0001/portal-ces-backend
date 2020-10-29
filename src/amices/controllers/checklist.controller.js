@@ -103,6 +103,7 @@ const update = async (req, res) => {
   await auction.save();
   req.app.socketIo.emit(`RELOAD_AUCTION_${loanApplicationId}`);
   req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
+  req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_LIST_${feIdentificationValue}`);
   return res.status(200).json();
 };
 

@@ -168,6 +168,7 @@ const reception = async (req, res) => {
     await document.save();
   }
   req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
+  req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_LIST_${rut}`);
   return res.status(200).json();
 };
 

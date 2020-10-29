@@ -109,6 +109,7 @@ const reception = async (req, res) => {
     auction.markModified('checkListSent');
     await auction.save();
     req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanSimulationDataId}`);
+    req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_LIST_${req.params.rut}`);
   }
   res.status(200).end();
 };
