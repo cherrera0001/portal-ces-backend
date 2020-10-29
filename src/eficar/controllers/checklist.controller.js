@@ -97,6 +97,7 @@ const reception = async (req, res) => {
     if (!auction) return errors.notFound(res);
 
     auction.checkListSent.checklistId = checklistId;
+    auction.hasUnseenDocumentsUploaded = true;
 
     for (const document of auction.checkListSent.checklistItems) {
       if (document.coreParamId === coreParamId) {
@@ -108,6 +109,7 @@ const reception = async (req, res) => {
     auction.markModified('checkListSent');
     await auction.save();
     req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanSimulationDataId}`);
+    req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_LIST_${req.params.rut}`);
   }
   res.status(200).end();
 };

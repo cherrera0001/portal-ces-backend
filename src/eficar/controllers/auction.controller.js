@@ -97,6 +97,8 @@ const get = async (req, res) => {
     auction.finalLoanStatus = evaluationInProcessStatus;
   }
 
+  if (auction.checkListSent && auction.hasUnseenDocumentsUploaded) auction.hasUnseenDocumentsUploaded = false;
+
   const config = await Config.findOne({});
   auction.riskAnalyst = req.user;
   await auction.save();
@@ -131,9 +133,11 @@ const update = async (req, res) => {
 
   const completeChecklistItems = await getCompleteItems(checklistItems);
   auction.checkListSent = { checklistItems: completeChecklistItems, proposeBaseRate, sentAt: new Date() };
+  auction.hasUnseenDocumentsUploaded = true;
   auction.markModified('checkListSent');
   await auction.save();
   req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
+  req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_LIST_${req.params.rut}`);
   res.status(200).end();
 };
 
@@ -155,6 +159,7 @@ const granted = async (req, res) => {
   }
   if (status === 'AWARDED') auction.awardedTime = new Date();
   req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
+  req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_LIST_${req.params.rut}`);
 
   await auction.save();
   res.status(200).end();
@@ -210,6 +215,7 @@ const create = async (req, res) => {
     finalLoanStatus: loanStatus,
   });
   await auction.save();
+  req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_LIST_${req.params.rut}`);
   res.status(201).end();
 };
 
