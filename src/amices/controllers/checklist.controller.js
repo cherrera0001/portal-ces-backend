@@ -22,6 +22,7 @@ const { CORE_URL } = process.env;
 
 const generateAssistanceDocuments = async ({ loanApplicationId, feIdentificationValue }) => {
   try {
+    const loanApplication = await LoansApplication.findOne({ simulationId: loanApplicationId });
     const response = await HTTP.get(`${CORE_URL}${PATH_ENDPOINT_CORE_GET_ASSISTANCES_FOR_LOAN}/${loanApplicationId}`);
     const { amicarAssistance } = response.data;
     const amicesAssistances = await Assistances.find({});
