@@ -44,7 +44,7 @@ const all = async (req, res) => {
 };
 
 const getCustomerHistory = async (req, res) => {
-  const recordsPerPage = 1;
+  const recordsPerPage = 10;
   const currentPage = req.params.page - 1;
   const { skip, sort, projection, population } = aqp({
     ...req.query,
