@@ -44,12 +44,32 @@ const all = async (req, res) => {
 };
 
 const getCustomerHistory = async (req, res) => {
-  const auctions = await Auction.find({
-    'customer.identificationValue': req.params.rut,
-    financingEntityId: req.user.companyIdentificationValue,
+  const recordsPerPage = 1;
+  const currentPage = req.params.page - 1;
+  const { skip, sort, projection, population } = aqp({
+    ...req.query,
+    skip: currentPage * recordsPerPage,
   });
 
+  const auctions = await Auction.find({
+      'customer.identificationValue': req.params.rut,
+      financingEntityId: req.user.companyIdentificationValue,
+    })
+    .skip(skip)
+    .limit(recordsPerPage)
+    .sort(sort)
+    .select(projection)
+    .populate(population);
+  
+  const total = await Auction.find({
+    'customer.identificationValue': req.params.rut,
+    financingEntityId: req.user.companyIdentificationValue,
+  }).select(
+    projection,
+  )
+    
   res.json({
+    total: Math.ceil(total.length / recordsPerPage),
     result: auctions,
   });
 };
