@@ -1,5 +1,5 @@
 const router = require('express-promise-router')();
-const security = require('security/default.security');
+const security = require('security/ldap.security');
 const schema = require('validations/login.validation');
 const validate = require('middlewares/validate.middleware');
 const ldap = require('middlewares/ldap.middleware');
