@@ -53,12 +53,14 @@ jobs:
       - run: gcloud --quiet config set project ${{ secrets.GCP_PROJECT_PRODUCTION }}
       - run: gcloud info
       - run: gcloud builds submit --config=.github/cloudbuild.yaml --substitutions=_GCP_PROJECT=$GCP_PROJECT_PRODUCTION,_DEPLOY_IMG=$NODE_ENV
-      - run: gcloud run deploy amices-backend-production --image gcr.io/${{ secrets.GCP_PROJECT_PRODUCTION }}/amices-backend-production --platform managed --set-env-vars NODE_ENV=$NODE_ENV,MONGO_URI_AMICES=$MONGO_URI_AMICES,MONGO_URI_EFICAR=$MONGO_URI_EFICAR,ROLLBAR_TOKEN=$ROLLBAR_TOKEN,CORE_URL=$CORE_URL,API_KEY_PORTAL=$API_KEY_PORTAL,SECRET=$SECRET
+      - run: gcloud run deploy amices-backend-production --image gcr.io/${{ secrets.GCP_PROJECT_PRODUCTION }}/amices-backend-production --platform managed --set-env-vars NODE_ENV=$NODE_ENV,MONGO_URI_AMICES=$MONGO_URI_AMICES,MONGO_URI_EFICAR=$MONGO_URI_EFICAR,ROLLBAR_TOKEN=$ROLLBAR_TOKEN,CORE_URL=$CORE_URL,API_KEY_PORTAL=$API_KEY_PORTAL,SECRET=$SECRET,BACKOFFICE_URL=$BACKOFFICE_URL,SLACK_AMICES_NOTIFICATION_CHANNEL=$SLACK_AMICES_NOTIFICATION_CHANNEL
     env:
       CI: true
       NODE_ENV: production
       MONGO_URI_AMICES: ${{ secrets.MONGO_URI_AMICES_PRODUCTION }}
       MONGO_URI_EFICAR: ${{ secrets.MONGO_URI_EFICAR_PRODUCTION }}
+      BACKOFFICE_URL: ${{ secrets.BACKOFFICE_URL_PRODUCTION }}
+      SLACK_AMICES_NOTIFICATION_CHANNEL: ${{ secrets.SLACK_AMICES_NOTIFICATION_CHANNEL }}
       ROLLBAR_TOKEN: ${{ secrets.ROLLBAR_TOKEN_PRODUCTION }}
       CORE_URL: ${{ secrets.CORE_URL_PRODUCTION }}
       API_KEY_PORTAL: ${{ secrets.API_KEY_PORTAL_PRODUCTION }}

@@ -54,7 +54,7 @@ jobs:
       - run: gcloud --quiet config set project ${{ secrets.GCP_PROJECT_STAGING }}
       - run: gcloud info
       - run: gcloud builds submit --config=.github/cloudbuild.yaml --substitutions=_GCP_PROJECT=$GCP_PROJECT_STAGING,_DEPLOY_IMG=$NODE_ENV
-      - run: gcloud run deploy amices-backend-staging --image gcr.io/${{ secrets.GCP_PROJECT_STAGING }}/amices-backend-staging --platform managed --set-env-vars NODE_ENV=$NODE_ENV,MONGO_URI_AMICES=$MONGO_URI_AMICES,MONGO_URI_EFICAR=$MONGO_URI_EFICAR,ROLLBAR_TOKEN=$ROLLBAR_TOKEN,CORE_URL=$CORE_URL,API_KEY_PORTAL=$API_KEY_PORTAL,SECRET=$SECRET
+      - run: gcloud run deploy amices-backend-staging --image gcr.io/${{ secrets.GCP_PROJECT_STAGING }}/amices-backend-staging --platform managed --set-env-vars NODE_ENV=$NODE_ENV,MONGO_URI_AMICES=$MONGO_URI_AMICES,MONGO_URI_EFICAR=$MONGO_URI_EFICAR,ROLLBAR_TOKEN=$ROLLBAR_TOKEN,CORE_URL=$CORE_URL,API_KEY_PORTAL=$API_KEY_PORTAL,SECRET=$SECRET,BACKOFFICE_URL=$BACKOFFICE_URL,SLACK_AMICES_NOTIFICATION_CHANNEL=$SLACK_AMICES_NOTIFICATION_CHANNEL
     env:
       CI: true
       NODE_ENV: staging
@@ -62,6 +62,8 @@ jobs:
       MONGO_URI_EFICAR: ${{ secrets.MONGO_URI_EFICAR_STAGING }}
       ROLLBAR_TOKEN: ${{ secrets.ROLLBAR_TOKEN_STAGING }}
       CORE_URL: ${{ secrets.CORE_URL_STAGING }}
+      BACKOFFICE_URL: ${{ secrets.BACKOFFICE_URL_STAGING }}
+      SLACK_AMICES_NOTIFICATION_CHANNEL: ${{ secrets.SLACK_AMICES_NOTIFICATION_CHANNEL }}
       API_KEY_PORTAL: ${{ secrets.API_KEY_PORTAL_STAGING }}
       GCP_PROJECT_STAGING: ${{ secrets.GCP_PROJECT_STAGING }}
       SECRET: ${{ secrets.SECRET_STAGING }}

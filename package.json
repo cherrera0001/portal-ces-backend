@@ -9,7 +9,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "pretty-quick --staged && docker-compose run api npm test"
+      "pre-commit": "pretty-quick --staged",
+      "pre-push": "npm test"
     }
   },
   "dependencies": {
