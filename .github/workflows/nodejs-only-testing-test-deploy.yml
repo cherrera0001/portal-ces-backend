@@ -54,7 +54,7 @@ jobs:
       - run: gcloud --quiet config set project ${{ secrets.GCP_PROJECT_TESTING }}
       - run: gcloud info
       - run: gcloud builds submit --config=.github/cloudbuild.yaml --substitutions=_GCP_PROJECT=$GCP_PROJECT_TESTING,_DEPLOY_IMG=$NODE_ENV
-      - run: gcloud run deploy amices-backend-testing --image gcr.io/${{ secrets.GCP_PROJECT_TESTING }}/amices-backend-testing --platform managed --set-env-vars NODE_ENV=$NODE_ENV,MONGO_URI_AMICES=$MONGO_URI_AMICES,MONGO_URI_EFICAR=$MONGO_URI_EFICAR,ROLLBAR_TOKEN=$ROLLBAR_TOKEN,CORE_URL=$CORE_URL,API_KEY_PORTAL=$API_KEY_PORTAL,SECRET=$SECRET,BACKOFFICE_URL=$BACKOFFICE_URL,SLACK_AMICES_NOTIFICATION_CHANNEL=$SLACK_AMICES_NOTIFICATION_CHANNEL
+      - run: gcloud run deploy amices-backend-testing --image gcr.io/${{ secrets.GCP_PROJECT_TESTING }}/amices-backend-testing --platform managed --set-env-vars NODE_ENV=$NODE_ENV,MONGO_URI_AMICES=$MONGO_URI_AMICES,MONGO_URI_EFICAR=$MONGO_URI_EFICAR,ROLLBAR_TOKEN=$ROLLBAR_TOKEN,CORE_URL=$CORE_URL,API_KEY_PORTAL=$API_KEY_PORTAL,SECRET=$SECRET,BACKOFFICE_URL=$BACKOFFICE_URL,SLACK_AMICES_NOTIFICATION_CHANNEL=$SLACK_AMICES_NOTIFICATION_CHANNEL,LDAP_URL=$LDAP_URL,LDAP_USER=$LDAP_USER,LDAP_PASSWORD=$LDAP_PASSWORD
     env:
       CI: true
       NODE_ENV: testing
@@ -64,6 +64,9 @@ jobs:
       BACKOFFICE_URL: ${{ secrets.BACKOFFICE_URL_TESTING }}
       SLACK_AMICES_NOTIFICATION_CHANNEL: ${{ secrets.SLACK_AMICES_NOTIFICATION_CHANNEL }}
       CORE_URL: ${{ secrets.CORE_URL_TESTING }}
+      LDAP_URL: ${{ secrets.LDAP_URL }}
+      LDAP_USER: ${{ secrets.LDAP_USER }}
+      LDAP_PASSWORD: ${{ secrets.LDAP_PASSWORD }}
       API_KEY_PORTAL: ${{ secrets.API_KEY_PORTAL_TESTING }}
       GCP_PROJECT_TESTING: ${{ secrets.GCP_PROJECT_TESTING }}
       SECRET: ${{ secrets.SECRET_TESTING }}
