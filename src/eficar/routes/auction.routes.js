@@ -8,7 +8,7 @@ const authenticate = require('middlewares/authenticate.middleware');
 router.route('/loan/status').get(authenticate, controller.findAllLoanStatus);
 router.route('/:page').get(authenticate, controller.all);
 router.route('/get/:id').get(authenticate, controller.get);
-router.route('/customer-history/:rut').get(authenticate, controller.getCustomerHistory);
+router.route('/customer-history/:rut/:page').get(authenticate, controller.getCustomerHistory);
 router.route('/send-response').post(authenticate, controller.sendResponse);
 router.route('').post(coreAuth, validate(schema.create), controller.create);
 router.route('/:rut').post(coreAuth, validate(schema.create), controller.create);
