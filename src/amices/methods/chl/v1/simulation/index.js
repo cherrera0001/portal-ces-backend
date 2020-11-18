@@ -11,17 +11,14 @@ module.exports = async ({ data, rollbar }) => {
       ...simulation,
       loan: {
         ...simulation.loan,
-        // rateType: simulation.loan.rateType.externalCode,
       },
     });
     const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_SIMULATION}`, {
       ...simulation,
       loan: {
         ...simulation.loan,
-        // rateType: simulation.loan.rateType.externalCode,
       },
     });
-    // console.log(response)
 
     const coreParamsRateTypes = await CoreParamsModel.find({
       type: 'RATE_TYPE',
