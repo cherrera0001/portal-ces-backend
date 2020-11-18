@@ -8,7 +8,6 @@ const getVehicleTypeSaleChannel = async (req, res) => {
   try {
     const url = `${CORE_URL}${PATH_ENDPOINT_CORE_GET_RATE_SALE_CHANNERL}/${req.params.saleChannelId}`;
     const response = await HTTP.get(url);
-    console.log(response.data);
     if (response.status === 200 && response.data.length) {
       let unique = [
         ...new Set(
@@ -21,7 +20,6 @@ const getVehicleTypeSaleChannel = async (req, res) => {
         type: 'VEHICLE_TYPE',
         internalCode: unique,
       });
-      console.log(coreParams);
       return res.status(200).json(coreParams);
     }
   } catch (e) {
@@ -41,12 +39,10 @@ const getLoanTypeSaleChannel = async (req, res) => {
           }),
         ),
       ];
-      console.log(unique);
       const coreParams = await CoreParamsModel.find({
         type: 'LOAN_TYPE',
         internalCode: unique,
       });
-      console.log(coreParams, '-----');
       return res.status(200).json(coreParams);
     }
   } catch (e) {
