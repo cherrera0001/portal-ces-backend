@@ -7,12 +7,6 @@ const { CORE_URL } = process.env;
 module.exports = async ({ data, rollbar }) => {
   try {
     const { simulation } = data;
-    console.log({
-      ...simulation,
-      loan: {
-        ...simulation.loan,
-      },
-    });
     const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_SIMULATION}`, {
       ...simulation,
       loan: {
