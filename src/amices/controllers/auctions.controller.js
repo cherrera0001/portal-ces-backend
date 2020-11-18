@@ -62,9 +62,7 @@ const responses = async (req, res) => {
       participant.Checklists[0].ChecklistItems = newCheckListItems;
     }
   }
-
   auction.auctionParticipants = auctionParticipants;
-
   await auction.save();
   req.app.socketIo.emit(`RELOAD_AUCTION_${loanApplicationId}`);
   return res.status(200).json();
