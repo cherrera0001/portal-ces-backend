@@ -1,10 +1,17 @@
 const Users = require('models/users.model');
 const jwt = require('security/jwt.security');
 const sendSlackNotification = require('helpers/slackSendNotification');
+const testUser = require('fixtures/user');
 
-const { NODE_ENV, BACKOFFICE_URL } = process.env;
+const { NODE_ENV, BACKOFFICE_URL, USE_MOCK_DATA } = process.env;
 
 const login = async (req, res) => {
+  if (USE_MOCK_DATA)
+    return res.json({
+      user: testUser,
+      token: jwt.makeToken(testUser),
+    });
+
   const localUser = await Users.findOne({
     $or: [
       { email: new RegExp(`^${req.user.mail}$`, 'i') },

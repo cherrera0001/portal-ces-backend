@@ -142,22 +142,13 @@ require('mongoEficar')();
   await eficarConfig.save();
 
   await Users.deleteMany({ email: 'mail1@mail.com' });
-  const testUser = new Users({
-    name: 'Evaluador Web Amicar',
-    username: 'Evaluador Web Amicar',
-    rut: '112223339',
-    email: 'mail1@mail.com',
-    password: '$2a$10$0ZXz5YX.2sHGxLMjbT50xuYUBr3./cyUSTXgix6YQ3TkS9rhjBG4S',
-    companyIdentificationValue: '966675608',
-    sellerIdentificationValue: '112223339',
-    amicarExecutiveIdentificationValue: '156681911',
-    saleChannel: '829957000',
-    saleChannelType: 'IMPORTADOR',
-    salesRoomId: 1,
-    forApp: 'amices',
-    profile: 'SALES_MANAGER',
-  });
-  await testUser.save();
+
+  const localUsers = await Users.find({ email: 'mail1@mail.com' });
+
+  if (!localUsers.length) {
+    const testUser = new Users(require('fixtures/user'));
+    await testUser.save();
+  }
 
   await AuctionParticipant.findOneAndUpdate(
     { loanApplicationId: 10000042 },

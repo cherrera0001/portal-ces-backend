@@ -36,6 +36,7 @@ jobs:
       MONGO_URI_AMICES: mongodb://localhost:27017/amices_test?authSource=admin&retryWrites=true&w=majority
       MONGO_URI_EFICAR: mongodb://localhost:27017/eficar_test?authSource=admin&retryWrites=true&w=majority
       ACTIONS_RUNNER_DEBUG: true
+      USE_MOCK_DATA: true
       TERM: xterm
   deploy_staging:
     needs: build_and_test

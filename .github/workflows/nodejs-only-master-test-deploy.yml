@@ -35,6 +35,7 @@ jobs:
       SERVER_HOST: 127.0.0.1
       MONGO_URI_AMICES: mongodb://localhost:27017/amices_test?authSource=admin&retryWrites=true&w=majority
       MONGO_URI_EFICAR: mongodb://localhost:27017/eficar_test?authSource=admin&retryWrites=true&w=majority
+      USE_MOCK_DATA: true
       ACTIONS_RUNNER_DEBUG: true
       TERM: xterm
   deploy_master:
