@@ -11,7 +11,6 @@ module.exports = async ({ data, rollbar }) => {
       ...simulation,
       loan: {
         ...simulation.loan,
-        rateType: simulation.loan.rateType.externalCode,
       },
     });
 
