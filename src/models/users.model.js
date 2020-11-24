@@ -13,6 +13,7 @@ const schema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   forApp: { type: String, required: false },
   saleChannel: { type: String, required: false },
+  saleChannelId: { type: Number, required: false },
   saleChannelType: { type: String, required: false },
   salesRoomId: { type: Number, required: false },
   profile: { type: String, required: false },
