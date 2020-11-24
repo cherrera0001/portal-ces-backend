@@ -29,7 +29,6 @@ const updateFromCore = async (req, res) => {
 
     await AmicesParams.deleteMany();
     await EficarParams.deleteMany();
-
     await AmicesParams.insertMany(response.data);
     await EficarParams.insertMany(response.data);
     res.status(201).end();

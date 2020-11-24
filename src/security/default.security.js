@@ -18,6 +18,7 @@ const login = async (req, res) => {
       forApp,
       profile,
       saleChannelType,
+      saleChannelId,
       saleChannel,
       salesRoomId,
     } = user;
@@ -30,6 +31,7 @@ const login = async (req, res) => {
         sellerIdentificationValue,
         companyIdentificationValue,
         saleChannel,
+        saleChannelId,
         saleChannelType,
         salesRoomId,
       },
