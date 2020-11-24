@@ -47,7 +47,7 @@ input Loan {
   startDate: String
   firstDueDate: String
   financingEntity: String
-  rateType: RateTypeInput
+  rateType: String
   saleChannel: String
   saleChannelType: String
   salesRoomId: Int
@@ -142,6 +142,7 @@ input SelectedScenarioInput {
   customerRate: Float
   vfg: VfgInput
   totalLoanCost: Float
+  totalToFinance: Float
   cae: Float
 }
 
