@@ -22,7 +22,6 @@ module.exports = async ({ data, rollbar }) => {
     const newLoan = await new LoansApplication({
       customer: {
         ...simulation.customer,
-        identificationValue: simulation.customer.rut,
       },
       simulationId: response.data.simulationId,
       loan: {
