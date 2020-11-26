@@ -1,5 +1,6 @@
 input Customer {
-  rut: String
+  identificationValue: String
+  identificationTypeId: Int
   email: String
   phone: String
   name: String
