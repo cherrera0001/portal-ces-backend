@@ -174,6 +174,9 @@ const schema = new mongoose.Schema(
     hasUnseenDocumentsUploaded: { type: Boolean, default: false },
     sellerIdentificationValue: { type: String, required: false },
     amicarExecutiveIdentificationValue: { type: String, required: false },
+    legalRepresentative: [{ type: Object, required: false }],
+    customerSuppliers: [{ type: Object, required: false }],
+    majorityPartners: [{ type: Object, required: false }],
   },
   {
     collection: 'auctions',
