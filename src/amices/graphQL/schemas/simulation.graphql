@@ -137,6 +137,7 @@ input SelectedScenarioInput {
   surchargesAndInsurances: SurchargesAndInsurancesInput
   loanType: String
   rateType: RateTypeInput
+  dealerCommission: Float
   monthlyPayment: Float
   term: Int
   customerRate: Float
