@@ -139,6 +139,7 @@ input SelectedScenarioInput {
   loanType: String
   rateType: RateTypeInput
   monthlyPayment: Float
+  dealerCommission: Float
   term: Int
   customerRate: Float
   vfg: VfgInput
