@@ -42,6 +42,14 @@ const httpServer = createServer(app);
 
 app.socketIo = socketIo(httpServer);
 
+app.socketIo.on('connect_error', (error) => {
+  console.log(error);
+});
+
+app.socketIo.on('error', (err) => {
+  console.log(error);
+});
+
 httpServer.listen(apiPort, () => {
   debugApp("Let's rock!! 🤘🏻🚀");
   debugApp(`Server running at http://127.0.0.1:${apiPort}/`);
