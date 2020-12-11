@@ -40,14 +40,25 @@ app.use((req, res, next) => {
 
 const httpServer = createServer(app);
 
-app.socketIo = socketIo(httpServer);
+app.socketIo = socketIo(httpServer, {
+  cors: {
+    origin: ['http://localhost:3000', '/.amicar.com/'],
+    methods: ['GET', 'POST'],
+  },
+});
 
-app.socketIo.on('connect_error', (error) => {
-  console.log(error);
+app.socketIo.on('connection', (socket) => {
+  socket.on('disconnect', (reason) => {
+    if (reason === 'transport error') console.log({ reason });
+  });
+});
+
+app.socketIo.on('connect_error', (err) => {
+  console.log(err);
 });
 
 app.socketIo.on('error', (err) => {
-  console.log(error);
+  console.log(err);
 });
 
 httpServer.listen(apiPort, () => {

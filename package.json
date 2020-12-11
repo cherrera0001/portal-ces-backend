@@ -9,7 +9,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "pretty-quick --staged && docker-compose run api npm test"
+      "pre-commit": "pretty-quick --staged",
+      "pre-push": "npm test"
     }
   },
   "dependencies": {
@@ -46,7 +47,7 @@
     "pdf-lib": "^1.11.1",
     "rollbar": "^2.13.0",
     "sinon": "^7.5.0",
-    "socket.io": "^2.3.0"
+    "socket.io": "^3.0.4"
   },
   "devDependencies": {
     "@types/mocha": "^7.0.2",
