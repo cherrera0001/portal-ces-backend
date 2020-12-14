@@ -4,6 +4,7 @@ const LoansApplication = require('amices/models/loanApplications.model');
 const { PATH_ENDPOINT_LOAN_APPLICATION, PATH_CORE_LOAN_SUBMISSIONS } = require('amices/core.services');
 const errors = require('amices/errors');
 const findLoanStatus = require('amices/helpers/findLoanStatus');
+const mapCompany = require('amices/helpers/mapCompanyApplication');
 
 const { CORE_URL } = process.env;
 
@@ -48,7 +49,7 @@ const formatLoanApplication = (incomeData, externalIds) => {
     ? {
         ...incomeData,
         loanSimulationCar: { ...loanSimulationCar, vehicleType: loanSimulationCar.VehicleType.externalCode },
-        customerActivity: customerActivity || {},
+        customerActivity: { ...customerActivity, salaryType: customerActivity.salaryType.externalCode } || {},
         simulationId: loanSimulationData.id,
         salesRoomId: loanSimulationData.SalesRoom.id,
         sellerIdentificationValue: loanSimulationData.salesRepresentative.rut,
@@ -186,7 +187,10 @@ const save = async (req, res) => {
     await LoansApplication.findOneAndUpdate({ simulationId: req.body.simulationId }, req.body, {
       useFindAndModify: false,
     });
-    const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_LOAN_APPLICATION}`, req.body);
+    const data = mapCompany(req.body);
+    console.log(data, '<---data');
+    const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_LOAN_APPLICATION}`, data);
+    console.log(response, '----');
     res.status(response.status).end();
   } catch (e) {
     throw Error(e.message);

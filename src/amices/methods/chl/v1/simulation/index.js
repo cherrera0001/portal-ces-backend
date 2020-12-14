@@ -27,6 +27,7 @@ module.exports = async ({ data, rollbar }) => {
 
     return fixedResponse;
   } catch (err) {
+    console.log(err, '-------->>>>');
     rollbar.log(`src/methods/chl/v1/simulation/index::ERROR: ${err.message}`);
     throw new Error(err.message);
   }

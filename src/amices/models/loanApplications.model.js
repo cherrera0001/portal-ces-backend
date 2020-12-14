@@ -20,13 +20,21 @@ const schema = new mongoose.Schema(
       dob: { type: String, default: '' },
       nationality: { type: String, default: '' },
       gender: { type: String, default: '' },
+      companyName: { type: String, default: '' },
+      numberOfWorkers: { type: Number, default: 0 },
+      contactName: { type: String, default: '' },
+      contactWorkPosition: { type: String, default: '' },
+      contactWorkPhone: { type: String, default: '' },
+      contactEmail: { type: String, default: '' },
+      businessSectorDescription: { type: String, default: '' },
+      businessSectorId: { type: Number, default: 0 },
     },
     customerRequestData: {
       maritalStatus: { type: String, default: '' },
       maritalRegime: { type: String, default: '' },
       academicLevel: { type: String, default: '' },
       livingHousehold: { type: String, default: '' },
-      profession: { type: String, default: ' ' },
+      profession: { type: String, default: '' },
       generalComments: { type: String, default: '' },
     },
     customerActivity: {
@@ -134,6 +142,20 @@ const schema = new mongoose.Schema(
         salaryPayday: { type: Number, default: 0 },
       },
     ],
+
+    majorityPartners: [
+      {
+        identificationValue: { type: String, default: '' },
+        name: { type: String, default: '' },
+        address: { type: String, default: '' },
+        phone: { type: String, default: '' },
+        profession: { type: String, default: '' },
+        houseAppraisal: { type: Number, default: 0 },
+        vehicleAppraisal: { type: Number, default: 0 },
+        participationPercentage: { type: Number, default: 0 },
+      },
+    ],
+
     bankInformation: {
       type: [
         {
