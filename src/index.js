@@ -40,12 +40,7 @@ app.use((req, res, next) => {
 
 const httpServer = createServer(app);
 
-app.socketIo = socketIo(httpServer, {
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST'],
-  },
-});
+app.socketIo = socketIo(httpServer);
 
 httpServer.listen(apiPort, () => {
   debugApp("Let's rock!! 🤘🏻🚀");
