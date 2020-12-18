@@ -11,47 +11,63 @@ const {
 
 const { CORE_URL } = process.env;
 
+const sendDocumentsToCore = async ({ loanApplicationId, files, feIdentificationValue }) => {
+  try {
+    const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_CORE_UPLOAD_DOCUMENT_TO_SIGN}`, {
+      loanApplicationId,
+      feIdentificationValue,
+      files,
+      requestFromAmices: true,
+    });
+
+    if (response.status !== 200) return response;
+
+    for (const { documentTypeId, filesContent } of response.data) {
+      const filesToSave = filesContent.filter((file) => file.fileName && file.uuid);
+
+      let document = await DocumentsToSign.findOne({
+        loanApplicationId,
+        'documentType.externalCode': documentTypeId,
+      });
+
+      if (document) {
+        document.files = filesToSave;
+        document.markModified('files');
+      } else {
+        const documentType = await Params.findOne({ type: 'DOCUMENT_TYPE', externalCode: documentTypeId }).select(
+          'id name externalCode parentId type',
+        );
+
+        const documentClassification = await Params.findOne({ id: documentType.parentId }).select(
+          'id name externalCode parentId type',
+        );
+
+        document = new DocumentsToSign({
+          loanApplicationId,
+          documentType,
+          documentClassification,
+          files: filesToSave,
+        });
+      }
+
+      await document.save();
+    }
+    return response;
+  } catch (err) {
+    console.log(err.message);
+  }
+};
+
 const upload = async (req, res) => {
   const { loanApplicationId, files } = req.body;
-  const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_CORE_UPLOAD_DOCUMENT_TO_SIGN}`, {
+  const feIdentificationValue = req.user.companyIdentificationValue;
+  const response = await sendDocumentsToCore({
     loanApplicationId,
-    feIdentificationValue: req.user.companyIdentificationValue,
     files,
-    requestFromAmices: true,
+    feIdentificationValue,
   });
 
   if (response.status !== 200) return errors.badRequest(res);
-
-  for (const { documentTypeId, filesContent } of response.data) {
-    const filesToSave = filesContent.filter((file) => file.fileName && file.uuid);
-
-    let document = await DocumentsToSign.findOne({
-      loanApplicationId,
-      'documentType.externalCode': documentTypeId,
-    });
-
-    if (document) {
-      document.files = filesToSave;
-      document.markModified('files');
-    } else {
-      const documentType = await Params.findOne({ type: 'DOCUMENT_TYPE', externalCode: documentTypeId }).select(
-        'id name externalCode parentId type',
-      );
-
-      const documentClassification = await Params.findOne({ id: documentType.parentId }).select(
-        'id name externalCode parentId type',
-      );
-
-      document = new DocumentsToSign({
-        loanApplicationId,
-        documentType,
-        documentClassification,
-        files: filesToSave,
-      });
-    }
-
-    await document.save();
-  }
 
   req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
   return res.status(200).json();
@@ -74,7 +90,7 @@ const download = async (req, res) => {
       ...response.data,
     });
   } catch (err) {
-    //
+    console.log(err.message);
   }
 };
 
@@ -176,6 +192,7 @@ module.exports = {
   upload,
   download,
   deleteDocuments,
+  sendDocumentsToCore,
   list,
   reception,
 };
