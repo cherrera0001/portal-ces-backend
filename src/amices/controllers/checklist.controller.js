@@ -4,11 +4,9 @@ const Assistances = require('amices/models/assistances.model');
 const Params = require('amices/controllers/params.controller');
 const errors = require('amices/errors');
 const HTTP = require('requests');
-const {
-  PATH_ENDPOINT_CORE_GET_ASSISTANCES_FOR_LOAN,
-  PATH_ENDPOINT_CORE_UPLOAD_DOCUMENT_TO_SIGN,
-} = require('amices/core.services');
+const { PATH_ENDPOINT_CORE_GET_ASSISTANCES_FOR_LOAN } = require('amices/core.services');
 const findLoanStatus = require('amices/helpers/findLoanStatus');
+const documentsToSign = require('eficar/controllers/documentsToSign.controller');
 
 const {
   generateProtecar,
@@ -29,7 +27,8 @@ const generateAssistanceDocuments = async ({ loanApplicationId, feIdentification
       amicarAssistance.some((coreAssistance) => coreAssistance.id === assistance.id && coreAssistance.selected),
     );
     assistancesToGenerate.push(amicesAssistances[4]);
-    await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_CORE_UPLOAD_DOCUMENT_TO_SIGN}`, {
+
+    return documentsToSign.sendDocumentsToCore({
       loanApplicationId,
       feIdentificationValue,
       files: assistancesToGenerate.map((assistance) => ({
@@ -41,7 +40,6 @@ const generateAssistanceDocuments = async ({ loanApplicationId, feIdentification
           },
         ],
       })),
-      requestFromAmices: true,
     });
   } catch (err) {
     console.log(err.message);
@@ -97,7 +95,10 @@ const update = async (req, res) => {
     }
   }
 
-  if (status === 'CHECKLIST_CONFIRMED') generateAssistanceDocuments({ loanApplicationId, feIdentificationValue });
+  if (status === 'CHECKLIST_CONFIRMED') {
+    await generateAssistanceDocuments({ loanApplicationId, feIdentificationValue });
+    req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
+  }
 
   auction.markModified('auctionParticipants');
   await auction.save();
