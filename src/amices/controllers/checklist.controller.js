@@ -18,6 +18,69 @@ const {
 
 const { CORE_URL } = process.env;
 
+const generateAssistancePDF = async (assistance, loanData) => {
+  let assistancePDF;
+
+  const customer = {
+    name: `${loanData.customer.name} ${loanData.customer.lastName}`,
+    identificationValue: loanData.customer.identificationValue,
+    address: loanData.customer.address,
+    email: loanData.customer.email,
+    // city: '',
+    // phone: '',
+    // cellPhone: '',
+  };
+
+  const vehicle = {
+    plateNumber: loanData.loanSimulationCar.licensePlate,
+    carBrand: loanData.vehicleData.brandName,
+    carModel: loanData.vehicleData.modelName,
+    carYear: loanData.vehicleData.year,
+    // carMileage: '',
+    // chasisNumber: '',
+  };
+
+  const contract = {
+    // startDate: '',
+    // endDate: '',
+    // contractNumber: '',
+  };
+
+  switch (assistance) {
+    case 'FAMILIA_PROTEGIDA':
+      assistancePDF = generateProtectedFamily({ customer });
+      break;
+    case 'GARANTIA_MECANICA':
+      assistancePDF = generateMecanicalGuaranty({
+        contract,
+        vehicle,
+        customer,
+      });
+      break;
+    case 'NEUMATICOS':
+      assistancePDF = generateTireProtection({
+        contract,
+        vehicle,
+        customer,
+      });
+      break;
+    case 'PROTECAR':
+      assistancePDF = generateProtecar({
+        contract,
+        vehicle,
+        customer,
+      });
+      break;
+    case 'MANDATO':
+      assistancePDF = generateMandate({ customer });
+      break;
+    default:
+      break;
+  }
+
+  return assistancePDF;
+};
+
 const generateAssistanceDocuments = async ({ loanApplicationId, feIdentificationValue }) => {
   try {
     const response = await HTTP.get(`${CORE_URL}${PATH_ENDPOINT_CORE_GET_ASSISTANCES_FOR_LOAN}/${loanApplicationId}`);
@@ -27,6 +90,14 @@ const generateAssistanceDocuments = async ({ loanApplicationId, feIdentification
       amicarAssistance.some((coreAssistance) => coreAssistance.id === assistance.id && coreAssistance.selected),
     );
     assistancesToGenerate.push(amicesAssistances[4]);
+
+    if (!assistancesToGenerate.length) return;
+
+    const loanApplication = await LoansApplication.findOne({ simulationId: loanApplicationId });
+
+    for (const assistance of assistancesToGenerate) {
+      assistance.value = await generateAssistancePDF(assistance.documentTypeId, loanApplication);
+    }
 
     return documentsToSign.sendDocumentsToCore({
       loanApplicationId,
@@ -44,17 +115,6 @@ const generateAssistanceDocuments = async ({ loanApplicationId, feIdentification
   } catch (err) {
     console.log(err.message);
   }
-};
-
-const assistances = async (req, res) => {
-  const document = await generateAssistanceDocuments({
-    loanApplicationId: req.body.loanApplicationId,
-    feIdentificationValue: req.user.companyIdentificationValue,
-  });
-  res.set('Content-Type', 'application/pdf;');
-  res.set('Content-Disposition', 'attachment; filename="filename222.pdf"');
-  res.set('Cache-control', 'no-store, no-cache, max-age=0');
-  res.end(document, 'binary');
 };
 
 const update = async (req, res) => {
@@ -108,4 +168,4 @@ const update = async (req, res) => {
   return res.status(200).json();
 };
 
-module.exports = { update, assistances };
+module.exports = { update };

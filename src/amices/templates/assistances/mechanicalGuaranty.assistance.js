@@ -16,26 +16,15 @@ const PAGE_BORDER = 35;
 const CELL_WIDTH = 125;
 
 module.exports = async (args) => {
-  const {
-    startDate,
-    endDate,
-    contractNumber,
-    plateNumber,
-    chasisNumber,
-    carBrand,
-    carModel,
-    carYear,
-    carMileage,
-    customer,
-  } = args || {};
+  const { contract, vehicle, customer } = args || {};
   const pdfDoc = await PDFDocument.create();
   const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const helveticaBoldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-  const pages = await generatePages({ pdfDoc, amount: 7, helveticaFont, helveticaBoldFont });
+  const pages = await generatePages({ pdfDoc, amount: 5, helveticaFont, helveticaBoldFont });
   const headerCellSpace = (PAGE_WIDTH - PAGE_BORDER * 2 - 3 * CELL_WIDTH) / 2;
   const vehicleCellWidth = (PAGE_WIDTH - PAGE_BORDER * 2) / 4;
   const clientDataWidth = (PAGE_WIDTH - 2 * PAGE_BORDER) / 3;
-  const [page, page2, page3, page4, page5, page6, page7] = pages;
+  const [page, page2, page3, page4, page5] = pages;
 
   page.drawText('CERTIFICADO DE SERVICIO ASISTENCIA', {
     x: 140,
@@ -256,8 +245,8 @@ module.exports = async (args) => {
     y: 60,
   });
 
-  if (startDate) {
-    page.drawText(String(startDate), {
+  if (contract && contract.startDate) {
+    page.drawText(String(contract.startDate), {
       x: PAGE_BORDER + 3,
       y: 669,
       color: rgb(0, 0, 0, 0),
@@ -266,8 +255,8 @@ module.exports = async (args) => {
     });
   }
 
-  if (contractNumber) {
-    page.drawText(String(contractNumber), {
+  if (contract && contract.contractNumber) {
+    page.drawText(String(contract.contractNumber), {
       x: PAGE_BORDER + (CELL_WIDTH + headerCellSpace) + 3,
       y: 669,
       color: rgb(0, 0, 0, 0),
@@ -276,8 +265,8 @@ module.exports = async (args) => {
     });
   }
 
-  if (endDate) {
-    page.drawText(String(endDate), {
+  if (contract && contract.endDate) {
+    page.drawText(String(contract.endDate), {
       x: PAGE_BORDER + 2 * (CELL_WIDTH + headerCellSpace) + 3,
       y: 669,
       color: rgb(0, 0, 0, 0),
@@ -286,8 +275,8 @@ module.exports = async (args) => {
     });
   }
 
-  if (plateNumber) {
-    page.drawText(String(plateNumber), {
+  if (vehicle && vehicle.plateNumber) {
+    page.drawText(String(vehicle.plateNumber), {
       x: 138,
       y: 630,
       color: rgb(0, 0, 0, 0),
@@ -296,8 +285,8 @@ module.exports = async (args) => {
     });
   }
 
-  if (chasisNumber) {
-    page.drawText(String(chasisNumber), {
+  if (vehicle && vehicle.chasisNumber) {
+    page.drawText(String(vehicle.chasisNumber), {
       x: 338,
       y: 630,
       color: rgb(0, 0, 0, 0),
@@ -306,8 +295,8 @@ module.exports = async (args) => {
     });
   }
 
-  if (carBrand) {
-    page.drawText(String(carBrand), {
+  if (vehicle && vehicle.carBrand) {
+    page.drawText(String(vehicle.carBrand), {
       x: PAGE_BORDER + 3,
       y: 590,
       color: rgb(0, 0, 0, 0),
@@ -316,8 +305,8 @@ module.exports = async (args) => {
     });
   }
 
-  if (carModel) {
-    page.drawText(String(carModel), {
+  if (vehicle && vehicle.carModel) {
+    page.drawText(String(vehicle.carModel), {
       x: PAGE_BORDER + vehicleCellWidth + 3,
       y: 590,
       color: rgb(0, 0, 0, 0),
@@ -326,8 +315,8 @@ module.exports = async (args) => {
     });
   }
 
-  if (carYear) {
-    page.drawText(String(carYear), {
+  if (vehicle && vehicle.carYear) {
+    page.drawText(String(vehicle.carYear), {
       x: PAGE_BORDER + 2 * vehicleCellWidth + 3,
       y: 590,
       color: rgb(0, 0, 0, 0),
@@ -336,8 +325,8 @@ module.exports = async (args) => {
     });
   }
 
-  if (carMileage) {
-    page.drawText(String(carMileage), {
+  if (vehicle && vehicle.carMileage) {
+    page.drawText(String(vehicle.carMileage), {
       x: PAGE_BORDER + 3 * vehicleCellWidth + 3,
       y: 590,
       color: rgb(0, 0, 0, 0),
@@ -2698,6 +2687,5 @@ module.exports = async (args) => {
     y: PAGE_HEIGHT - 280,
   });
 
-  const pdfBytes = await pdfDoc.save();
-  return Buffer.from(pdfBytes);
+  return pdfDoc.saveAsBase64();
 };
