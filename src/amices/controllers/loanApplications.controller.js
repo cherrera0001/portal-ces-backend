@@ -21,6 +21,7 @@ const formatLoanApplication = (incomeData, externalIds) => {
     loanSimulationCar,
     amortizationSchedule,
     customer,
+    taxReturn,
   } = incomeData;
   const loanType = loanSimulationData.LoanType.cod;
   const vfg = loanType === 'SMART' ? amortizationSchedule.find((schedule) => schedule.quotaType === 'SMART') : null;
@@ -69,6 +70,7 @@ const formatLoanApplication = (incomeData, externalIds) => {
       }
     : {
         ...incomeData,
+        ...taxReturn,
         loanSimulationCar: { ...loanSimulationCar, vehicleType: loanSimulationCar.VehicleType.externalCode },
         customer: {
           ...customer,
@@ -143,7 +145,6 @@ const formatLoanApplication = (incomeData, externalIds) => {
         amicarExecutiveIdentificationValue: loanSimulationData.amicarExecutive.rut,
         externalIds,
       };
-  console.log(loanSimulationCar, '-.-.-.');
   return loanApplicationFormated;
 };
 
