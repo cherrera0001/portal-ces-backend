@@ -135,6 +135,7 @@ const list = async (req, res) => {
       documents: documentTypes.map((docType) => ({
         document: docType.documentType,
         files: docType.files,
+        required: docType.required,
         updatedAt: docType.updatedAt,
       })),
     };

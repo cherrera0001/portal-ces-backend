@@ -1,12 +1,13 @@
 const AuctionParticipants = require('amices/models/auctionParticipants.model');
 const LoansApplication = require('amices/models/loanApplications.model');
 const Assistances = require('amices/models/assistances.model');
+const DocumentsToSign = require('eficar/models/documentsToSign.model');
 const Params = require('amices/controllers/params.controller');
 const errors = require('amices/errors');
 const HTTP = require('requests');
 const { PATH_ENDPOINT_CORE_GET_ASSISTANCES_FOR_LOAN } = require('amices/core.services');
 const findLoanStatus = require('amices/helpers/findLoanStatus');
-const documentsToSign = require('eficar/controllers/documentsToSign.controller');
+const documentsToSignController = require('eficar/controllers/documentsToSign.controller');
 
 const {
   generateProtecar,
@@ -93,13 +94,15 @@ const generateAssistanceDocuments = async ({ loanApplicationId, feIdentification
 
     if (!assistancesToGenerate.length) return;
 
+    // finds loan data to pre-fill the assistance templates
     const loanApplication = await LoansApplication.findOne({ simulationId: loanApplicationId });
 
     for (const assistance of assistancesToGenerate) {
       assistance.value = await generateAssistancePDF(assistance.documentTypeId, loanApplication);
     }
 
-    return documentsToSign.sendDocumentsToCore({
+    // upload assistances like any other document to sign sent by the FE
+    const uploadDocumentsResponse = await documentsToSignController.sendDocumentsToCore({
       loanApplicationId,
       feIdentificationValue,
       files: assistancesToGenerate.map((assistance) => ({
@@ -112,13 +115,28 @@ const generateAssistanceDocuments = async ({ loanApplicationId, feIdentification
         ],
       })),
     });
+
+    // after uploading, this assistances should be marked as required so that they can not be deleted
+    for (const assistance of assistancesToGenerate) {
+      const document = await DocumentsToSign.findOne({
+        loanApplicationId,
+        'documentType.externalCode': assistance.documentTypeId,
+      });
+
+      if (document) {
+        document.required = true;
+        await document.save();
+      }
+    }
+
+    return uploadDocumentsResponse;
   } catch (err) {
     console.log(err.message);
   }
 };
 
 const update = async (req, res) => {
-  // This function is called when a checklist item changes its status by being approved, rejected or downloaded.
+  // This function is called when a checklist item changes its status by being approved, rejected or downloaded
   if (!req.body.message.data) return errors.badRequest(res);
   const { loanApplicationId, feIdentificationValue, checkList, comment, status } = req.body.message.data;
   const auction = await AuctionParticipants.findOne({ loanApplicationId });
