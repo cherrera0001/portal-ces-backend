@@ -6,7 +6,7 @@ const {
   drawMultilineText,
   drawSignatureLine,
   generatePages,
-} = require('amices/helpers/pdf.helpers');
+} = require('eficar/helpers/pdf.helpers');
 
 const FONT_SIZE = 8;
 const TITLE_FONT_SIZE = 15;

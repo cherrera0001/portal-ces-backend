@@ -1,6 +1,6 @@
 const { PDFDocument, StandardFonts, rgb } = require('pdf-lib');
 const axios = require('axios');
-const { drawMultilineText, AMICAR_LOGO_URL } = require('amices/helpers/pdf.helpers');
+const { drawMultilineText, AMICAR_LOGO_URL } = require('eficar/helpers/pdf.helpers');
 
 const FONT_SIZE = 9;
 const TITLE_FONT_SIZE = 12;
