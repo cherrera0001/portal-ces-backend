@@ -162,9 +162,6 @@ const generateAssistancePDF = async (assistance, loanData) => {
     identificationValue: loanData.customer.identificationValue,
     address: loanData.customer.address,
     email: loanData.customer.email,
-    // city: '',
-    // phone: '',
-    // cellPhone: '',
   };
 
   const vehicle = {
@@ -172,15 +169,9 @@ const generateAssistancePDF = async (assistance, loanData) => {
     carBrand: loanData.loanSimulationCar.carBrandDescription,
     carModel: loanData.loanSimulationCar.carModelDescription,
     carYear: loanData.loanSimulationCar.year,
-    // carMileage: '',
-    // chasisNumber: '',
   };
 
-  const contract = {
-    // startDate: '',
-    // endDate: '',
-    // contractNumber: '',
-  };
+  const contract = {};
 
   switch (assistance) {
     case 'FAMILIA_PROTEGIDA':
