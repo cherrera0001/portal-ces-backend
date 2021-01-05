@@ -52,22 +52,20 @@ const getCustomerHistory = async (req, res) => {
   });
 
   const auctions = await Auction.find({
-      'customer.identificationValue': req.params.rut,
-      financingEntityId: req.user.companyIdentificationValue,
-    })
+    'customer.identificationValue': req.params.rut,
+    financingEntityId: req.user.companyIdentificationValue,
+  })
     .skip(skip)
     .limit(recordsPerPage)
     .sort(sort)
     .select(projection)
     .populate(population);
-  
+
   const total = await Auction.find({
     'customer.identificationValue': req.params.rut,
     financingEntityId: req.user.companyIdentificationValue,
-  }).select(
-    projection,
-  )
-    
+  }).select(projection);
+
   res.json({
     total: Math.ceil(total.length / recordsPerPage),
     result: auctions,
@@ -108,10 +106,14 @@ const get = async (req, res) => {
     auction.finalLoanStatus = evaluationInProcessStatus;
   }
 
+  if (auction.loanStatus.code === 'SIMULATION_SENT' || auction.loanStatus.code === 'EVALUATION_IN_PROCESS') {
+    auction.riskAnalyst = req.user;
+  }
+
   if (auction.checkListSent && auction.hasUnseenDocumentsUploaded) auction.hasUnseenDocumentsUploaded = false;
 
   const config = await Config.findOne({});
-  auction.riskAnalyst = req.user;
+
   await auction.save();
 
   auction = auction.toObject();
