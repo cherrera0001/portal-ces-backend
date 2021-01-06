@@ -5,7 +5,6 @@ exports.PATH_ENDPOINT_SAVE_SIMULATION = '/chl/v1/simulation/save';
 exports.PATH_ENDPOINT_LOAN_APPLICATION = '/chl/v1/loan-application';
 exports.PATH_CORE_ENDPOINT_ALFRESCO = '/chl/v1/files/checklist/upload';
 exports.PATH_CORE_LOAN_SUBMISSIONS = '/chl/v1/loan-application/submissions';
-exports.PATH_ENDPOINT_CORE_GET_ASSISTANCES_FOR_LOAN = '/chl/v1/loan-application/assistance-insurance';
 exports.PATH_ENDPOINT_CORE_UPLOAD_DOCUMENT_TO_SIGN = '/chl/v1/files/documents-to-sign/upload';
 exports.PATH_ENDPOINT_CORE_GET_BRANDS_FOR_SALE_ROOM = '/chl/v1/sales-rooms-brands';
 exports.PATH_ENDPOINT_CORE_GET_RATE_SALE_CHANNERL = '/chl/v1/rates/sale-channel';

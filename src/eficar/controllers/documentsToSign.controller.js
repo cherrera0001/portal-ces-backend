@@ -49,7 +49,6 @@ const sendDocumentsToCore = async ({ loanApplicationId, files, feIdentificationV
           files: filesToSave,
         });
       }
-
       await document.save();
     }
     return response;
@@ -61,16 +60,20 @@ const sendDocumentsToCore = async ({ loanApplicationId, files, feIdentificationV
 const upload = async (req, res) => {
   const { loanApplicationId, files } = req.body;
   const feIdentificationValue = req.user.companyIdentificationValue;
-  const response = await sendDocumentsToCore({
-    loanApplicationId,
-    files,
-    feIdentificationValue,
-  });
 
-  if (response.status !== 200) return errors.badRequest(res);
+  try {
+    const response = await sendDocumentsToCore({
+      loanApplicationId,
+      files,
+      feIdentificationValue,
+    });
 
-  req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
-  return res.status(200).json();
+    if (response.status !== 200) return errors.badRequest(res);
+    req.app.socketIo.emit(`RELOAD_EFICAR_DOCUMENTS_TO_SIGN_${loanApplicationId}`);
+    return res.status(200).json();
+  } catch (err) {
+    console.log(err.message);
+  }
 };
 
 const download = async (req, res) => {
@@ -110,10 +113,10 @@ const deleteDocuments = async (req, res) => {
     }
 
     await DocumentsToSign.deleteOne({ loanApplicationId, 'documentType.externalCode': documentTypeId });
-    req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
+    req.app.socketIo.emit(`RELOAD_EFICAR_DOCUMENTS_TO_SIGN_${loanApplicationId}`);
     res.json();
   } catch (err) {
-    req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
+    req.app.socketIo.emit(`RELOAD_EFICAR_DOCUMENTS_TO_SIGN_${loanApplicationId}`);
     res.status(500);
   }
 };
