@@ -113,6 +113,7 @@ require('mongoEficar')();
       { code: 'CONDITIONED', status: 'Crédito Condicionado', color: '#007BDC' },
       { code: 'CHECKLIST_REJECTED', status: 'Rechazado por Checklist', color: 'black' },
       { code: 'CHECKLIST_CONFIRMED', status: 'Checklist Confirmado', color: '#3DAC00' },
+      { code: 'CHECKLIST_VALIDATION', status: 'En Validación de Checklist', color: '#3DAC00' },
       { code: 'EXPIRED', status: 'No se entregó Respuesta a Tiempo', color: 'black' },
       { code: 'EVALUATION_IN_PROCESS', status: 'Pendiente o en Proceso', color: '#007BDC' },
       { code: 'AWARDED', status: 'Crédito Adjudicado', color: '#3DAC00' },
