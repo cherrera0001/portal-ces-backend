@@ -1,10 +1,24 @@
 const aqp = require('api-query-params');
 const Params = require('eficar/controllers/params.controller');
+const DocumentsToSignController = require('eficar/controllers/documentsToSign.controller');
 const Auction = require('eficar/models/auctions.model');
+const Assistances = require('eficar/models/assistances.model');
+const DocumentsToSign = require('eficar/models/documentsToSign.model');
 const findLoanStatus = require('eficar/helpers/findLoanStatus');
 const errors = require('eficar/errors');
 const HTTP = require('requests');
-const { PATH_ENDPOINT_CORE_DOWNLOAD_DOCUMENT, PATH_ENDPOINT_CORE_DOCUMENT_STATUS } = require('eficar/core.services');
+const {
+  PATH_ENDPOINT_CORE_DOWNLOAD_DOCUMENT,
+  PATH_ENDPOINT_CORE_DOCUMENT_STATUS,
+  PATH_ENDPOINT_CORE_GET_ASSISTANCES_FOR_LOAN,
+} = require('eficar/core.services');
+const {
+  generateProtecar,
+  generateTireProtection,
+  generateMandate,
+  generateProtectedFamily,
+  generateMecanicalGuaranty,
+} = require('eficar/templates/assistances');
 
 const { CORE_URL } = process.env;
 
@@ -140,15 +154,127 @@ const documentStatusChange = async (req, res) => {
   });
 };
 
+const generateAssistancePDF = async (assistance, loanData) => {
+  let assistancePDF;
+
+  const customer = {
+    name: `${loanData.customer.name} ${loanData.customer.lastName}`,
+    identificationValue: loanData.customer.identificationValue,
+    address: loanData.customer.address,
+    email: loanData.customer.email,
+  };
+
+  const vehicle = {
+    plateNumber: loanData.loanSimulationCar.licensePlate,
+    carBrand: loanData.loanSimulationCar.carBrandDescription,
+    carModel: loanData.loanSimulationCar.carModelDescription,
+    carYear: loanData.loanSimulationCar.year,
+  };
+
+  const contract = {};
+
+  switch (assistance) {
+    case 'FAMILIA_PROTEGIDA':
+      assistancePDF = generateProtectedFamily({ customer });
+      break;
+    case 'GARANTIA_MECANICA':
+      assistancePDF = generateMecanicalGuaranty({
+        contract,
+        vehicle,
+        customer,
+      });
+      break;
+    case 'NEUMATICOS':
+      assistancePDF = generateTireProtection({
+        contract,
+        vehicle,
+        customer,
+      });
+      break;
+    case 'PROTECAR':
+      assistancePDF = generateProtecar({
+        contract,
+        vehicle,
+        customer,
+      });
+      break;
+    case 'MANDATO':
+      assistancePDF = generateMandate({ customer });
+      break;
+    default:
+      break;
+  }
+
+  return assistancePDF;
+};
+
+const generateAssistanceDocuments = async ({ loanApplicationId, financingEntityId }) => {
+  try {
+    const response = await HTTP.get(`${CORE_URL}${PATH_ENDPOINT_CORE_GET_ASSISTANCES_FOR_LOAN}/${loanApplicationId}`);
+    const { amicarAssistance } = response.data;
+    const eficarAssistances = await Assistances.find({});
+    const assistancesToGenerate = eficarAssistances.filter((assistance) =>
+      amicarAssistance.some((coreAssistance) => coreAssistance.id === assistance.id && coreAssistance.selected),
+    );
+    assistancesToGenerate.push(eficarAssistances[4]);
+
+    if (!assistancesToGenerate.length) return;
+
+    // finds loan data to pre-fill the assistance templates
+    const loanData = await Auction.findOne({ simulationId: loanApplicationId, financingEntityId });
+
+    for (const assistance of assistancesToGenerate) {
+      assistance.value = await generateAssistancePDF(assistance.documentTypeId, loanData);
+    }
+
+    // upload assistances like any other document to sign sent by the FE
+    const uploadDocumentsResponse = await DocumentsToSignController.sendDocumentsToCore({
+      loanApplicationId,
+      feIdentificationValue: financingEntityId,
+      files: assistancesToGenerate.map((assistance) => ({
+        documentTypeId: assistance.documentTypeId,
+        filesContent: [
+          {
+            fileName: assistance.description,
+            content: assistance.value,
+          },
+        ],
+      })),
+    });
+
+    // after uploading, this assistances should be marked as required so that they can not be deleted
+    for (const assistance of assistancesToGenerate) {
+      const document = await DocumentsToSign.findOne({
+        loanApplicationId,
+        'documentType.externalCode': assistance.documentTypeId,
+      });
+
+      if (document) {
+        document.required = true;
+        await document.save();
+      }
+    }
+    return uploadDocumentsResponse;
+  } catch (err) {
+    console.log(err.message);
+  }
+};
+
 const confirmation = async (req, res) => {
   // this function is called when the checklist is approved or rejected in eficar and its status changes to CHECKLIST_CONFIRMED or CHECKLIST_REJECTED
   const { loanApplicationId, status } = req.body;
+  const financingEntityId = req.params.rut;
 
-  const auction = await Auction.findOne({ simulationId: loanApplicationId, financingEntityId: req.params.rut });
+  const auction = await Auction.findOne({ simulationId: loanApplicationId, financingEntityId });
   if (!auction) return errors.notFound(res);
 
   auction.finalLoanStatus = await findLoanStatus(status);
   await auction.save();
+
+  if (status === 'CHECKLIST_CONFIRMED') {
+    await generateAssistanceDocuments({ loanApplicationId, financingEntityId });
+    req.app.socketIo.emit(`RELOAD_EFICAR_DOCUMENTS_TO_SIGN_${loanApplicationId}`);
+  }
 
   req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
   res.status(200).end();

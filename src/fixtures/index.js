@@ -3,7 +3,7 @@ const Users = require('models/users.model');
 const AmicesConfigs = require('amices/models/configs.model');
 const EficarConfigs = require('eficar/models/configs.model');
 const AuctionParticipant = require('amices/models/auctionParticipants.model');
-const Assistances = require('amices/models/assistances.model');
+const Assistances = require('eficar/models/assistances.model');
 
 const { CORE_URL } = process.env;
 
