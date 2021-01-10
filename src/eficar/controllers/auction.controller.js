@@ -46,7 +46,7 @@ const all = async (req, res) => {
 const getCustomerHistory = async (req, res) => {
   const recordsPerPage = 10;
   const currentPage = req.params.page - 1;
-  const { skip, sort, projection, population } = aqp({
+  const { skip, sort, projection, population, filter } = aqp({
     ...req.query,
     skip: currentPage * recordsPerPage,
   });
@@ -54,6 +54,7 @@ const getCustomerHistory = async (req, res) => {
   const auctions = await Auction.find({
     'customer.identificationValue': req.params.rut,
     financingEntityId: req.user.companyIdentificationValue,
+    ...filter,
   })
     .skip(skip)
     .limit(recordsPerPage)
