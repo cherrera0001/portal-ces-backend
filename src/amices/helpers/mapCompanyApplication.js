@@ -3,6 +3,7 @@ const mapCompany = (data) => {
   return {
     ...data,
     stage: 10,
+    majorityPartners: [...data.majorityPartners],
     customer: {
       identificationValue: customer.identificationValue,
       identificationTypeId: customer.identificationTypeId,

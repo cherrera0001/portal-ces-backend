@@ -190,9 +190,10 @@ const save = async (req, res) => {
     });
     const data = mapCompany(req.body);
     console.log(data, '<---data');
-    const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_LOAN_APPLICATION}`, data);
-    console.log(response, '----');
-    res.status(response.status).end();
+    // const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_LOAN_APPLICATION}`, data);
+    // console.log(response, '----');
+    // res.status(response.status).end();
+    res.status(200).end();
   } catch (e) {
     throw Error(e.message);
   }

@@ -155,7 +155,19 @@ const schema = new mongoose.Schema(
         participationPercentage: { type: Number, default: 0 },
       },
     ],
-
+    legalRepresentative: [
+      {
+        identificationValue: { type: String, default: '' },
+        name: { type: String, default: '' },
+        address: { type: String, default: '' },
+        phone: { type: String, default: '' },
+        geographicDataId: { type: String, default: '' },
+        isGuarantor: { type: Boolean, default: false },
+        maritalStatus: { type: String, default: '' },
+        email: { type: String, default: '' },
+        activityTypeId: { type: String, default: '' },
+      },
+    ],
     bankInformation: {
       type: [
         {
@@ -181,6 +193,15 @@ const schema = new mongoose.Schema(
           type: { type: String, default: '' },
           address: { type: String, default: '' },
           phone: { type: String, default: '' },
+        },
+      ],
+    },
+    customerSuppliers: {
+      type: [
+        {
+          name: { type: String, default: '' },
+          phone: { type: String, default: '' },
+          relationship: { type: String, default: '' },
         },
       ],
     },
