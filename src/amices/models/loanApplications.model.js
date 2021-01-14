@@ -25,6 +25,7 @@ const schema = new mongoose.Schema(
       contactName: { type: String, default: '' },
       contactWorkPosition: { type: String, default: '' },
       contactWorkPhone: { type: String, default: '' },
+      workPhone: { type: String, default: '' },
       contactEmail: { type: String, default: '' },
       businessSectorDescription: { type: String, default: '' },
       businessSectorId: { type: Number, default: 0 },
