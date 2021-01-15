@@ -125,7 +125,7 @@ const schema = new mongoose.Schema(
     bankInformation: [{ type: Object, required: true }],
     personalReferences: [{ type: Object, required: true }],
     loanSimulationCar: { type: Object, required: true },
-    tradeInCar: [{ type: Object, required: true }],
+    tradeInCar: { type: Object, required: true },
     heritage: [{ type: Object, required: true }],
     customer: {
       identificationValue: { type: String, required: true, index: true },
@@ -174,6 +174,9 @@ const schema = new mongoose.Schema(
     hasUnseenDocumentsUploaded: { type: Boolean, default: false },
     sellerIdentificationValue: { type: String, required: false },
     amicarExecutiveIdentificationValue: { type: String, required: false },
+    legalRepresentative: [{ type: Object, required: false }],
+    customerSuppliers: [{ type: Object, required: false }],
+    majorityPartners: [{ type: Object, required: false }],
   },
   {
     collection: 'auctions',
