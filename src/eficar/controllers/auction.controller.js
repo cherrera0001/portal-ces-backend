@@ -108,7 +108,10 @@ const get = async (req, res) => {
   }
 
   if (auction.loanStatus.code === 'SIMULATION_SENT' || auction.loanStatus.code === 'EVALUATION_IN_PROCESS') {
+    const shouldRefreshList = auction.riskAnalyst ? auction.riskAnalyst.rut !== req.user.rut : true;
     auction.riskAnalyst = req.user;
+    await auction.save();
+    if (shouldRefreshList) req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_LIST_${req.user.companyIdentificationValue}`);
   }
 
   if (auction.checkListSent && auction.hasUnseenDocumentsUploaded) auction.hasUnseenDocumentsUploaded = false;
