@@ -135,10 +135,11 @@ input VfgInput {
 
 input SelectedScenarioInput {
   surchargesAndInsurances: SurchargesAndInsurancesInput
+  amortizationSchedule: [AmortizationScheduleInput]
   loanType: String
   rateType: RateTypeInput
-  dealerCommission: Float
   monthlyPayment: Float
+  dealerCommission: Float
   term: Int
   customerRate: Float
   vfg: VfgInput
@@ -189,6 +190,19 @@ type EquivalentAnnualCharge {
 }
 
 type AmortizationSchedule {
+  paymentNumber: Int
+  expirationDate: String
+  daysBetweenExpirationsDates: Int
+  payment: Int
+  quotaType: String
+  beginningBalance: Int
+  principal: Int
+  interest: Int
+  endingBalance: Int
+  cumulativeInterest: Int
+}
+
+input AmortizationScheduleInput {
   paymentNumber: Int
   expirationDate: String
   daysBetweenExpirationsDates: Int

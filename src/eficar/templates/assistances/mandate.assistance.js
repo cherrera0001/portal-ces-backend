@@ -1,6 +1,6 @@
 const { PDFDocument, StandardFonts, rgb } = require('pdf-lib');
 const axios = require('axios');
-const { drawMultilineText, AMICAR_LOGO_URL } = require('amices/helpers/pdf.helpers');
+const { drawMultilineText, AMICAR_LOGO_URL } = require('eficar/helpers/pdf.helpers');
 
 const FONT_SIZE = 9;
 const TITLE_FONT_SIZE = 12;
@@ -595,7 +595,7 @@ module.exports = async (args) => {
 
   if (customer && customer.name) {
     page.drawText(String(customer.name), {
-      x: PAGE_BORDER + 40,
+      x: PAGE_BORDER + 41,
       y: PAGE_HEIGHT - 573,
       color: rgb(0, 0, 0, 0),
       size: FONT_SIZE,
@@ -605,7 +605,7 @@ module.exports = async (args) => {
 
   if (customer && customer.identificationValue) {
     page.drawText(String(customer.identificationValue), {
-      x: PAGE_BORDER + 125,
+      x: PAGE_BORDER + 127,
       y: PAGE_HEIGHT - 603,
       color: rgb(0, 0, 0, 0),
       size: FONT_SIZE,
@@ -615,7 +615,7 @@ module.exports = async (args) => {
 
   if (customer && customer.address) {
     page.drawText(String(customer.address), {
-      x: PAGE_BORDER + 45,
+      x: PAGE_BORDER + 46,
       y: PAGE_HEIGHT - 633,
       color: rgb(0, 0, 0, 0),
       size: FONT_SIZE,
@@ -625,7 +625,7 @@ module.exports = async (args) => {
 
   if (customer && customer.email) {
     page.drawText(String(customer.email), {
-      x: PAGE_BORDER + 125,
+      x: PAGE_BORDER + 127,
       y: PAGE_HEIGHT - 663,
       color: rgb(0, 0, 0, 0),
       size: FONT_SIZE,
@@ -643,6 +643,5 @@ module.exports = async (args) => {
     });
   }
 
-  const pdfBytes = await pdfDoc.save();
-  return Buffer.from(pdfBytes);
+  return pdfDoc.saveAsBase64();
 };

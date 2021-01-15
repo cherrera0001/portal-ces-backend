@@ -6,7 +6,7 @@ const {
   drawMultilineText,
   drawSignatureLine,
   generatePages,
-} = require('amices/helpers/pdf.helpers');
+} = require('eficar/helpers/pdf.helpers');
 
 const FONT_SIZE = 8;
 const TITLE_FONT_SIZE = 15;
@@ -16,7 +16,7 @@ const PAGE_BORDER = 35;
 const CELL_WIDTH = 125;
 
 module.exports = async (args) => {
-  const { startDate, endDate, contractNumber, plateNumber, chasisNumber, customer } = args || {};
+  const { contract, vehicle, customer } = args || {};
   const pdfDoc = await PDFDocument.create();
   const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const helveticaBoldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
@@ -207,8 +207,8 @@ module.exports = async (args) => {
     y: 60,
   });
 
-  if (startDate) {
-    page.drawText(String(startDate), {
+  if (contract && contract.startDate) {
+    page.drawText(String(contract.startDate), {
       x: PAGE_BORDER + 3,
       y: 669,
       color: rgb(0, 0, 0, 0),
@@ -217,8 +217,8 @@ module.exports = async (args) => {
     });
   }
 
-  if (contractNumber) {
-    page.drawText(String(contractNumber), {
+  if (contract && contract.contractNumber) {
+    page.drawText(String(contract.contractNumber), {
       x: PAGE_BORDER + (CELL_WIDTH + headerCellSpace) + 3,
       y: 669,
       color: rgb(0, 0, 0, 0),
@@ -227,8 +227,8 @@ module.exports = async (args) => {
     });
   }
 
-  if (endDate) {
-    page.drawText(String(endDate), {
+  if (contract && contract.endDate) {
+    page.drawText(String(contract.endDate), {
       x: PAGE_BORDER + 2 * (CELL_WIDTH + headerCellSpace) + 3,
       y: 669,
       color: rgb(0, 0, 0, 0),
@@ -237,8 +237,8 @@ module.exports = async (args) => {
     });
   }
 
-  if (plateNumber) {
-    page.drawText(String(plateNumber), {
+  if (vehicle && vehicle.plateNumber) {
+    page.drawText(String(vehicle.plateNumber), {
       x: 138,
       y: 630,
       color: rgb(0, 0, 0, 0),
@@ -247,8 +247,8 @@ module.exports = async (args) => {
     });
   }
 
-  if (chasisNumber) {
-    page.drawText(String(chasisNumber), {
+  if (vehicle && vehicle.chasisNumber) {
+    page.drawText(String(vehicle.chasisNumber), {
       x: 338,
       y: 630,
       color: rgb(0, 0, 0, 0),
@@ -873,6 +873,5 @@ module.exports = async (args) => {
     y: PAGE_HEIGHT - 160,
   });
 
-  const pdfBytes = await pdfDoc.save();
-  return Buffer.from(pdfBytes);
+  return pdfDoc.saveAsBase64();
 };
