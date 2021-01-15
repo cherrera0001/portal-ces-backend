@@ -6,7 +6,7 @@ const {
   drawMultilineText,
   drawSignatureLine,
   generatePages,
-} = require('amices/helpers/pdf.helpers');
+} = require('eficar/helpers/pdf.helpers');
 
 const FONT_SIZE = 8;
 const TITLE_FONT_SIZE = 15;
@@ -16,15 +16,26 @@ const PAGE_BORDER = 35;
 const CELL_WIDTH = 125;
 
 module.exports = async (args) => {
-  const { contract, vehicle, customer } = args || {};
+  const {
+    startDate,
+    endDate,
+    contractNumber,
+    plateNumber,
+    chasisNumber,
+    carBrand,
+    carModel,
+    carYear,
+    carMileage,
+    customer,
+  } = args || {};
   const pdfDoc = await PDFDocument.create();
   const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const helveticaBoldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-  const pages = await generatePages({ pdfDoc, amount: 5, helveticaFont, helveticaBoldFont });
+  const pages = await generatePages({ pdfDoc, amount: 7, helveticaFont, helveticaBoldFont });
   const headerCellSpace = (PAGE_WIDTH - PAGE_BORDER * 2 - 3 * CELL_WIDTH) / 2;
   const vehicleCellWidth = (PAGE_WIDTH - PAGE_BORDER * 2) / 4;
   const clientDataWidth = (PAGE_WIDTH - 2 * PAGE_BORDER) / 3;
-  const [page, page2, page3, page4, page5] = pages;
+  const [page, page2, page3, page4, page5, page6, page7] = pages;
 
   page.drawText('CERTIFICADO DE SERVICIO ASISTENCIA', {
     x: 140,
@@ -245,8 +256,8 @@ module.exports = async (args) => {
     y: 60,
   });
 
-  if (contract && contract.startDate) {
-    page.drawText(String(contract.startDate), {
+  if (startDate) {
+    page.drawText(String(startDate), {
       x: PAGE_BORDER + 3,
       y: 669,
       color: rgb(0, 0, 0, 0),
@@ -255,8 +266,8 @@ module.exports = async (args) => {
     });
   }
 
-  if (contract && contract.contractNumber) {
-    page.drawText(String(contract.contractNumber), {
+  if (contractNumber) {
+    page.drawText(String(contractNumber), {
       x: PAGE_BORDER + (CELL_WIDTH + headerCellSpace) + 3,
       y: 669,
       color: rgb(0, 0, 0, 0),
@@ -265,8 +276,8 @@ module.exports = async (args) => {
     });
   }
 
-  if (contract && contract.endDate) {
-    page.drawText(String(contract.endDate), {
+  if (endDate) {
+    page.drawText(String(endDate), {
       x: PAGE_BORDER + 2 * (CELL_WIDTH + headerCellSpace) + 3,
       y: 669,
       color: rgb(0, 0, 0, 0),
@@ -275,8 +286,8 @@ module.exports = async (args) => {
     });
   }
 
-  if (vehicle && vehicle.plateNumber) {
-    page.drawText(String(vehicle.plateNumber), {
+  if (plateNumber) {
+    page.drawText(String(plateNumber), {
       x: 138,
       y: 630,
       color: rgb(0, 0, 0, 0),
@@ -285,8 +296,8 @@ module.exports = async (args) => {
     });
   }
 
-  if (vehicle && vehicle.chasisNumber) {
-    page.drawText(String(vehicle.chasisNumber), {
+  if (chasisNumber) {
+    page.drawText(String(chasisNumber), {
       x: 338,
       y: 630,
       color: rgb(0, 0, 0, 0),
@@ -295,8 +306,8 @@ module.exports = async (args) => {
     });
   }
 
-  if (vehicle && vehicle.carBrand) {
-    page.drawText(String(vehicle.carBrand), {
+  if (carBrand) {
+    page.drawText(String(carBrand), {
       x: PAGE_BORDER + 3,
       y: 590,
       color: rgb(0, 0, 0, 0),
@@ -305,8 +316,8 @@ module.exports = async (args) => {
     });
   }
 
-  if (vehicle && vehicle.carModel) {
-    page.drawText(String(vehicle.carModel), {
+  if (carModel) {
+    page.drawText(String(carModel), {
       x: PAGE_BORDER + vehicleCellWidth + 3,
       y: 590,
       color: rgb(0, 0, 0, 0),
@@ -315,8 +326,8 @@ module.exports = async (args) => {
     });
   }
 
-  if (vehicle && vehicle.carYear) {
-    page.drawText(String(vehicle.carYear), {
+  if (carYear) {
+    page.drawText(String(carYear), {
       x: PAGE_BORDER + 2 * vehicleCellWidth + 3,
       y: 590,
       color: rgb(0, 0, 0, 0),
@@ -325,8 +336,8 @@ module.exports = async (args) => {
     });
   }
 
-  if (vehicle && vehicle.carMileage) {
-    page.drawText(String(vehicle.carMileage), {
+  if (carMileage) {
+    page.drawText(String(carMileage), {
       x: PAGE_BORDER + 3 * vehicleCellWidth + 3,
       y: 590,
       color: rgb(0, 0, 0, 0),
@@ -2680,11 +2691,199 @@ module.exports = async (args) => {
       'c)   Fallas preexistente al momento de entrada en vigencia de la cobertura.',
       'd)   Los gastos de mantenimiento normal de la carrocería y habitáculo, incluida la limpieza y reparación de decoraciones de los asientos,',
       '      bolsas portapapeles, tapizado, apoya cabezas, cuero o tela de asientos.',
+      'e)   Las operaciones periódicas de carácter preventivo así como los controles y ajustes con o sin cambio de piezas.',
+      'f)   Las averías como consecuencia de seguir circulando cuando los indicadores del vehículo señalan fallos en el funcionamiento de los',
+      '      sistemas, o por el uso, accidental o no, de lubricantes o combustible inadecuado o en mal estado.',
+      'g)   Las averías a consecuencia de negligencias o mala utilización del vehículo como sobre carga, competición, choque, accidente, etc.,',
+      '      así como por congelación o falta de los líquidos necesarios para su funcionamiento.',
+      'h)   Cualquier avería ocasionada como consecuencia de no haber realizado las operaciones de mantenimiento, dentro de los términos y',
+      '      condiciones previstas en el Plan de Inspección y Mantenimiento sugerido por el fabricante del vehículo y/o el indicado por el',
+      '      prestador del servicio.',
+      'i)   Los servicios que el usuario haya concertado por su cuenta sin el previo consentimiento de Mapfre Assistance.',
+      'j)   Las averías producidas a causa o como consecuencia de arreglos, reparaciones, modificaciones (tanto mecánicas como de',
+      '      carrocería) o desarme de cualquier parte del vehículo cubierto por un técnico no autorizado por el prestador del servicio.',
+      'k)  Los servicios que el usuario haya concertado por su cuenta sin el previo consentimiento de Mapfre Assistance.',
+      'l)   Las averías de piezas y/o repuestos del vehículo cubierto que aún se encuentren cubiertas por la garantía del fabricante',
+      'm)  Las consecuencias de los hechos causadas directa o indirectamente por la mala fe del usuario.',
+      'n)   Pérdida o daño causado por incendio, explosión, inundaciones, terremotos, maremotos, granizo, vientos fuertes, erupciones',
+      '     volcánicas, tempestades ciclónicas, caídas de cuerpos siderales y aerolitos, o cualquier otro fenómeno de la naturaleza de carácter',
+      '     catastrófico.',
+      'o)   Perdida o daño que tuviese origen o fueran una consecuencia directa o indirecta de guerra, guerra civil, conflictos armados, actos de',
+      '     hostilidad, invasión, insurrección, sublevación, rebelión, sedición, actos mal intencionados de terceros, motín, huelga, desorden',
+      '     popular y otros hechos que alteren la seguridad interior del Estado o el orden público, secuestro, confiscación, incautación o',
+      '     decomiso.',
+      'p)   Los elementos deteriorados por falsa maniobra, hurto, tentativa de hurto, acto de vandalismo, así como las averías provocadas por',
+      '     piezas no cubiertas por la presente garantía o por falta de piezas.',
+      'q)   Averías notificadas transcurridos más de 3 (tres) días hábiles desde el momento en que se produzcan éstas.',
+      'r)   Los gastos de parqueaderos y/o de garaje, así como toda la indemnización por inmovilización, lucro cesante y daño emergente o',
+      '     perjuicio consecuencial.',
+      's)   Vehículos destinados a servicio de: alquiler, servicio público o comercial o vehículos usados en cualquier clase de competencia',
+      '     autorizada o no, rally o carreras de cualquier tipo.',
+      't)   Cualquier avería cuando el cuenta-kilómetros (odómetro) haya sido intervenido, alterado, o desconectado. Será responsabilidad del',
+      '     usuario verificar el normal funcionamiento de este instrumento al momento de comprar el vehículo.',
+      'u)   El prestador del servicio queda relevado de responsabilidad cuando por causa de fuerza mayor no pueda efectuar cualquiera de las',
+      '     prestaciones específicamente previstas en este documento.',
     ],
     font: helveticaFont,
     alignment: 'left',
     x: smallBorder,
     y: PAGE_HEIGHT - 280,
+  });
+
+  // // -------------------------- Page 6 --------------------------
+
+  drawMultilineText({
+    page: page6,
+    lines: [
+      'Todas las condiciones se refiere sólo al vehículo cubierto plenamente determinado en la contratación de servicio y por tanto, carecerá de toda',
+      'validez, si desde un comienzo no se indica simultáneamente y en todos los ejemplares de la contratación de servicio: placa patente, marca,',
+      'modelo, año, kilometraje y demás datos requeridos, que identifiquen plenamente el vehículo amparado. En caso de presentarse',
+      'inconsistencias en la información relacionada con la identificación del vehículo consignada en la contratación de servicio, no habrá lugar a la',
+      'prestación del servicio de garantía mecánica.',
+      '',
+      'La compañía queda relevada de responsabilidad cuando por causa de fuerza mayor le sea imposible prestar las acciones de asistencia',
+      'descritas anteriormente, sin perjuicio de las indemnizaciones a que hubiere lugar, las que se pagarán contra presentación de los comprobantes',
+      'de gastos originales respectivos que presente el cliente y hasta la concurrencia de los límites que se estipulan, previa autorización de Mapfre',
+      'Assistance.',
+    ],
+    font: helveticaFont,
+    alignment: 'left',
+    x: smallBorder,
+    y: PAGE_HEIGHT - 90,
+  });
+
+  addSeparatorRectangle({
+    page: page6,
+    text: 'PROCEDIMIENTO OPERATIVO DE LAS ASISTENCIAS',
+    alignment: 'left',
+    font: helveticaBoldFont,
+    backgroundColor: rgb(1, 1, 1),
+    borderWidth: 0.5,
+    x: PAGE_BORDER,
+    y: PAGE_HEIGHT - 220,
+  });
+
+  drawMultilineText({
+    page: page6,
+    lines: [
+      'El cliente deberá comunicarse telefónicamente con la central de operaciones de Mapfre Assistance en la ciudad de Santiago de Chile, al',
+      'número +562 27074555, desde una línea fija o celular, en un plazo no superior a los 3 (tres) días hábiles de producirse la avería.',
+      'Producida la llamada, el cliente deberá informar al operador los datos del vehículo cubierto: placa, marca, modelo, como también el número de',
+      'contrato (número indicado en la primera página) de la solicitud de servicio de GARANTÍA MECÁNICA, su nombre y apellido, Rut y motivo del',
+      'llamado.',
+      'El operador realizará las consultas básicas respecto del origen de la avería que sufrió el vehículo e informará al cliente plazo en que el Gestor',
+      'de Siniestros lo contactará para el análisis de su reclamación. El plazo no deberá ser superior a 48 horas hábiles de recibir la llamada del',
+      'cliente.',
+      'El Gestor de Siniestros contactará al cliente para ejecutar un primer análisis técnico de la reclamación y a partir de este análisis, determinará el',
+      'traslado del vehículo al servicio técnico (taller) competente según sea el origen de la avería, para determinar el diagnóstico y causa de dicha',
+      'falla.',
+      'El cliente deberá trasladar el vehículo al centro de servicios autorizado, informado por el Gestor de siniestros en la fecha y hora pactada en',
+      'conjunto con el cliente. El personal del centro de servicio recibirá el vehículo inventariado y procederá a realizar el diagnóstico. El cliente',
+      'deberá autorizar al prestador del servicio al desmonte de las piezas a que tenga lugar a fin de determinar la falla y causa de la misma. Los',
+      'gastos de desmonte de piezas no estarán cubiertos por el prestador del servicio si la avería no está cubierta.',
+      'En el evento de daño no cubierto, el prestador del servicio comunicará al usuario esta circunstancia, obligándose al cliente a retirar el',
+      'vehículo.',
+      'durante los 3 (tres) días hábiles siguientes a la comunicación. Transcurrido este plazo, el prestador del servicio no responderá por la pérdida o',
+      'daño que sufriere el vehículo, ni por los costos de custodia del vehículo aplicados. El cliente puede autorizar expresamente al centro de servicio',
+      'para que le sea reparado el vehículo; en este caso los costos que se generen serán cancelados directamente por el cliente antes de retirar el vehículo.',
+      'En el evento de daño cubierto, el prestador del servicio comunicará al usuario esta circunstancia y procederá a reparar el vehículo dentro de los',
+      'plazos y condiciones de servicio antes mencionados, teniendo el cliente que cancelar el deducible correspondiente. El prestador del servicio no',
+      'se hará responsable ante la imposibilidad de reparar la falla cubierta, cuando exista en el vehículo una falla adicional no cubierta por la',
+      'presente GARANTÍA MECÁNICA que afecte de forma directa a la reparación de la falla cubierta, y el cliente no autorice la reparación a costo',
+      'particular de esta. En estas circunstancias la reclamación quedará en estado rechazada por el desistimiento del cliente en ejecutar el proceso',
+      'normal de reparación del vehículo.',
+      'Verificada la procedencia del daño, si los repuestos necesarios para la reparación debieran ser conseguidos en otras plazas por no encontrarse',
+      'en el mercado local, el tiempo de reparación estará sujeta a la disponibilidad de las piezas o partes en el centro de servicios.',
+      'Reparado el vehículo, el cliente se obliga a retirarlo dentro los 3 (tres) días hábiles siguientes a la fecha de la comunicación en la que se le',
+      'informe que éste ha sido reparado. Si el vehículo no es retirado por el cliente dentro del término establecido, cualquier pérdida, daño o',
+      'deterioro del mismo quedará bajo la exclusiva responsabilidad del cliente.',
+    ],
+    font: helveticaFont,
+    alignment: 'left',
+    x: smallBorder,
+    y: PAGE_HEIGHT - 240,
+  });
+
+  addUnderlineText({
+    page: page7,
+    text: 'Plazos',
+    font: helveticaBoldFont,
+    fontSize: FONT_SIZE,
+    x: PAGE_BORDER,
+    y: PAGE_HEIGHT - 90,
+  });
+
+  page7.drawText('        1.    Ingreso a taller para reparación:', {
+    x: PAGE_BORDER,
+    y: PAGE_HEIGHT - 100,
+    color: rgb(0, 0, 0, 0),
+    size: FONT_SIZE,
+    font: helveticaBoldFont,
+  });
+
+  drawMultilineText({
+    page: page7,
+    lines: [
+      '               El cliente deberá ingresar el vehículo en un plazo máximo de 15 días, contados desde que el Gestor de Siniestro haya contactado al',
+      '               cliente, al servicio técnico autorizado asignado y acordado, para proceder con las evaluaciones y reparaciones. En el caso que el cliente',
+      '               exceda este plazo y no de aviso a la compañía, se procederá a enviar un aviso al cliente indicando el cierre del caso y el rechazo a la',
+      '               reclamación presentada.',
+      '               Conjuntamente con el cierre del caso, se rechazará todo daño asociado a la reclamación y las consecuencias que pudiese generar en el',
+      '               vehículo, producto de la no reparación de la avería. En caso que el cliente volviese a reclamar la misma avería o similar con fecha',
+      '               posterior al cierre de la reclamación, esta se considerará como pre-existente, por lo tanto no tendrá cobertura dentro del plan del producto',
+      '               de GARANTÍA MECÁNICA.',
+    ],
+    font: helveticaFont,
+    alignment: 'left',
+    y: PAGE_HEIGHT - 110,
+  });
+
+  page7.drawText('        2.    Plazo de reparaciones en servicio técnico:', {
+    x: PAGE_BORDER,
+    y: PAGE_HEIGHT - 200,
+    color: rgb(0, 0, 0, 0),
+    size: FONT_SIZE,
+    font: helveticaBoldFont,
+  });
+
+  drawMultilineText({
+    page: page7,
+    lines: [
+      '               El plazo de la ejecución de la reparación dependerá del tipo y gravedad de la avería que presente el vehículo, como también de la',
+      '               existencia en el mercado de los repuestos necesarios para reparar la avería. Este plazo de reparación pactado con los servicios técnicos',
+      '               será de 30 días desde el momento de ingreso del vehículo al taller. Cualquier exceso en el plazo definido, no será responsabilidad de',
+      '               Mapfre Assistance, cuando el retraso obedece a un problema externo al prestador de servicios.',
+      '               En caso de ser excedido el plazo de reparación, se informará al cliente, por medio de carta o e-mail informando la situación e indicando',
+      '               fechas probables de entrega.',
+    ],
+    font: helveticaFont,
+    alignment: 'left',
+    y: PAGE_HEIGHT - 210,
+  });
+
+  page7.drawText('        3.    Plazo Máximo para la reparación de una reclamación.', {
+    x: PAGE_BORDER,
+    y: PAGE_HEIGHT - 280,
+    color: rgb(0, 0, 0, 0),
+    size: FONT_SIZE,
+    font: helveticaBoldFont,
+  });
+
+  drawMultilineText({
+    page: page7,
+    lines: [
+      '               Se establece un plazo máximo de un (1) mes para que el cliente ejecute el procedimiento normal de una reclamación y que contempla el',
+      '               ingreso al taller para diagnosticar el tipo de avería, verificar su cobertura y posteriormente repararla si corresponde. Cumplido este plazo',
+      '               de un (1) mes, la reclamación quedará en estado rechazada por el desistimiento del cliente en ejecutar el proceso normal de reparación',
+      '               del vehículo.',
+      '               En caso que el cliente volviese a reclamar la misma avería o similar con fecha posterior al cierre de la reclamación, esta se considerará',
+      '               como pre-existente, por lo tanto no tendrá cobertura dentro del plan de coberturas del producto de GARANTÍA MECÁNICA.',
+      '               Conjuntamente con el cierre del caso, se rechazará todo daño asociado a la reclamación y las consecuencias que pudiese generar en el',
+      '               vehículo, producto de la no reparación de la avería.',
+    ],
+    font: helveticaFont,
+    alignment: 'left',
+    y: PAGE_HEIGHT - 290,
   });
 
   return pdfDoc.saveAsBase64();

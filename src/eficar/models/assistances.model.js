@@ -15,5 +15,5 @@ const schema = new mongoose.Schema(
   },
 );
 
-const db = mongoose.connection.useDb(`amices_${process.env.NODE_ENV}`);
+const db = mongoose.connection.useDb(`eficar_${process.env.NODE_ENV}`);
 module.exports = db.model('Assistances', schema);
