@@ -9,13 +9,14 @@ const format = (incomeData, externalIds) => {
       bankInformation,
       heritage,
       personalReferences,
-      loanSimulationData,
       loanSimulationCar,
       amortizationSchedule,
       customer,
       taxReturn,
+      majorityPartners,
+      loanSimulationData,
     } = incomeData;
-
+    console.log('sadklasndlkasdlaskjdklasjdalkj', customerRequestData);
     const loanType = loanSimulationData.LoanType.cod;
     const vfg = loanType === 'SMART' ? amortizationSchedule.find((schedule) => schedule.quotaType === 'SMART') : null;
     // const spouseDataFormated =
@@ -37,15 +38,15 @@ const format = (incomeData, externalIds) => {
     //         maritalRegime: buyForAnother.maritalRegimeData.externalCode,
     //       }
     //     : {};
-    const customerActivityFormated = {
-      ...customerActivity,
-      workType: customerActivity.workType.externalCode,
-      activityTypeId: customerActivity.activityType.externalCode,
-      businessSectorId: customerActivity.businessSector.externalCode,
-      workGeographicDataId: customerActivity.workGeographicData.COMMUNE.externalCode,
-      employmentContractType: customerActivity.employmentContractType.externalCode,
-      salaryType: customerActivity.salaryType.externalCode,
-    };
+    // const customerActivityFormated = {
+    //   ...customerActivity,
+    //   workType: customerActivity.workType.externalCode,
+    //   activityTypeId: customerActivity.activityType.externalCode,
+    //   businessSectorId: customerActivity.businessSector.externalCode,
+    //   workGeographicDataId: customerActivity.workGeographicData.COMMUNE.externalCode,
+    //   employmentContractType: customerActivity.employmentContractType.externalCode,
+    //   salaryType: customerActivity.salaryType.externalCode,
+    // };
 
     return {
       ...incomeData,
@@ -56,14 +57,15 @@ const format = (incomeData, externalIds) => {
         geographicDataId: customer.geographicData.COMMUNE.externalCode,
         businessSectorId: customer.businessSectorData.externalCode,
       },
-      customerActivity: customerActivityFormated,
-      // customerRequestData: {
-      //   ...customerRequestData,
-      //   maritalStatus: customerRequestData.maritalStatus.externalCode,
-      //   maritalRegime: customerRequestData.maritalRegime.externalCode,
-      //   academicLevel: customerRequestData.academicLevel.externalCode,
-      //   livingHousehold: customerRequestData.livingHousehold.externalCode,
-      // },
+      customerActivity: {},
+      majorityPartners,
+      customerRequestData: {
+        // ...customerRequestData,
+        // maritalStatus: customerRequestData.maritalStatus.externalCode,
+        // maritalRegime: customerRequestData.maritalRegime.externalCode,
+        // academicLevel: customerRequestData.academicLevel.externalCode,
+        // livingHousehold: customerRequestData.livingHousehold.externalCode,
+      },
       // spouseData: spouseDataFormated,
       // buyForAnother: buyForAnotherFormated,
       // guarantor: guarantor.length
@@ -116,7 +118,7 @@ const format = (incomeData, externalIds) => {
       externalIds,
     };
   } catch (e) {
-    console.log(e, '.-.-');
+    console.log(e, 'error');
   }
 };
 module.exports = format;
