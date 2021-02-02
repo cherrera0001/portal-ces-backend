@@ -152,6 +152,7 @@ const schema = new mongoose.Schema(
         stillPaying: { type: Boolean, default: false },
       },
     ],
+    tradeInCar: { type: Object, defatult: {} },
     personalReferences: {
       type: [
         {
