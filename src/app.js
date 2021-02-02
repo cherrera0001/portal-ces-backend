@@ -5,6 +5,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const parseSubscriptions = require('middlewares/parseSubscriptions.middleware');
+const saveLogsApi = require('helpers/saveLogsApi');
 
 dotenv.config();
 
@@ -25,6 +26,22 @@ app.use(
   }),
 );
 app.use(parseSubscriptions);
+
+app.use((req, res, next) => {
+  const oldSend = res.send;
+
+  res.send = function(data) {
+    saveLogsApi({
+      request: req,
+      response: data,
+    });
+
+    res.send = oldSend;
+    return res.send(data);
+  };
+  next();
+});
+
 app.use(helmet());
 app.use(cors());
 app.use(morgan('tiny'));
