@@ -125,7 +125,7 @@ const schema = new mongoose.Schema(
     bankInformation: [{ type: Object, required: true }],
     personalReferences: [{ type: Object, required: true }],
     loanSimulationCar: { type: Object, required: true },
-    tradeInCar: [{ type: Object, required: true }],
+    tradeInCar: { type: Object, required: true },
     heritage: [{ type: Object, required: true }],
     customer: {
       identificationValue: { type: String, required: true, index: true },
