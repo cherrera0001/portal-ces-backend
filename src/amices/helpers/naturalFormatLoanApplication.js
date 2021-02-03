@@ -40,7 +40,9 @@ const format = (incomeData, externalIds) => {
     ? {
         ...incomeData,
         loanSimulationCar: { ...loanSimulationCar, vehicleType: loanSimulationCar.VehicleType.externalCode },
-        customerActivity: { ...customerActivity, salaryType: customerActivity.salaryType.externalCode } || {},
+        customerActivity: Object.keys(customerActivity).length
+          ? { ...customerActivity, salaryType: customerActivity.salaryType.externalCode }
+          : {},
         simulationId: loanSimulationData.id,
         salesRoomId: loanSimulationData.SalesRoom.id,
         sellerIdentificationValue: loanSimulationData.salesRepresentative.rut,

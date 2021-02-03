@@ -13,44 +13,36 @@ const format = (incomeData, externalIds) => {
       amortizationSchedule,
       customer,
       taxReturn,
+      legalRepresentative,
       majorityPartners,
       loanSimulationData,
     } = incomeData;
-    console.log('sadklasndlkasdlaskjdklasjdalkj', customerRequestData);
     const loanType = loanSimulationData.LoanType.cod;
     const vfg = loanType === 'SMART' ? amortizationSchedule.find((schedule) => schedule.quotaType === 'SMART') : null;
-    // const spouseDataFormated =
-    //   Object.keys(spouseData).length > 6
-    //     ? {
-    //         ...spouseData,
-    //         spouseGeographicDataId: spouseData.spouseGeographicData.COMMUNE.externalCode,
-    //         workType: spouseData.workType.externalCode,
-    //         activityType: spouseData.activityType.externalCode,
-    //       }
-    //     : {};
-    // const buyForAnotherFormated =
-    //   Object.keys(buyForAnother).length > 0
-    //     ? {
-    //         ...buyForAnother,
-    //         geographicDataId: buyForAnother.geographicData.COMMUNE.externalCode,
-    //         nationalityId: buyForAnother.nationalityData.externalCode,
-    //         maritalStatus: buyForAnother.maritalStatusData.externalCode,
-    //         maritalRegime: buyForAnother.maritalRegimeData.externalCode,
-    //       }
-    //     : {};
-    // const customerActivityFormated = {
-    //   ...customerActivity,
-    //   workType: customerActivity.workType.externalCode,
-    //   activityTypeId: customerActivity.activityType.externalCode,
-    //   businessSectorId: customerActivity.businessSector.externalCode,
-    //   workGeographicDataId: customerActivity.workGeographicData.COMMUNE.externalCode,
-    //   employmentContractType: customerActivity.employmentContractType.externalCode,
-    //   salaryType: customerActivity.salaryType.externalCode,
-    // };
+    const buyForAnotherFormated =
+      Object.keys(buyForAnother).length > 0
+        ? {
+            ...buyForAnother,
+            nationalityId: buyForAnother.nationalityData.externalCode,
+            geographicDataId: buyForAnother.geographicData.COMMUNE.externalCode,
+            maritalStatus: buyForAnother.maritalStatusData.externalCode,
+            maritalRegime: buyForAnother.maritalRegimeData.externalCode,
+          }
+        : {};
+    const guarantorFormated = guarantor.length
+      ? guarantor.map((el) => ({
+          ...el,
+          geographicDataId: el.geographicData.COMMUNE.externalCode,
+          nationalityId: el.nationalityData.externalCode,
+          maritalStatus: el.maritalStatusData.externalCode,
+          maritalRegime: el.maritalRegimeData.externalCode,
+          workType: el.workTypeData.externalCode,
+          activityTypeId: el.activityTypeData.externalCode,
+        }))
+      : [];
 
     return {
       ...incomeData,
-      // ...taxReturn,
       loanSimulationCar: { ...loanSimulationCar, vehicleType: loanSimulationCar.VehicleType.externalCode },
       customer: {
         ...customer,
@@ -58,46 +50,37 @@ const format = (incomeData, externalIds) => {
         businessSectorId: customer.businessSectorData.externalCode,
       },
       customerActivity: {},
-      majorityPartners,
-      customerRequestData: {
-        // ...customerRequestData,
-        // maritalStatus: customerRequestData.maritalStatus.externalCode,
-        // maritalRegime: customerRequestData.maritalRegime.externalCode,
-        // academicLevel: customerRequestData.academicLevel.externalCode,
-        // livingHousehold: customerRequestData.livingHousehold.externalCode,
-      },
-      // spouseData: spouseDataFormated,
-      // buyForAnother: buyForAnotherFormated,
-      // guarantor: guarantor.length
-      //   ? guarantor.map((el) => ({
-      //       ...el,
-      //       geographicDataId: el.geographicData.COMMUNE.externalCode,
-      //       nationalityId: el.nationalityData.externalCode,
-      //       maritalStatus: el.maritalStatusData.externalCode,
-      //       maritalRegime: el.maritalRegimeData.externalCode,
-      //       workType: el.workTypeData.externalCode,
-      //       activityTypeId: el.activityTypeData.externalCode,
-      //     }))
-      //   : [],
-      // bankInformation: bankInformation.length
-      //   ? bankInformation.map((el) => ({
-      //       ...el,
-      //       codeId: el.externalCode,
-      //     }))
-      //   : [],
-      // heritage: heritage.length
-      //   ? heritage.map((el) => ({
-      //       ...el,
-      //       financing: el.financingTypeData.externalCode,
-      //       type: el.typeExternalCode,
-      //     }))
-      //   : [],
-      // personalReferences: personalReferences.length
-      //   ? personalReferences.map((el) => ({
-      //       ...el,
-      //       type: el.typeData.externalCode,
-      //     }))
-      //   : [],
+      buyForAnother: buyForAnotherFormated,
+      legalRepresentative: [],
+
+      guarantor: guarantorFormated,
+      legalRepresentative: legalRepresentative.length
+        ? legalRepresentative.map((el) => ({
+            ...el,
+            geographicDataId: el.geographicData.COMMUNE.externalCode,
+            maritalStatus: el.maritalStatusData.externalCode,
+            // activityTypeId: el.activityTypeData.externalCode,
+          }))
+        : [],
+      bankInformation: bankInformation.length
+        ? bankInformation.map((el) => ({
+            ...el,
+            codeId: el.externalCode,
+          }))
+        : [],
+      heritage: heritage.length
+        ? heritage.map((el) => ({
+            ...el,
+            financing: el.financingTypeData.externalCode,
+            type: el.typeExternalCode,
+          }))
+        : [],
+      personalReferences: personalReferences.length
+        ? personalReferences.map((el) => ({
+            ...el,
+            type: el.typeData.externalCode,
+          }))
+        : [],
       loan: {
         ...loanSimulationData,
         rateType: loanSimulationData.Rate.RateType,
