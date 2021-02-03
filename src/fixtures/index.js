@@ -3,7 +3,7 @@ const Users = require('models/users.model');
 const AmicesConfigs = require('amices/models/configs.model');
 const EficarConfigs = require('eficar/models/configs.model');
 const AuctionParticipant = require('amices/models/auctionParticipants.model');
-const Assistances = require('amices/models/assistances.model');
+const Assistances = require('eficar/models/assistances.model');
 
 const { CORE_URL } = process.env;
 
@@ -35,6 +35,7 @@ require('mongoEficar')();
       { code: 'CHECKLIST_CONFIRMED', status: 'Checklist confirmado', color: '#3DAC00' },
       { code: 'SIGNING', status: 'Firma de documentación', color: '#3DAC00' },
       { code: 'AWARDED', status: 'Crédito Adjudicado', color: '#3DAC00' },
+      { code: 'CLOSED_WITHOUT_APPROVALS', status: 'Cerrado sin aprobaciones', color: 'black' },
     ],
     maxFileSizeInKB: 40000000,
     coreToken:
@@ -113,9 +114,11 @@ require('mongoEficar')();
       { code: 'CONDITIONED', status: 'Crédito Condicionado', color: '#007BDC' },
       { code: 'CHECKLIST_REJECTED', status: 'Rechazado por Checklist', color: 'black' },
       { code: 'CHECKLIST_CONFIRMED', status: 'Checklist Confirmado', color: '#3DAC00' },
+      { code: 'CHECKLIST_VALIDATION', status: 'En Validación de Checklist', color: '#3DAC00' },
       { code: 'EXPIRED', status: 'No se entregó Respuesta a Tiempo', color: 'black' },
       { code: 'EVALUATION_IN_PROCESS', status: 'Pendiente o en Proceso', color: '#007BDC' },
       { code: 'AWARDED', status: 'Crédito Adjudicado', color: '#3DAC00' },
+      { code: 'CLOSED_WITHOUT_APPROVALS', status: 'Cerrado sin aprobaciones', color: 'black' },
     ],
     coreUrls: {
       UPLOAD_DOCUMENT_TO_SIGN: `${CORE_URL}/chl/v1/files/documents-to-sign/upload`,

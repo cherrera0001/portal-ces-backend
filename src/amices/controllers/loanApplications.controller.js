@@ -1,7 +1,11 @@
 const aqp = require('api-query-params');
 const HTTP = require('requests');
 const LoansApplication = require('amices/models/loanApplications.model');
-const { PATH_ENDPOINT_LOAN_APPLICATION, PATH_CORE_LOAN_SUBMISSIONS } = require('amices/core.services');
+const {
+  PATH_ENDPOINT_LOAN_APPLICATION,
+  PATH_CORE_LOAN_SUBMISSIONS,
+  PATH_CORE_LOAN_AWARD,
+} = require('amices/core.services');
 const errors = require('amices/errors');
 const findLoanStatus = require('amices/helpers/findLoanStatus');
 const mapCompany = require('amices/helpers/mapCompanyApplication');
@@ -63,6 +67,17 @@ const save = async (req, res) => {
   }
 };
 
+const award = async (req, res) => {
+  try {
+    const response = await HTTP.post(`${CORE_URL}${PATH_CORE_LOAN_AWARD}/${req.params.loanId}`, {
+      ...req.body,
+    });
+    if (response.status === 200) return res.status(200).json();
+  } catch (e) {
+    throw Error(e);
+  }
+};
+
 const saveExternal = async (req, res) => {
   try {
     console.log(req.body.message.data.legalRepresentative);
@@ -119,4 +134,4 @@ const submissions = async (req, res) => {
   }
 };
 
-module.exports = { all, create, save, saveExternal, finish, status, submissions };
+module.exports = { all, create, save, saveExternal, finish, status, submissions, award };

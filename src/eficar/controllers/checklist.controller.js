@@ -2,6 +2,7 @@ const aqp = require('api-query-params');
 const Params = require('eficar/controllers/params.controller');
 const Auction = require('eficar/models/auctions.model');
 const findLoanStatus = require('eficar/helpers/findLoanStatus');
+const generateAssistanceDocuments = require('eficar/helpers/generateAssistances');
 const errors = require('eficar/errors');
 const HTTP = require('requests');
 const { PATH_ENDPOINT_CORE_DOWNLOAD_DOCUMENT, PATH_ENDPOINT_CORE_DOCUMENT_STATUS } = require('eficar/core.services');
@@ -143,12 +144,18 @@ const documentStatusChange = async (req, res) => {
 const confirmation = async (req, res) => {
   // this function is called when the checklist is approved or rejected in eficar and its status changes to CHECKLIST_CONFIRMED or CHECKLIST_REJECTED
   const { loanApplicationId, status } = req.body;
+  const financingEntityId = req.params.rut;
 
-  const auction = await Auction.findOne({ simulationId: loanApplicationId, financingEntityId: req.params.rut });
+  const auction = await Auction.findOne({ simulationId: loanApplicationId, financingEntityId });
   if (!auction) return errors.notFound(res);
 
   auction.finalLoanStatus = await findLoanStatus(status);
   await auction.save();
+
+  if (status === 'CHECKLIST_CONFIRMED') {
+    await generateAssistanceDocuments({ loanApplicationId, financingEntityId });
+    req.app.socketIo.emit(`RELOAD_EFICAR_DOCUMENTS_TO_SIGN_${loanApplicationId}`);
+  }
 
   req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
   res.status(200).end();
