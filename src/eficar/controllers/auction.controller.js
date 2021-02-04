@@ -3,6 +3,7 @@ const Params = require('eficar/controllers/params.controller');
 const Auction = require('eficar/models/auctions.model');
 const Config = require('eficar/models/configs.model');
 const findLoanStatus = require('eficar/helpers/findLoanStatus');
+const generateAssistanceDocuments = require('eficar/helpers/generateAssistances');
 const errors = require('eficar/errors');
 const HTTP = require('requests');
 
@@ -17,6 +18,7 @@ const loanStatusMap = {
 };
 
 const INTERMEDIATE_STATUS = ['SAVED_SIMULATION'];
+const LOCKED_STATUS = ['GRANTED', 'CHECKLIST_VALIDATION', 'CHECKLIST_CONFIRMED', 'SIGNING', 'AWARDED'];
 
 const all = async (req, res) => {
   const recordsPerPage = 20;
@@ -161,12 +163,21 @@ const update = async (req, res) => {
 const granted = async (req, res) => {
   // defines the final status for this FE
   const { status, loanSimulationDataId: loanApplicationId } = req.body;
-  const auction = await Auction.findOne({ simulationId: loanApplicationId, financingEntityId: req.params.rut });
+  const financingEntityId = req.params.rut;
+  const auction = await Auction.findOne({ simulationId: loanApplicationId, financingEntityId });
   if (!auction) return errors.notFound(res);
 
   const finalLoanStatus = status === 'APPROVED' ? 'LOSER' : status;
 
-  auction.finalLoanStatus = await findLoanStatus(finalLoanStatus);
+  if (status === 'WINNER') {
+    const canUpdateStatus = !LOCKED_STATUS.includes(auction.finalLoanStatus.code);
+    if (canUpdateStatus) auction.finalLoanStatus = await findLoanStatus(finalLoanStatus);
+
+    await generateAssistanceDocuments({ loanApplicationId, financingEntityId });
+    req.app.socketIo.emit(`RELOAD_EFICAR_DOCUMENTS_TO_SIGN_${loanApplicationId}`);
+  } else {
+    auction.finalLoanStatus = await findLoanStatus(finalLoanStatus);
+  }
 
   if (status === 'CHECKLIST_REJECTED') {
     // makes sure the checklist items are shown as rejected even if they were approved before the complete checklist rejection
