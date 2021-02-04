@@ -35,6 +35,7 @@ require('mongoEficar')();
       { code: 'CHECKLIST_CONFIRMED', status: 'Checklist confirmado', color: '#3DAC00' },
       { code: 'SIGNING', status: 'Firma de documentación', color: '#3DAC00' },
       { code: 'AWARDED', status: 'Crédito Adjudicado', color: '#3DAC00' },
+      { code: 'CLOSED_WITHOUT_APPROVALS', status: 'Cerrado sin aprobaciones', color: 'black' },
     ],
     maxFileSizeInKB: 40000000,
     coreToken:
@@ -117,6 +118,7 @@ require('mongoEficar')();
       { code: 'EXPIRED', status: 'No se entregó Respuesta a Tiempo', color: 'black' },
       { code: 'EVALUATION_IN_PROCESS', status: 'Pendiente o en Proceso', color: '#007BDC' },
       { code: 'AWARDED', status: 'Crédito Adjudicado', color: '#3DAC00' },
+      { code: 'CLOSED_WITHOUT_APPROVALS', status: 'Cerrado sin aprobaciones', color: 'black' },
     ],
     coreUrls: {
       UPLOAD_DOCUMENT_TO_SIGN: `${CORE_URL}/chl/v1/files/documents-to-sign/upload`,
@@ -144,6 +146,7 @@ require('mongoEficar')();
     amicarExecutiveIdentificationValue: '156681911',
     saleChannel: '829957000',
     saleChannelType: 'IMPORTADOR',
+    saleChannelId: '1',
     salesRoomId: 1,
     forApp: 'amices',
     profile: 'SALES_MANAGER',
