@@ -70,6 +70,8 @@ const generateAssistancePDF = async (assistance, loanData) => {
   return assistancePDF;
 };
 
+const FES_WITH_DOCUMENT_GENERATION = ['2'];
+
 module.exports = async ({ loanApplicationId, financingEntityId }) => {
   try {
     const response = await HTTP.get(`${CORE_URL}${PATH_ENDPOINT_CORE_GET_ASSISTANCES_FOR_LOAN}/${loanApplicationId}`);
@@ -80,13 +82,20 @@ module.exports = async ({ loanApplicationId, financingEntityId }) => {
     // deletes the previously generated assistances
     await DocumentsToSign.deleteMany({
       loanApplicationId,
-      'documentType.externalCode': { $in: eficarAssistances.map((assistance) => assistance.documentTypeId) },
+      financingEntityId: {
+        $ne: financingEntityId,
+      },
     });
 
     await AmicesDocumentsToSign.deleteMany({
       loanApplicationId,
-      'documentType.externalCode': { $in: eficarAssistances.map((assistance) => assistance.documentTypeId) },
+      financingEntityId: {
+        $ne: financingEntityId,
+      },
     });
+
+    // some FE's generate and upload their own assistance documents, so we avoid generating our own as we would overwritte theirs.
+    if (FES_WITH_DOCUMENT_GENERATION.includes(String(financingEntityId))) return;
 
     // generates the new assistances using the core's response
     const assistancesToGenerate = eficarAssistances.filter((assistance) =>
