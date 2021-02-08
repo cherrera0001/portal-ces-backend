@@ -72,6 +72,11 @@ require('mongoEficar')();
       documentTypeId: 'GARANTIA_MECANICA',
     },
     {
+      id: 3,
+      description: 'GARANTIA MECANICA.pdf',
+      documentTypeId: 'GARANTIA_MECANICA',
+    },
+    {
       id: 4,
       description: 'NEUMATICOS.pdf',
       documentTypeId: 'NEUMATICOS',
