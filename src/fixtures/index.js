@@ -146,6 +146,7 @@ require('mongoEficar')();
     amicarExecutiveIdentificationValue: '156681911',
     saleChannel: '829957000',
     saleChannelType: 'IMPORTADOR',
+    saleChannelId: '1',
     salesRoomId: 1,
     forApp: 'amices',
     profile: 'SALES_MANAGER',
