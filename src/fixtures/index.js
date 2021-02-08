@@ -72,6 +72,11 @@ require('mongoEficar')();
       documentTypeId: 'GARANTIA_MECANICA',
     },
     {
+      id: 3,
+      description: 'GARANTIA MECANICA.pdf',
+      documentTypeId: 'GARANTIA_MECANICA',
+    },
+    {
       id: 4,
       description: 'NEUMATICOS.pdf',
       documentTypeId: 'NEUMATICOS',
@@ -145,6 +150,7 @@ require('mongoEficar')();
     sellerIdentificationValue: '112223339',
     amicarExecutiveIdentificationValue: '156681911',
     saleChannel: '829957000',
+    saleChannelId: '1',
     saleChannelType: 'IMPORTADOR',
     salesRoomId: 1,
     forApp: 'amices',
