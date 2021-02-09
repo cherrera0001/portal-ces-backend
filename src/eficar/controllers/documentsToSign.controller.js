@@ -11,50 +11,69 @@ const {
 
 const { CORE_URL } = process.env;
 
-const upload = async (req, res) => {
-  const { loanApplicationId, files } = req.body;
-  const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_CORE_UPLOAD_DOCUMENT_TO_SIGN}`, {
-    loanApplicationId,
-    feIdentificationValue: req.user.companyIdentificationValue,
-    files,
-    requestFromAmices: true,
-  });
-
-  if (response.status !== 200) return errors.badRequest(res);
-
-  for (const { documentTypeId, filesContent } of response.data) {
-    const filesToSave = filesContent.filter((file) => file.fileName && file.uuid);
-
-    let document = await DocumentsToSign.findOne({
+const sendDocumentsToCore = async ({ loanApplicationId, files, feIdentificationValue }) => {
+  try {
+    const response = await HTTP.post(`${CORE_URL}${PATH_ENDPOINT_CORE_UPLOAD_DOCUMENT_TO_SIGN}`, {
       loanApplicationId,
-      'documentType.externalCode': documentTypeId,
+      feIdentificationValue,
+      files,
+      requestFromAmices: true,
     });
 
-    if (document) {
-      document.files = filesToSave;
-      document.markModified('files');
-    } else {
-      const documentType = await Params.findOne({ type: 'DOCUMENT_TYPE', externalCode: documentTypeId }).select(
-        'id name externalCode parentId type',
-      );
+    if (response.status !== 200) return response;
 
-      const documentClassification = await Params.findOne({ id: documentType.parentId }).select(
-        'id name externalCode parentId type',
-      );
+    for (const { documentTypeId, filesContent } of response.data) {
+      const filesToSave = filesContent.filter((file) => file.fileName && file.uuid);
 
-      document = new DocumentsToSign({
+      let document = await DocumentsToSign.findOne({
         loanApplicationId,
-        documentType,
-        documentClassification,
-        files: filesToSave,
+        'documentType.externalCode': documentTypeId,
       });
+
+      if (document) {
+        document.files = filesToSave;
+        document.markModified('files');
+      } else {
+        const documentType = await Params.findOne({ type: 'DOCUMENT_TYPE', externalCode: documentTypeId }).select(
+          'id name externalCode parentId type',
+        );
+
+        const documentClassification = await Params.findOne({ id: documentType.parentId }).select(
+          'id name externalCode parentId type',
+        );
+
+        document = new DocumentsToSign({
+          loanApplicationId,
+          documentType,
+          documentClassification,
+          files: filesToSave,
+        });
+      }
+      await document.save();
     }
-
-    await document.save();
+    return response;
+  } catch (err) {
+    console.log(err.message);
   }
+};
 
-  req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
-  return res.status(200).json();
+const upload = async (req, res) => {
+  const { loanApplicationId, files } = req.body;
+  const feIdentificationValue = req.user.companyIdentificationValue;
+
+  try {
+    const response = await sendDocumentsToCore({
+      loanApplicationId,
+      files,
+      feIdentificationValue,
+    });
+
+    if (response.status !== 200) return errors.badRequest(res);
+    req.app.socketIo.emit(`RELOAD_EFICAR_DOCUMENTS_TO_SIGN_${loanApplicationId}`);
+    return res.status(200).json();
+  } catch (err) {
+    console.log(err.message);
+  }
 };
 
 const download = async (req, res) => {
@@ -74,7 +93,7 @@ const download = async (req, res) => {
       ...response.data,
     });
   } catch (err) {
-    //
+    console.log(err.message);
   }
 };
 
@@ -94,10 +113,10 @@ const deleteDocuments = async (req, res) => {
     }
 
     await DocumentsToSign.deleteOne({ loanApplicationId, 'documentType.externalCode': documentTypeId });
-    req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
+    req.app.socketIo.emit(`RELOAD_EFICAR_DOCUMENTS_TO_SIGN_${loanApplicationId}`);
     res.json();
   } catch (err) {
-    req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
+    req.app.socketIo.emit(`RELOAD_EFICAR_DOCUMENTS_TO_SIGN_${loanApplicationId}`);
     res.status(500);
   }
 };
@@ -119,6 +138,7 @@ const list = async (req, res) => {
       documents: documentTypes.map((docType) => ({
         document: docType.documentType,
         files: docType.files,
+        required: docType.required,
         updatedAt: docType.updatedAt,
       })),
     };
@@ -176,6 +196,7 @@ module.exports = {
   upload,
   download,
   deleteDocuments,
+  sendDocumentsToCore,
   list,
   reception,
 };

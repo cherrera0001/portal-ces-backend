@@ -7,9 +7,10 @@ module.exports = {
   companyIdentificationValue: '966675608',
   sellerIdentificationValue: '112223339',
   amicarExecutiveIdentificationValue: '156681911',
-  saleChannel: '79649140K',
+  saleChannel: '829957000',
   saleChannelType: 'IMPORTADOR',
-  salesRoomId: 179,
+  saleChannelId: '1',
+  salesRoomId: 1,
   forApp: 'amices',
   profile: 'SALES_MANAGER',
 };

@@ -1,7 +1,11 @@
 const aqp = require('api-query-params');
 const HTTP = require('requests');
 const LoansApplication = require('amices/models/loanApplications.model');
-const { PATH_ENDPOINT_LOAN_APPLICATION, PATH_CORE_LOAN_SUBMISSIONS } = require('amices/core.services');
+const {
+  PATH_ENDPOINT_LOAN_APPLICATION,
+  PATH_CORE_LOAN_SUBMISSIONS,
+  PATH_CORE_LOAN_AWARD,
+} = require('amices/core.services');
 const errors = require('amices/errors');
 const findLoanStatus = require('amices/helpers/findLoanStatus');
 
@@ -21,6 +25,7 @@ const formatLoanApplication = (incomeData, externalIds) => {
     loanSimulationCar,
     amortizationSchedule,
     customer,
+    taxReturn,
   } = incomeData;
   const loanType = loanSimulationData.LoanType.cod;
   const vfg = loanType === 'SMART' ? amortizationSchedule.find((schedule) => schedule.quotaType === 'SMART') : null;
@@ -69,6 +74,7 @@ const formatLoanApplication = (incomeData, externalIds) => {
       }
     : {
         ...incomeData,
+        ...taxReturn,
         loanSimulationCar: { ...loanSimulationCar, vehicleType: loanSimulationCar.VehicleType.externalCode },
         customer: {
           ...customer,
@@ -143,7 +149,6 @@ const formatLoanApplication = (incomeData, externalIds) => {
         amicarExecutiveIdentificationValue: loanSimulationData.amicarExecutive.rut,
         externalIds,
       };
-  console.log(loanSimulationCar, '-.-.-.');
   return loanApplicationFormated;
 };
 
@@ -190,6 +195,17 @@ const save = async (req, res) => {
     res.status(response.status).end();
   } catch (e) {
     throw Error(e.message);
+  }
+};
+
+const award = async (req, res) => {
+  try {
+    const response = await HTTP.post(`${CORE_URL}${PATH_CORE_LOAN_AWARD}/${req.params.loanId}`, {
+      ...req.body,
+    });
+    if (response.status === 200) return res.status(200).json();
+  } catch (e) {
+    throw Error(e);
   }
 };
 
@@ -248,4 +264,4 @@ const submissions = async (req, res) => {
   }
 };
 
-module.exports = { all, create, save, saveExternal, finish, status, submissions };
+module.exports = { all, create, save, saveExternal, finish, status, submissions, award };
