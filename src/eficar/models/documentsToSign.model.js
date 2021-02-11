@@ -6,6 +6,7 @@ const schema = new mongoose.Schema(
     documentClassification: { type: Object, required: false },
     documentType: { type: Object, required: false },
     required: { type: Boolean, default: false },
+    financingEntityId: { type: String, required: false },
     files: [
       {
         fileName: { type: String, required: false },
