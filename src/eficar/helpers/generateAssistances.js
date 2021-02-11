@@ -4,6 +4,8 @@ const Assistances = require('eficar/models/assistances.model');
 const DocumentsToSign = require('eficar/models/documentsToSign.model');
 const AmicesDocumentsToSign = require('amices/models/documentsToSign.model');
 const { PATH_ENDPOINT_CORE_GET_ASSISTANCES_FOR_LOAN } = require('eficar/core.services');
+const fixtureAssistances = require('fixtures/assistances');
+
 const HTTP = require('requests');
 
 const {
@@ -70,40 +72,64 @@ const generateAssistancePDF = async (assistance, loanData) => {
   return assistancePDF;
 };
 
-const FES_WITH_DOCUMENT_GENERATION = ['2'];
+const FES_WITH_DOCUMENT_GENERATION = [
+  {
+    id: '2',
+    identificationValue: '966675608',
+  },
+  {
+    id: '4',
+    identificationValue: '760022934',
+  },
+  {
+    id: '9',
+    identificationValue: '78624210K',
+  },
+];
+
+const shouldGenerateAssistancesForFE = (financingEntityId) => {
+  return !FES_WITH_DOCUMENT_GENERATION.some(
+    (ef) => ef.id === financingEntityId || ef.identificationValue === financingEntityId,
+  );
+};
 
 module.exports = async ({ loanApplicationId, financingEntityId }) => {
   try {
-    const response = await HTTP.get(`${CORE_URL}${PATH_ENDPOINT_CORE_GET_ASSISTANCES_FOR_LOAN}/${loanApplicationId}`);
-    const { amicarAssistance } = response.data;
-
     const eficarAssistances = await Assistances.find({});
+    let assistancesToGenerate = [];
+    /**
+     * generates the new assistances using the core's response
+     * some FE's generate and upload their own assistance documents, so we avoid generating our own as we would overwritte theirs.
+     */
+    const shouldGenerateDocuments = shouldGenerateAssistancesForFE(String(financingEntityId));
 
-    // deletes the previously generated assistances
-    await DocumentsToSign.deleteMany({
-      loanApplicationId,
-      financingEntityId: {
-        $ne: financingEntityId,
-      },
-    });
+    if (shouldGenerateDocuments) {
+      // deletes the previously generated assistances
+      const assistanceDocuments = fixtureAssistances.map((assistance) => assistance.coreParamId);
+      await DocumentsToSign.deleteMany({
+        loanApplicationId,
+        'documentType.externalCode': { $in: assistanceDocuments },
+      });
+      await AmicesDocumentsToSign.deleteMany({
+        loanApplicationId,
+        'documentType.externalCode': { $in: assistanceDocuments },
+      });
 
-    await AmicesDocumentsToSign.deleteMany({
-      loanApplicationId,
-      financingEntityId: {
-        $ne: financingEntityId,
-      },
-    });
+      // maps the assistance documents that the CORE has selected at the time of this request
+      const response = await HTTP.get(`${CORE_URL}${PATH_ENDPOINT_CORE_GET_ASSISTANCES_FOR_LOAN}/${loanApplicationId}`);
+      const { amicarAssistance } = response.data;
 
-    // some FE's generate and upload their own assistance documents, so we avoid generating our own as we would overwritte theirs.
-    if (FES_WITH_DOCUMENT_GENERATION.includes(String(financingEntityId))) return;
+      assistancesToGenerate = eficarAssistances.filter((assistance) =>
+        amicarAssistance.some(
+          (coreAssistance) => coreAssistance.description === assistance.documentTypeId && coreAssistance.selected,
+        ),
+      );
+    }
 
-    // generates the new assistances using the core's response
-    const assistancesToGenerate = eficarAssistances.filter((assistance) =>
-      amicarAssistance.some((coreAssistance) => coreAssistance.id === assistance.id && coreAssistance.selected),
-    );
+    // generates the required mandate assistance (this is generated for ALL FE's)
+    const mandateToGenerate = eficarAssistances.find((assistance) => assistance.documentTypeId === 'MANDATO');
 
-    // generates the required mandate assistance
-    assistancesToGenerate.push(eficarAssistances[4]);
+    if (mandateToGenerate) assistancesToGenerate.push(mandateToGenerate);
 
     if (!assistancesToGenerate.length) return;
 
@@ -111,7 +137,7 @@ module.exports = async ({ loanApplicationId, financingEntityId }) => {
     const loanData = await Auction.findOne({ simulationId: loanApplicationId, financingEntityId });
 
     for (const assistance of assistancesToGenerate) {
-      assistance.value = await generateAssistancePDF(assistance.documentTypeId, loanData);
+      assistance.value = await generateAssistancePDF(assistance.coreParamId, loanData);
     }
 
     // upload assistances like any other document to sign sent by the FE
@@ -119,7 +145,7 @@ module.exports = async ({ loanApplicationId, financingEntityId }) => {
       loanApplicationId,
       feIdentificationValue: financingEntityId,
       files: assistancesToGenerate.map((assistance) => ({
-        documentTypeId: assistance.documentTypeId,
+        documentTypeId: assistance.coreParamId,
         filesContent: [
           {
             fileName: assistance.description,
@@ -129,11 +155,11 @@ module.exports = async ({ loanApplicationId, financingEntityId }) => {
       })),
     });
 
-    // after uploading, this assistances should be marked as required so that they can not be deleted
+    // after uploading, this assistances should be marked as required so that they can not be deleted from eficar
     for (const assistance of assistancesToGenerate) {
       const document = await DocumentsToSign.findOne({
         loanApplicationId,
-        'documentType.externalCode': assistance.documentTypeId,
+        'documentType.externalCode': assistance.coreParamId,
       });
 
       if (document) {

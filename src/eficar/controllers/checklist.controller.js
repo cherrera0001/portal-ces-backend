@@ -153,6 +153,7 @@ const confirmation = async (req, res) => {
   await auction.save();
 
   if (status === 'CHECKLIST_CONFIRMED') {
+    // we check the CORE for new assistances that could have been selected after granting the loan
     await generateAssistanceDocuments({ loanApplicationId, financingEntityId });
     req.app.socketIo.emit(`RELOAD_EFICAR_DOCUMENTS_TO_SIGN_${loanApplicationId}`);
   }
