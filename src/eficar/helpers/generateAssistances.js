@@ -95,8 +95,7 @@ const shouldGenerateAssistancesForFE = (financingEntityId) => {
 
 module.exports = async ({ loanApplicationId, financingEntityId }) => {
   try {
-    const eficarAssistances = await Assistances.find({});
-    let assistancesToGenerate = [];
+    let coreAssistances = [];
     /**
      * generates the new assistances using the core's response
      * some FE's generate and upload their own assistance documents, so we avoid generating our own as we would overwritte theirs.
@@ -119,17 +118,14 @@ module.exports = async ({ loanApplicationId, financingEntityId }) => {
       const response = await HTTP.get(`${CORE_URL}${PATH_ENDPOINT_CORE_GET_ASSISTANCES_FOR_LOAN}/${loanApplicationId}`);
       const { amicarAssistance } = response.data;
 
-      assistancesToGenerate = eficarAssistances.filter((assistance) =>
-        amicarAssistance.some(
-          (coreAssistance) => coreAssistance.description === assistance.documentTypeId && coreAssistance.selected,
-        ),
-      );
+      coreAssistances = amicarAssistance
+        .filter((assistance) => assistance.selected)
+        .map((assistance) => assistance.description);
     }
 
-    // generates the required mandate assistance (this is generated for ALL FE's)
-    const mandateToGenerate = eficarAssistances.find((assistance) => assistance.documentTypeId === 'MANDATO');
-
-    if (mandateToGenerate) assistancesToGenerate.push(mandateToGenerate);
+    const assistancesToGenerate = await Assistances.find({
+      $or: [{ documentTypeId: { $in: coreAssistances } }, { documentTypeId: 'MANDATO' }],
+    });
 
     if (!assistancesToGenerate.length) return;
 
