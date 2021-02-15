@@ -2,6 +2,8 @@ const aqp = require('api-query-params');
 const Params = require('eficar/controllers/params.controller');
 const Auction = require('eficar/models/auctions.model');
 const Config = require('eficar/models/configs.model');
+const DocumentsToSign = require('eficar/models/documentsToSign.model');
+const AmicesDocumentsToSign = require('amices/models/documentsToSign.model');
 const findLoanStatus = require('eficar/helpers/findLoanStatus');
 const generateAssistanceDocuments = require('eficar/helpers/generateAssistances');
 const errors = require('eficar/errors');
@@ -18,7 +20,7 @@ const loanStatusMap = {
 };
 
 const INTERMEDIATE_STATUS = ['SAVED_SIMULATION'];
-const LOCKED_STATUS = ['GRANTED', 'CHECKLIST_VALIDATION', 'CHECKLIST_CONFIRMED', 'SIGNING', 'AWARDED'];
+const LOCKED_STATUS = ['CHECKLIST_CONFIRMED', 'SIGNING', 'AWARDED'];
 
 const all = async (req, res) => {
   const recordsPerPage = 20;
@@ -160,37 +162,63 @@ const update = async (req, res) => {
   res.status(200).end();
 };
 
+const checkPreviousWinner = async ({ loanApplicationId, financingEntityId }) => {
+  // deletes the previously generated documents to sign after a manual reassignment
+  const previousWinner = await Auction.findOne({
+    simulationId: loanApplicationId,
+    'finalLoanStatus.code': { $in: ['WINNER', 'CHECKLIST_VALIDATION', 'CHECKLIST_CONFIRMED'] },
+  });
+
+  if (previousWinner && previousWinner.financingEntityId !== financingEntityId) {
+    await DocumentsToSign.deleteMany({ loanApplicationId });
+    await AmicesDocumentsToSign.deleteMany({ loanApplicationId });
+  }
+};
+
 const granted = async (req, res) => {
-  // defines the final status for this FE
-  const { status, loanSimulationDataId: loanApplicationId } = req.body;
-  const financingEntityId = req.params.rut;
-  const auction = await Auction.findOne({ simulationId: loanApplicationId, financingEntityId });
-  if (!auction) return errors.notFound(res);
+  try {
+    // when amicar assistances are changed by the PUT method OR the loan is reassigned, the CORE makes a request to this endpoint
+    const { status, loanSimulationDataId: loanApplicationId } = req.body;
 
-  const finalLoanStatus = status === 'APPROVED' ? 'LOSER' : status;
+    const financingEntityId = req.params.rut;
+    const auction = await Auction.findOne({ simulationId: loanApplicationId, financingEntityId });
 
-  if (status === 'WINNER') {
-    const canUpdateStatus = !LOCKED_STATUS.includes(auction.finalLoanStatus.code);
-    if (canUpdateStatus) auction.finalLoanStatus = await findLoanStatus(finalLoanStatus);
+    if (!auction) return errors.notFound(res);
 
-    await generateAssistanceDocuments({ loanApplicationId, financingEntityId });
-    req.app.socketIo.emit(`RELOAD_EFICAR_DOCUMENTS_TO_SIGN_${loanApplicationId}`);
-  } else {
-    auction.finalLoanStatus = await findLoanStatus(finalLoanStatus);
+    const finalLoanStatus = status === 'APPROVED' ? 'LOSER' : status;
+
+    if (status === 'WINNER') {
+      await checkPreviousWinner({ loanApplicationId, financingEntityId });
+      await generateAssistanceDocuments({ loanApplicationId, financingEntityId });
+
+      req.app.socketIo.emit(`RELOAD_EFICAR_DOCUMENTS_TO_SIGN_${loanApplicationId}`);
+    }
+
+    const currentStatus = auction.finalLoanStatus.code;
+
+    if (status !== 'WINNER' || !LOCKED_STATUS.includes(currentStatus))
+      auction.finalLoanStatus = await findLoanStatus(finalLoanStatus);
+
+    if (status === 'CHECKLIST_REJECTED') {
+      // makes sure the checklist items are shown as rejected even if they were approved before the complete checklist rejection
+      const items = auction.checkListSent.checklistItems;
+      auction.checkListSent = {
+        ...auction.checkListSent,
+        checklistItems: items.map((item) => ({ ...item, status: 5 })),
+      };
+      auction.markModified('checkListSent');
+    }
+
+    if (status === 'AWARDED') auction.awardedTime = new Date();
+
+    req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
+    req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_LIST_${req.params.rut}`);
+
+    await auction.save();
+    res.status(200).end();
+  } catch (err) {
+    console.error(err.message);
   }
-
-  if (status === 'CHECKLIST_REJECTED') {
-    // makes sure the checklist items are shown as rejected even if they were approved before the complete checklist rejection
-    const items = auction.checkListSent.checklistItems;
-    auction.checkListSent = { ...auction.checkListSent, checklistItems: items.map((item) => ({ ...item, status: 5 })) };
-    auction.markModified('checkListSent');
-  }
-  if (status === 'AWARDED') auction.awardedTime = new Date();
-  req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_${loanApplicationId}`);
-  req.app.socketIo.emit(`RELOAD_EFICAR_AUCTION_LIST_${req.params.rut}`);
-
-  await auction.save();
-  res.status(200).end();
 };
 
 const create = async (req, res) => {
