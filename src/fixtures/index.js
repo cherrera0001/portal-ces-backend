@@ -55,6 +55,8 @@ require('mongoEficar')();
       LOAN_APPLICATION: `${CORE_URL}/chl/v1/loan-application`,
       CHECKLIST_UPLOAD_FILES: `${CORE_URL}/chl/v1/files/checklist/upload`,
       SEND_EMAIL: `${CORE_URL}/chl/v1/email`,
+      GET_SALE_CHANNELS: `${CORE_URL}/chl/v1/sales-channels`,
+      GET_SALE_ROOMS: `${CORE_URL}/chl/v1/sales-rooms/sale-channel`,
     },
   });
   await config.save();
