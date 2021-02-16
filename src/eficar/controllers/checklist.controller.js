@@ -5,6 +5,7 @@ const findLoanStatus = require('eficar/helpers/findLoanStatus');
 const generateAssistanceDocuments = require('eficar/helpers/generateAssistances');
 const errors = require('eficar/errors');
 const HTTP = require('requests');
+const generateApprovementLetter = require('eficar/templates/assistances/approvementLetter');
 const { PATH_ENDPOINT_CORE_DOWNLOAD_DOCUMENT, PATH_ENDPOINT_CORE_DOCUMENT_STATUS } = require('eficar/core.services');
 
 const { CORE_URL } = process.env;
@@ -176,6 +177,14 @@ const downloadDocument = async (req, res) => {
   });
 };
 
+const approvementLetter = async (req, res) => {
+  const document = await generateApprovementLetter(req.body);
+  res.set('Content-Type', 'application/pdf;');
+  res.set('Content-Disposition', 'attachment; filename="letter.pdf"');
+  res.set('Cache-control', 'no-store, no-cache, max-age=0');
+  res.end(document, 'binary');
+};
+
 module.exports = {
   downloadDocument,
   checklist,
@@ -183,4 +192,5 @@ module.exports = {
   reception,
   documentStatusUpdate,
   confirmation,
+  approvementLetter,
 };
