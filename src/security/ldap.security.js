@@ -81,7 +81,8 @@ const login = async (req, res) => {
     res.status(401).json({ msg: 'Su cuenta no se encuentra habilitada, contacte al administrador' });
     return;
   }
-
+  localUser.logout = false;
+  await localUser.save();
   res.json({
     user: localUser,
     token: jwt.makeToken(localUser),
