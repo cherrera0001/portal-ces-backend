@@ -10,25 +10,50 @@ const PAGE_HEIGHT = 841.89;
 const PAGE_BORDER = 70;
 const PAGE_CONTENT_WIDTH = PAGE_WIDTH - PAGE_BORDER * 2;
 
-const dinamicTextLines = (text, minCharsPerLine) => {
-  const textWithExtraSpace = ' ' + text;
-  const arrayText = [...textWithExtraSpace];
-  let textInLines = [];
-  let charSplitPosition = 0;
-  arrayText.forEach((letter, index) => {
-    if (index >= charSplitPosition && index >= charSplitPosition + minCharsPerLine && letter === ' ') {
-      textInLines = [...textInLines, textWithExtraSpace.substring(charSplitPosition + 1, index)];
-      charSplitPosition = index;
-    } else if (index === textWithExtraSpace.length - 1) {
-      textInLines = [...textInLines, textWithExtraSpace.substring(charSplitPosition + 1, index + 1)];
+const moneyFormat = (value) => {
+  const numParts = value.toString().split('.');
+  numParts[0] = numParts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  return '$ ' + numParts.join('.');
+};
+
+const formatRut = (rut) => {
+  if (!rut) return '';
+  if (rut.length < 2) return rut;
+  let cont = 0;
+  let format;
+  const rutFormat = rut.replace('.', '').replace('-', '');
+  format = `-${rutFormat.substring(rutFormat.length - 1)}`;
+  for (let i = rutFormat.length - 2; i >= 0; i -= 1) {
+    format = rutFormat.substring(i, i + 1) + format;
+    cont += 1;
+    if (cont === 3 && i !== 0) {
+      format = `.${format}`;
+      cont = 0;
     }
-  });
-  return textInLines;
+  }
+  return format;
 };
 
 module.exports = async (args) => {
-  const { protectedFamily, tireProtection, mechanicGuaranty, protecar, financialEntity, total, date, customer } =
-    args || {};
+  const {
+    awardDate,
+    loanId,
+    customer,
+    customerIdentificationValue,
+    financialEntityName,
+    loanTerm,
+    customerRate,
+    dealerCommission,
+    balance,
+    downPayment,
+    vehicleType,
+    vehicleBrand,
+    vehicleModel,
+    vehicleYear,
+    vehiclePrice,
+    amicarExecutiveName,
+  } = args || {};
+
   const pdfDoc = await PDFDocument.create();
   const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const helveticaCursiveFont = await pdfDoc.embedFont(StandardFonts.HelveticaOblique);
@@ -76,35 +101,37 @@ module.exports = async (args) => {
     font: helveticaFont,
   });
 
-  page.drawText('10-02-2021', {
-    x: PAGE_BORDER + 122,
+  page.drawText(awardDate, {
+    x: PAGE_BORDER + 125,
     y: PAGE_HEIGHT - 130,
     size: FONT_SIZE,
     font: helveticaBoldFont,
   });
 
   page.drawText('la solicitud de financiamiento Nro.', {
-    x: PAGE_BORDER + 170,
+    x: PAGE_BORDER + 174,
     y: PAGE_HEIGHT - 130,
     size: FONT_SIZE,
     font: helveticaFont,
   });
 
-  page.drawText('10001726 - 002', {
-    x: PAGE_BORDER + 305,
+  const loanIdTextWidth = helveticaBoldFont.widthOfTextAtSize(`${loanId}`, FONT_SIZE);
+
+  page.drawText(loanId, {
+    x: PAGE_BORDER + 310,
     y: PAGE_HEIGHT - 130,
     size: FONT_SIZE,
     font: helveticaBoldFont,
   });
 
   page.drawText('del (a) Sr.(a)', {
-    x: PAGE_BORDER + 372,
+    x: PAGE_BORDER + loanIdTextWidth + 313,
     y: PAGE_HEIGHT - 130,
     size: FONT_SIZE,
     font: helveticaFont,
   });
 
-  page.drawText('HECTOR CUEVAS PEREZ', {
+  page.drawText(customer.toUpperCase(), {
     x: PAGE_BORDER,
     y: PAGE_HEIGHT - 142,
     size: FONT_SIZE,
@@ -120,7 +147,7 @@ module.exports = async (args) => {
     font: helveticaFont,
   });
 
-  page.drawText('15194183-4', {
+  page.drawText(formatRut(customerIdentificationValue), {
     x: PAGE_BORDER + nameWidth + 88,
     y: PAGE_HEIGHT - 142,
     size: FONT_SIZE,
@@ -128,18 +155,18 @@ module.exports = async (args) => {
   });
 
   page.drawText('se encuentra aprobada por', {
-    x: PAGE_BORDER + nameWidth + 142,
+    x: PAGE_BORDER + nameWidth + 144,
     y: PAGE_HEIGHT - 142,
     size: FONT_SIZE,
     font: helveticaFont,
   });
 
-  const secondLineWidth = nameWidth + 248;
+  const secondLineWidth = nameWidth + 252;
   const secondLineRemainSpace = PAGE_CONTENT_WIDTH - secondLineWidth;
-  const entityNameWidth = helveticaBoldFont.widthOfTextAtSize('Nombre de entidad', FONT_SIZE);
+  const entityNameWidth = helveticaBoldFont.widthOfTextAtSize(financialEntityName, FONT_SIZE);
 
-  page.drawText('Nombre de entidad' + '.', {
-    x: secondLineRemainSpace > entityNameWidth ? PAGE_BORDER + nameWidth + 251 : PAGE_BORDER,
+  page.drawText(financialEntityName + '.', {
+    x: secondLineRemainSpace > entityNameWidth ? PAGE_BORDER + nameWidth + 255 : PAGE_BORDER,
     y: secondLineRemainSpace > entityNameWidth ? PAGE_HEIGHT - 142 : PAGE_HEIGHT - 154,
     size: FONT_SIZE,
     font: helveticaBoldFont,
@@ -164,7 +191,7 @@ module.exports = async (args) => {
     font: helveticaBoldFont,
   });
 
-  page.drawText('Comercial Nuevo', {
+  page.drawText(vehicleType, {
     x: PAGE_BORDER + 195,
     y: financingDetailsTop,
     size: FONT_SIZE,
@@ -179,7 +206,7 @@ module.exports = async (args) => {
     font: helveticaBoldFont,
   });
 
-  page.drawText('24', {
+  page.drawText(loanTerm, {
     x: PAGE_BORDER + 195,
     y: financingDetailsTop - 20,
     size: FONT_SIZE,
@@ -194,27 +221,29 @@ module.exports = async (args) => {
     font: helveticaBoldFont,
   });
 
-  page.drawText('1.63 %', {
+  page.drawText(`${customerRate} %`, {
     x: PAGE_BORDER + 195,
     y: financingDetailsTop - 40,
     size: FONT_SIZE,
     font: helveticaFont,
   });
 
-  page.drawText('Comisión Bruta Dealer', {
-    x: PAGE_BORDER + 80,
-    y: financingDetailsTop - 60,
-    color: rgb(0, 0, 0, 0),
-    size: FONT_SIZE,
-    font: helveticaBoldFont,
-  });
+  if (!!dealerCommission) {
+    page.drawText('Comisión Bruta Dealer', {
+      x: PAGE_BORDER + 80,
+      y: financingDetailsTop - 60,
+      color: rgb(0, 0, 0, 0),
+      size: FONT_SIZE,
+      font: helveticaBoldFont,
+    });
 
-  page.drawText('$353.718', {
-    x: PAGE_BORDER + 195,
-    y: financingDetailsTop - 60,
-    size: FONT_SIZE,
-    font: helveticaFont,
-  });
+    page.drawText(moneyFormat(dealerCommission), {
+      x: PAGE_BORDER + 195,
+      y: financingDetailsTop - 60,
+      size: FONT_SIZE,
+      font: helveticaFont,
+    });
+  }
 
   //----------------------------------
 
@@ -235,7 +264,7 @@ module.exports = async (args) => {
     font: helveticaBoldFont,
   });
 
-  page.drawText('MAHINDRA', {
+  page.drawText(vehicleBrand, {
     x: PAGE_BORDER + 195,
     y: vehicleDetailsTop,
     size: FONT_SIZE,
@@ -250,7 +279,7 @@ module.exports = async (args) => {
     font: helveticaBoldFont,
   });
 
-  page.drawText('PIK UP XL DC 4X2 CRDE', {
+  page.drawText(vehicleModel, {
     x: PAGE_BORDER + 195,
     y: vehicleDetailsTop - 20,
     size: FONT_SIZE,
@@ -265,7 +294,7 @@ module.exports = async (args) => {
     font: helveticaBoldFont,
   });
 
-  page.drawText('2021', {
+  page.drawText(`${vehicleYear}`, {
     x: PAGE_BORDER + 195,
     y: vehicleDetailsTop - 40,
     size: FONT_SIZE,
@@ -280,7 +309,7 @@ module.exports = async (args) => {
     font: helveticaBoldFont,
   });
 
-  page.drawText('$12.353.718', {
+  page.drawText(`${moneyFormat(vehiclePrice)}`, {
     x: PAGE_BORDER + 195,
     y: vehicleDetailsTop - 60,
     size: FONT_SIZE,
@@ -295,7 +324,7 @@ module.exports = async (args) => {
     font: helveticaBoldFont,
   });
 
-  page.drawText('$12.353.718', {
+  page.drawText(`${moneyFormat(downPayment)}`, {
     x: PAGE_BORDER + 195,
     y: vehicleDetailsTop - 80,
     size: FONT_SIZE,
@@ -310,7 +339,7 @@ module.exports = async (args) => {
     font: helveticaBoldFont,
   });
 
-  page.drawText('$12.353.718', {
+  page.drawText(`${moneyFormat(balance)}`, {
     x: PAGE_BORDER + 195,
     y: vehicleDetailsTop - 100,
     size: FONT_SIZE,
@@ -399,7 +428,7 @@ module.exports = async (args) => {
     font: helveticaFont,
   });
 
-  page.drawText('USER AMICAR EXECUTIVE', {
+  page.drawText(amicarExecutiveName.toUpperCase(), {
     x: PAGE_BORDER,
     y: PAGE_HEIGHT - 790,
     color: rgb(0, 0, 0, 0),
@@ -419,46 +448,6 @@ module.exports = async (args) => {
     page.drawText(String(customer.name), {
       x: PAGE_BORDER + 41,
       y: PAGE_HEIGHT - 573,
-      color: rgb(0, 0, 0, 0),
-      size: FONT_SIZE,
-      font: helveticaFont,
-    });
-  }
-
-  if (customer && customer.identificationValue) {
-    page.drawText(String(customer.identificationValue), {
-      x: PAGE_BORDER + 127,
-      y: PAGE_HEIGHT - 603,
-      color: rgb(0, 0, 0, 0),
-      size: FONT_SIZE,
-      font: helveticaFont,
-    });
-  }
-
-  if (customer && customer.address) {
-    page.drawText(String(customer.address), {
-      x: PAGE_BORDER + 46,
-      y: PAGE_HEIGHT - 633,
-      color: rgb(0, 0, 0, 0),
-      size: FONT_SIZE,
-      font: helveticaFont,
-    });
-  }
-
-  if (customer && customer.email) {
-    page.drawText(String(customer.email), {
-      x: PAGE_BORDER + 127,
-      y: PAGE_HEIGHT - 663,
-      color: rgb(0, 0, 0, 0),
-      size: FONT_SIZE,
-      font: helveticaFont,
-    });
-  }
-
-  if (date) {
-    page.drawText(String(date), {
-      x: PAGE_BORDER + 33,
-      y: PAGE_HEIGHT - 693,
       color: rgb(0, 0, 0, 0),
       size: FONT_SIZE,
       font: helveticaFont,
