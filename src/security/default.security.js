@@ -10,6 +10,9 @@ const login = async (req, res) => {
   if (!user) return errors.badRequest(res, 'USER_NOT_FOUND');
 
   if (bcrypt.compareSync(req.body.password, user.password)) {
+    user.logout = false;
+    await user.save();
+
     const {
       name,
       amicarExecutiveIdentificationValue,
