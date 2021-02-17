@@ -179,10 +179,10 @@ const downloadDocument = async (req, res) => {
 
 const approvementLetter = async (req, res) => {
   const document = await generateApprovementLetter(req.body);
-  res.set('Content-Type', 'application/pdf;');
-  res.set('Content-Disposition', 'attachment; filename="letter.pdf"');
-  res.set('Cache-control', 'no-store, no-cache, max-age=0');
-  res.end(document, 'binary');
+  res.json({
+    fileName: 'carta-amicar.pdf',
+    fileContent: document,
+  });
 };
 
 module.exports = {
