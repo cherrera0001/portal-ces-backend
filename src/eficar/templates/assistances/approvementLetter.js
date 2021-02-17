@@ -56,7 +56,6 @@ module.exports = async (args) => {
 
   const pdfDoc = await PDFDocument.create();
   const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
-  const helveticaCursiveFont = await pdfDoc.embedFont(StandardFonts.HelveticaOblique);
   const helveticaBoldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
   const response = await axios.get(AMICAR_LOGO_URL, { responseType: 'arraybuffer' });
   const amicarLogo = await pdfDoc.embedPng(response.data);
@@ -94,6 +93,13 @@ module.exports = async (args) => {
     color: rgb(0, 0, 0),
   });
 
+  page.drawText('Señores:', {
+    x: PAGE_BORDER,
+    y: PAGE_HEIGHT - 100,
+    size: FONT_SIZE,
+    font: helveticaFont,
+  });
+
   page.drawText('Informo a usted que con fecha', {
     x: PAGE_BORDER,
     y: PAGE_HEIGHT - 130,
@@ -117,7 +123,7 @@ module.exports = async (args) => {
 
   const loanIdTextWidth = helveticaBoldFont.widthOfTextAtSize(`${loanId}`, FONT_SIZE);
 
-  page.drawText(loanId, {
+  page.drawText(`${loanId}`, {
     x: PAGE_BORDER + 310,
     y: PAGE_HEIGHT - 130,
     size: FONT_SIZE,
@@ -138,7 +144,7 @@ module.exports = async (args) => {
     font: helveticaBoldFont,
   });
 
-  const nameWidth = helveticaBoldFont.widthOfTextAtSize('HECTOR CUEVAS PEREZ', FONT_SIZE);
+  const nameWidth = helveticaBoldFont.widthOfTextAtSize(customer.toUpperCase(), FONT_SIZE);
   console.log(nameWidth);
   page.drawText(', cédula de Identidad', {
     x: PAGE_BORDER + nameWidth + 2,
@@ -173,7 +179,7 @@ module.exports = async (args) => {
   });
 
   page.drawText('Las características del financiamiento son las siguientes:', {
-    x: secondLineRemainSpace > entityNameWidth ? PAGE_BORDER : entityNameWidth + PAGE_BORDER + 5,
+    x: secondLineRemainSpace > entityNameWidth ? PAGE_BORDER : entityNameWidth + PAGE_BORDER + 8,
     y: PAGE_HEIGHT - 154,
     size: FONT_SIZE,
     font: helveticaFont,
@@ -206,7 +212,7 @@ module.exports = async (args) => {
     font: helveticaBoldFont,
   });
 
-  page.drawText(loanTerm, {
+  page.drawText(`${loanTerm}`, {
     x: PAGE_BORDER + 195,
     y: financingDetailsTop - 20,
     size: FONT_SIZE,
@@ -454,6 +460,5 @@ module.exports = async (args) => {
     });
   }
 
-  const pdfBytes = await pdfDoc.save();
-  return Buffer.from(pdfBytes);
+  return pdfDoc.saveAsBase64();
 };
