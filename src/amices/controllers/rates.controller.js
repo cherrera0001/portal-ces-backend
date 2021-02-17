@@ -9,7 +9,7 @@ const getVehicleTypeSaleChannel = async (req, res) => {
     const url = `${CORE_URL}${PATH_ENDPOINT_CORE_GET_RATE_SALE_CHANNERL}/${req.params.saleChannelId}`;
     const response = await HTTP.get(url);
     if (response.status === 200 && response.data.length) {
-      let unique = [
+      const unique = [
         ...new Set(
           response.data.map(function(task) {
             return task.vehicleTypeId;
@@ -23,6 +23,7 @@ const getVehicleTypeSaleChannel = async (req, res) => {
       return res.status(200).json(coreParams);
     }
   } catch (e) {
+    console.log(e);
     throw Error(e.message);
   }
 };
@@ -32,7 +33,7 @@ const getLoanTypeSaleChannel = async (req, res) => {
     const url = `${CORE_URL}${PATH_ENDPOINT_CORE_GET_RATE_SALE_CHANNERL}/${req.params.saleChannelId}/vehicle-type/${req.params.vehicleType}`;
     const response = await HTTP.get(url);
     if (response.status === 200 && response.data.length) {
-      let unique = [
+      const unique = [
         ...new Set(
           response.data.map(function(task) {
             return task.loanTypeCode;
@@ -46,6 +47,7 @@ const getLoanTypeSaleChannel = async (req, res) => {
       return res.status(200).json(coreParams);
     }
   } catch (e) {
+    console.log(e);
     throw Error(e.message);
   }
 };
@@ -55,7 +57,7 @@ const getRateTypeSaleChannel = async (req, res) => {
     const url = `${CORE_URL}${PATH_ENDPOINT_CORE_GET_RATE_SALE_CHANNERL}/${req.params.saleChannelId}/vehicle-type/${req.params.vehicleType}/loan-type/${req.params.loanType}`;
     const response = await HTTP.get(url);
     if (response.status === 200 && response.data.length) {
-      let unique = [
+      const unique = [
         ...new Set(
           response.data.map(function(task) {
             return task.rateTypeCode;
@@ -69,6 +71,7 @@ const getRateTypeSaleChannel = async (req, res) => {
       return res.status(200).json(coreParams);
     }
   } catch (e) {
+    console.log(e);
     throw Error(e.message);
   }
 };
