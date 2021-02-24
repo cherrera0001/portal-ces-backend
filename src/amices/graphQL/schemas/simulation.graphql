@@ -3,6 +3,8 @@ input Customer {
   identificationTypeId: Int
   email: String
   phone: String
+  contactPhone: String
+  contactEmail: String
   name: String
   lastName: String
   motherLastName: String

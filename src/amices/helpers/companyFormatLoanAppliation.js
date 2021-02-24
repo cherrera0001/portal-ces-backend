@@ -1,9 +1,6 @@
 const format = (incomeData, externalIds) => {
   try {
     const {
-      customerRequestData,
-      customerActivity,
-      spouseData,
       buyForAnother,
       guarantor,
       bankInformation,
@@ -12,9 +9,7 @@ const format = (incomeData, externalIds) => {
       loanSimulationCar,
       amortizationSchedule,
       customer,
-      taxReturn,
       legalRepresentative,
-      majorityPartners,
       loanSimulationData,
     } = incomeData;
     const loanType = loanSimulationData.LoanType.cod;
@@ -59,7 +54,6 @@ const format = (incomeData, externalIds) => {
             ...el,
             geographicDataId: el.geographicData.COMMUNE.externalCode,
             maritalStatus: el.maritalStatusData.externalCode,
-            // activityTypeId: el.activityTypeData.externalCode,
           }))
         : [],
       bankInformation: bankInformation.length
