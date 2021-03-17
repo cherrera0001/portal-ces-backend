@@ -5,6 +5,7 @@ const findLoanStatus = require('eficar/helpers/findLoanStatus');
 const generateAssistanceDocuments = require('eficar/helpers/generateAssistances');
 const errors = require('eficar/errors');
 const HTTP = require('requests');
+const generateApprovementLetter = require('eficar/templates/assistances/approvementLetter');
 const { PATH_ENDPOINT_CORE_DOWNLOAD_DOCUMENT, PATH_ENDPOINT_CORE_DOCUMENT_STATUS } = require('eficar/core.services');
 
 const { CORE_URL } = process.env;
@@ -177,6 +178,14 @@ const downloadDocument = async (req, res) => {
   });
 };
 
+const approvementLetter = async (req, res) => {
+  const document = await generateApprovementLetter(req.body);
+  res.json({
+    fileName: 'carta-amicar.pdf',
+    fileContent: document,
+  });
+};
+
 module.exports = {
   downloadDocument,
   checklist,
@@ -184,4 +193,5 @@ module.exports = {
   reception,
   documentStatusUpdate,
   confirmation,
+  approvementLetter,
 };
