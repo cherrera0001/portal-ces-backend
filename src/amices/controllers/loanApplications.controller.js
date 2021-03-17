@@ -15,9 +15,11 @@ const companyFormat = require('amices/helpers/companyFormatLoanAppliation');
 const { CORE_URL } = process.env;
 
 const formatLoanApplication = (incomeData, externalIds) => {
+
   return incomeData.customer.identificationTypeId === 1
     ? naturalFormat(incomeData, externalIds)
     : companyFormat(incomeData, externalIds);
+
 };
 
 const create = async (req, res) => {
