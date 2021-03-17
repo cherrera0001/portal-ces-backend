@@ -9,5 +9,6 @@ router.route('/document-status-change').post(authenticate, controller.documentSt
 router.route('/document-status-update/:rut').post(coreAuth, controller.documentStatusUpdate);
 router.route('/confirmation/:rut').post(coreAuth, controller.confirmation);
 router.route('/reception/:rut').post(coreAuth, controller.reception);
+router.route('/approvement-letter').post(authenticate, controller.approvementLetter);
 
 module.exports = router;
