@@ -35,6 +35,7 @@ require('mongoEficar')();
       { code: 'CHECKLIST_CONFIRMED', status: 'Checklist confirmado', color: '#3DAC00' },
       { code: 'SIGNING', status: 'Firma de documentación', color: '#3DAC00' },
       { code: 'AWARDED', status: 'Crédito Adjudicado', color: '#3DAC00' },
+      { code: 'CLOSED_WITHOUT_APPROVALS', status: 'Sin respuesta', color: 'black' },
     ],
     maxFileSizeInKB: 40000000,
     coreToken:
@@ -59,33 +60,7 @@ require('mongoEficar')();
   await config.save();
 
   await Assistances.deleteMany({});
-  await Assistances.insertMany([
-    {
-      id: 1,
-      description: 'FAMILIA PROTEGIDA.pdf',
-      documentTypeId: 'FAMILIA_PROTEGIDA',
-    },
-    {
-      id: 2,
-      description: 'GARANTIA MECANICA USADOS.pdf',
-      documentTypeId: 'GARANTIA_MECANICA',
-    },
-    {
-      id: 4,
-      description: 'NEUMATICOS.pdf',
-      documentTypeId: 'NEUMATICOS',
-    },
-    {
-      id: 5,
-      description: 'PROTECAR.pdf',
-      documentTypeId: 'PROTECAR',
-    },
-    {
-      id: 6,
-      description: 'MANDATO.pdf',
-      documentTypeId: 'MANDATO',
-    },
-  ]);
+  await Assistances.insertMany(require('fixtures/assistances'));
 
   await EficarConfigs.deleteMany({});
   const eficarConfig = new EficarConfigs({
@@ -117,6 +92,7 @@ require('mongoEficar')();
       { code: 'EXPIRED', status: 'No se entregó Respuesta a Tiempo', color: 'black' },
       { code: 'EVALUATION_IN_PROCESS', status: 'Pendiente o en Proceso', color: '#007BDC' },
       { code: 'AWARDED', status: 'Crédito Adjudicado', color: '#3DAC00' },
+      { code: 'CLOSED_WITHOUT_APPROVALS', status: 'Cerrado sin aprobaciones', color: 'black' },
     ],
     coreUrls: {
       UPLOAD_DOCUMENT_TO_SIGN: `${CORE_URL}/chl/v1/files/documents-to-sign/upload`,
@@ -143,6 +119,7 @@ require('mongoEficar')();
     sellerIdentificationValue: '112223339',
     amicarExecutiveIdentificationValue: '156681911',
     saleChannel: '829957000',
+    saleChannelId: '1',
     saleChannelType: 'IMPORTADOR',
     salesRoomId: 1,
     forApp: 'amices',
